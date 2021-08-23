@@ -4,7 +4,7 @@ using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
-    public interface IImportPagedDataSource<T> : IDisposable where T : IImportable
+    public interface IImportPagedDataSource<T> : IDisposable where T : IExportable
     {
         int CurrentPageNumber { get; }
 
