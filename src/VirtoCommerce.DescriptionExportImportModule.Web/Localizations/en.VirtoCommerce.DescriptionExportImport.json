@@ -1,0 +1,28 @@
+{
+  "virtoCommerce.descriptionExportImport": {
+    "blades": {
+      "hello-world": {
+        "title": "Hello world blade"
+      }
+    }
+  },
+  "permissions": {
+    "virtoCommerceDescriptionExportImport:access": "Open VirtoCommerceDescriptionExportImport menu",
+    "virtoCommerceDescriptionExportImport:create": "Create VirtoCommerceDescriptionExportImport related data",
+    "virtoCommerceDescriptionExportImport:read": "View VirtoCommerceDescriptionExportImport related data",
+    "virtoCommerceDescriptionExportImport:update": "Update VirtoCommerceDescriptionExportImport related data",
+    "virtoCommerceDescriptionExportImport:delete": "Delete VirtoCommerceDescriptionExportImport related data"
+  },
+  "settings": {
+    "VirtoCommerceDescriptionExportImport": {
+      "VirtoCommerceDescriptionExportImportPassword": {
+        "title": "VirtoCommerceDescriptionExportImport Password",
+        "description": "VirtoCommerceDescriptionExportImport Password setting"
+      },
+      "VirtoCommerceDescriptionExportImportEnabled": {
+        "title": "VirtoCommerceDescriptionExportImport Enabled",
+        "description": "VirtoCommerceDescriptionExportImport Enabled setting"
+      }
+    }
+  }
+}
