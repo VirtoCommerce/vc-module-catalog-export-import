@@ -1,0 +1,12 @@
+{
+  "virtoCommerce.descriptionExportImport": {
+    "blades": {
+    }
+  },
+  "permissions": {
+  },
+  "settings": {
+    "VirtoCommerceDescriptionExportImport": {
+    }
+  }
+}
