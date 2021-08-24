@@ -10,7 +10,7 @@ using VirtoCommerce.Platform.Core.Assets;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public sealed class ImportPagedDataSource<T> : IImportPagedDataSource<T> where T : IExportable
+    public sealed class ImportPagedDataSource<T> : IImportPagedDataSource<T> where T : IImportable
     {
         private readonly Stream _stream;
         private readonly Configuration _configuration;
