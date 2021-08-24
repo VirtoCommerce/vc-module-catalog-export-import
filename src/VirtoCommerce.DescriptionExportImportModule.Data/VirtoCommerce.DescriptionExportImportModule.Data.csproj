@@ -24,7 +24,6 @@
         <Folder Include="Handlers\" />
         <Folder Include="Models\" />
         <Folder Include="Repositories\" />
-        <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,7 +32,8 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-        <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.23.0" />
-        <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.23.0" />
+        <PackageReference Include="VirtoCommerce.CatalogModule.Data" Version="3.59.0" />
+        <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.57.0" />
+        <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.57.0" />
     </ItemGroup>
 </Project>
