@@ -7,7 +7,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
     public interface ICsvPagedDataImporter
     {
-        string DataType { get; }
+        string MemberType { get; }
 
         Task ImportAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback, ICancellationToken cancellationToken);
     }
