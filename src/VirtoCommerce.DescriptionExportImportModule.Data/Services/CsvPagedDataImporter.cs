@@ -9,20 +9,22 @@ using FluentValidation.Results;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
+using VirtoCommerce.DescriptionExportImportModule.Data.Helpers;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public abstract class CsvPagedDataImporter<TImportable> : ICsvPagedDataImporter
+    public abstract class CsvPagedDataImporter<TImportable, TEntity> : ICsvPagedDataImporter
          where TImportable : IImportable
+         where TEntity : IEntity
     {
         private readonly ICsvImportReporterFactory _importReporterFactory;
         private readonly IImportPagedDataSourceFactory _dataSourceFactory;
         private readonly IValidator<ImportRecord<TImportable>[]> _importRecordsValidator;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
-        public abstract string DataType { get; }
+        public abstract string MemberType { get; }
 
         protected CsvPagedDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory,
@@ -50,7 +52,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var importProgress = new ImportProgressInfo { Description = "Import has started" };
 
-            using var dataSource = _dataSourceFactory.Create<TImportable>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
+            using var dataSource = await _dataSourceFactory.CreateAsync<TImportable, TEntity>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
 
             var headerRaw = dataSource.GetHeaderRaw();
             if (!headerRaw.IsNullOrEmpty())
