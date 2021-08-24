@@ -35,8 +35,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
             public const string InvalidValue = "invalid-value";
 
             public const string NotUniqueValue = "not-unique-value";
-
-            public const string CountryNameAndCodeDoesntMatch = "country-name-and-code-doesnt-match";
         }
 
         public static class Security
