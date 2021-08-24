@@ -22,8 +22,8 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             canExecuteMethod: () => true
         }];
 
-        blade.dataType = { key: 'Descriptions', value: 'Description' };
-        blade.availableDataTypes = [{ key: 'Descriptions', value: 'Description' }];
+        blade.dataType = { key: 'Descriptions', value: 'EditorialReview' };
+        blade.availableDataTypes = [{ key: 'Descriptions', value: 'EditorialReview' }];
 
         function initialize () {
             resetState();
