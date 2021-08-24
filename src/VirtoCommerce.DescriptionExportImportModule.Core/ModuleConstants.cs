@@ -41,7 +41,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
         {
             public static class Permissions
             {
-                public const string ImportAccess = "description:import";
+                public const string ImportAccess = "product:description:import";
 
                 public static string[] AllPermissions { get; } = { ImportAccess };
             }
