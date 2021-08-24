@@ -6,7 +6,7 @@ using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
 
-namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers
+namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
 {
     [Route("api/catalog/description/export")]
     [Authorize]
