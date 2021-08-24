@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using VirtoCommerce.Platform.Core.PushNotifications;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
@@ -7,6 +9,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         public ExportPushNotification(string creator)
             : base(creator)
         {
+            Errors = new List<string>();
         }
+
+        public string JobId { get; set; }
+        public int ProcessedCount { get; set; }
+        public int TotalCount { get; set; }
+        public ICollection<string> Errors { get; set; }
+        public DateTime? Finished { get; set; }
     }
 }
