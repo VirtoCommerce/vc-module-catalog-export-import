@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
+using VirtoCommerce.CatalogModule.Core.Model;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 {
@@ -34,5 +35,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         [Required]
         [Name("Language")]
         public string LanguageCode { get; set; }
+
+        public void PatchModel(EditorialReview target)
+        {
+            target.Content = Content;
+            target.ReviewType = ReviewType;
+            target.LanguageCode = LanguageCode;
+        }
+
     }
 }
