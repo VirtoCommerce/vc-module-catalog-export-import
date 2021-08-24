@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <noWarn>1591</noWarn>
@@ -33,6 +33,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+        <PackageReference Include="VirtoCommerce.CatalogModule.Core" Version="3.59.0" />
         <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.69.0" />
     </ItemGroup>
 </Project>
