@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
