@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CatalogModule.Data.Model;
 using VirtoCommerce.CatalogModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
@@ -13,10 +15,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
     public class ProductDescriptionSearchService : IProductDescriptionSearchService
     {
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
+        private readonly IProductDescriptionService _productDescriptionService;
 
-        public ProductDescriptionSearchService(Func<ICatalogRepository> catalogRepositoryFactory)
+        public ProductDescriptionSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductDescriptionService productDescriptionService)
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
+            _productDescriptionService = productDescriptionService;
         }
 
         public async Task<ProductDescriptionSearchResult> SearchProductDescriptionsAsync(ProductDescriptionSearchCriteria criteria)
@@ -35,20 +39,36 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             result.TotalCount = await descriptionQuery.CountAsync();
 
+            var sortInfos = BuildSortExpression(criteria);
+
             if (criteria.Take > 0 && result.TotalCount > 0)
             {
                 var ids = await descriptionQuery
-                    .OrderBySortInfos(criteria.SortInfos)
+                    .OrderBySortInfos(sortInfos)
                     .Select(x => x.Id)
                     .Skip(criteria.Skip)
                     .Take(criteria.Take)
                     .AsNoTracking()
                     .ToArrayAsync();
 
-                //TODO: select descrs
+                result.Results = await _productDescriptionService.GetByIdsAsync(ids);
             }
 
             return result;
+        }
+
+        protected virtual IList<SortInfo> BuildSortExpression(ProductDescriptionSearchCriteria criteria)
+        {
+            var sortInfos = criteria.SortInfos;
+            if (sortInfos.IsNullOrEmpty())
+            {
+                sortInfos = new[]
+                {
+                    new SortInfo { SortColumn = nameof(EditorialReviewEntity.Id) }
+                };
+            }
+
+            return sortInfos;
         }
     }
 }

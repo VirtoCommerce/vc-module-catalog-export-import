@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Data.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -30,10 +32,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddTransient<IProductDescriptionSearchService, ProductDescriptionSearchService>();
             serviceCollection.AddTransient<IDescriptionExportPagedDataSourceFactory, DescriptionExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IDescriptionDataExporter, DescriptionDataExporter>();
+            serviceCollection.AddTransient<IProductDescriptionService, ProductDescriptionService>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
+            AbstractTypeFactory<EditorialReview>.OverrideType<EditorialReview, ExtendedEditorialReview>();
+
             // register settings
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
