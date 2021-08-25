@@ -21,10 +21,36 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var exportProgress = new ExportProgressInfo { ProcessedCount = 0, Description = "Export has started" };
 
-            var dataSource = _descriptionExportPagedDataSourceFactory.Create(50, request);
+            var dataSource = _descriptionExportPagedDataSourceFactory.Create(50, request); //TODO: Move page size to consts
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             progressCallback(exportProgress);
+
+            const string exportDescription = "{0} out of {1} have been exported.";
+
+            exportProgress.Description = "Fetching...";
+            progressCallback(exportProgress);
+
+            try
+            {
+                while (await dataSource.FetchAsync())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var descriptions = dataSource.Items;
+
+                    exportProgress.ProcessedCount += dataSource.Items.Length;
+                    exportProgress.Description = string.Format(exportDescription, exportProgress.ProcessedCount,
+                        exportProgress.TotalCount);
+                    progressCallback(exportProgress);
+                }
+
+                exportProgress.Description = "Export completed";
+            }
+            finally
+            {
+
+            }
         }
     }
 }
