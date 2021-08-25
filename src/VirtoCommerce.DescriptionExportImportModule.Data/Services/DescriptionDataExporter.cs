@@ -49,11 +49,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, new ExportConfiguration());
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
-            progressCallback(exportProgress);
-
-
-
             exportProgress.Description = "Fetching...";
+
             progressCallback(exportProgress);
 
             try
