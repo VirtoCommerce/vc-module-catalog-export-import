@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -25,6 +26,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         }
 
         public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             _streamWriter.Flush();
             _streamWriter.Close();
