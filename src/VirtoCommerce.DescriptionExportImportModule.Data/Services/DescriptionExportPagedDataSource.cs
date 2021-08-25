@@ -1,5 +1,5 @@
+using System;
 using System.Threading.Tasks;
-using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 
@@ -15,7 +15,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
         public int PageSize { get; }
 
-        public EditorialReview[] Items { get; private set; }
+        public IExportable[] Items { get; private set; }
 
         public DescriptionExportPagedDataSource(IProductDescriptionSearchService productDescriptionSearchService, int pageSize, ExportDataRequest exportRequest)
         {
@@ -34,9 +34,22 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             return searchResult.TotalCount;
         }
 
-        public Task<bool> FetchAsync()
+        public async Task<bool> FetchAsync()
         {
-            return Task.FromResult(false);
+            if (CurrentPageNumber * PageSize >= await GetTotalCountAsync())
+            {
+                Items = Array.Empty<IExportable>();
+                return false;
+            }
+
+            var searchCriteria = _exportRequest.ToSearchCriteria();
+            searchCriteria.Skip = CurrentPageNumber * PageSize;
+            searchCriteria.Take = PageSize;
+
+            var searchResult = await _productDescriptionSearchService.SearchProductDescriptionsAsync(searchCriteria);
+
+            CurrentPageNumber++;
+            return false;
         }
     }
 }

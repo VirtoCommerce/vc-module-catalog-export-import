@@ -1,7 +1,7 @@
 using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
-using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.Platform.Core.Assets;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
@@ -18,7 +18,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _csvWriter = new CsvWriter(_streamWriter, csvConfiguration);
         }
 
-        public void WriteRecords(EditorialReview[] records)
+        public void WriteRecords(IExportable[] records)
         {
             _csvWriter.WriteRecords(records);
         }

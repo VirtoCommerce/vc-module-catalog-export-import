@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
@@ -9,6 +9,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
         int PageSize { get; }
         Task<int> GetTotalCountAsync();
         Task<bool> FetchAsync();
-        EditorialReview[] Items { get; }
+        IExportable[] Items { get; }
     }
 }
