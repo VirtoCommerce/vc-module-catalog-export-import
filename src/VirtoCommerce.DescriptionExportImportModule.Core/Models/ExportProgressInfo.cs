@@ -8,6 +8,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 
         public int TotalCount { get; set; }
 
-        public string FileUrl;
+        public string FileUrl { get; set; }
     }
 }
