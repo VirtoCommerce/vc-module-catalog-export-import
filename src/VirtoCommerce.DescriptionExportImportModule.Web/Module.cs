@@ -33,6 +33,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddTransient<IDescriptionExportPagedDataSourceFactory, DescriptionExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IDescriptionDataExporter, DescriptionDataExporter>();
             serviceCollection.AddTransient<IProductDescriptionService, ProductDescriptionService>();
+            serviceCollection.AddTransient<IExportWriterFactory, ExportWriterFactory>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

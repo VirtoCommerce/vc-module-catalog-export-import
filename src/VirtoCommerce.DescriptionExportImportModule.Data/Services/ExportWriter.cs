@@ -2,11 +2,12 @@ using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
+using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public class ExportWriter
+    public class ExportWriter : IExportWriter
     {
         private readonly StreamWriter _streamWriter;
         private readonly CsvWriter _csvWriter;
