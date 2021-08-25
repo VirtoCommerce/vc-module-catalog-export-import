@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
@@ -31,6 +32,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
                 options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
             });
             serviceCollection.AddOptions<ImportOptions>().Bind(Configuration.GetSection("DescriptionExportImport:Import")).ValidateDataAnnotations();
+            serviceCollection.AddTransient<ICsvDataValidator, CsvDataValidator>();
+
             serviceCollection.AddTransient<IProductDescriptionSearchService, ProductDescriptionSearchService>();
             serviceCollection.AddTransient<IDescriptionExportPagedDataSourceFactory, DescriptionExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IDescriptionDataExporter, DescriptionDataExporter>();
