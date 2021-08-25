@@ -5,7 +5,7 @@
     <version-tag></version-tag>
     <platformVersion>3.57.0</platformVersion>
     <dependencies>
-        <dependency id="VirtoCommerce.Catalog" version="3.59.0"/>
+        <dependency id="VirtoCommerce.Catalog" version="3.59.0" />
     </dependencies>
 
     <title>Description export import</title>
