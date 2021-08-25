@@ -22,6 +22,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
         public async Task<EditorialReview[]> GetByIdsAsync(string[] ids)
         {
+            //TODO: Add cache
             using var catalogRepository = _catalogRepositoryFactory();
 
             var descriptions = await catalogRepository
