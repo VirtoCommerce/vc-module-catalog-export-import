@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core;
@@ -44,7 +45,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             const string exportDescription = "{0} out of {1} have been exported.";
             var exportedDescriptionFilePath = GetExportFilePath("Descriptions");
 
-            var dataSource = _descriptionExportPagedDataSourceFactory.Create(50, request); //TODO: Move page size to consts
+            var dataSource = _descriptionExportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
             var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, new ExportConfiguration());
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
