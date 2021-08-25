@@ -15,7 +15,7 @@ using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Web
 {
-    public class Module : IModule
+    public class Module : IModule, IHasConfiguration
     {
         public ManifestModuleInfo ModuleInfo { get; set; }
 
