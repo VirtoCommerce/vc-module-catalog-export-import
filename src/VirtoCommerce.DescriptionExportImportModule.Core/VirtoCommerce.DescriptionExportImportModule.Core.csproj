@@ -17,7 +17,7 @@
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="12.2.2" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.69.0" />
+        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.57.0" />
         <PackageReference Include="VirtoCommerce.CatalogModule.Core" Version="3.59.0" />
     </ItemGroup>
 
