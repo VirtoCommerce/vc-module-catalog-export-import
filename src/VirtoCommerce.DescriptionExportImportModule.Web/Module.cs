@@ -1,5 +1,4 @@
 using System.Linq;
-using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +10,6 @@ using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Data.Services;
-using VirtoCommerce.DescriptionExportImportModule.Data.Validation;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
@@ -34,8 +32,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
                 options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
             });
             serviceCollection.AddOptions<ImportOptions>().Bind(Configuration.GetSection("DescriptionExportImport:Import")).ValidateDataAnnotations();
-            serviceCollection.AddOptions<ExportOptions>().Bind(Configuration.GetSection("DescriptionExportImport:Export")).ValidateDataAnnotations();
-
             serviceCollection.AddTransient<ICsvDataValidator, CsvDataValidator>();
 
             serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
@@ -43,11 +39,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddTransient<IDataExporter, DataExporter>();
             serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
             serviceCollection.AddTransient<IExportWriterFactory, ExportWriterFactory>();
-            serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
-            serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
-
-            serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -60,16 +52,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
             var descriptionImportOptions = appBuilder.ApplicationServices.GetService<IOptions<ImportOptions>>().Value;
-            var descriptionExportOptions = appBuilder.ApplicationServices.GetService<IOptions<ExportOptions>>().Value;
 
             settingsManager.SetValue(ModuleConstants.Settings.General.ImportLimitOfLines.Name,
                 descriptionImportOptions.LimitOfLines ?? ModuleConstants.Settings.General.ImportLimitOfLines.DefaultValue);
 
             settingsManager.SetValue(ModuleConstants.Settings.General.ImportFileMaxSize.Name,
                 descriptionImportOptions.FileMaxSize ?? ModuleConstants.Settings.General.ImportFileMaxSize.DefaultValue);
-
-            settingsManager.SetValue(ModuleConstants.Settings.General.ExportLimitOfLines.Name,
-                descriptionExportOptions.LimitOfLines ?? ModuleConstants.Settings.General.ExportLimitOfLines.DefaultValue);
 
             // register permissions
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
