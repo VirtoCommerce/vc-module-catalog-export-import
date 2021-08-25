@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 
@@ -9,6 +12,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
     {
         private readonly IProductDescriptionSearchService _productDescriptionSearchService;
+        private readonly IItemService _itemService;
         private readonly ExportDataRequest _exportRequest;
 
         public int CurrentPageNumber { get; private set; }
@@ -17,9 +21,16 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
         public IExportable[] Items { get; private set; }
 
-        public DescriptionExportPagedDataSource(IProductDescriptionSearchService productDescriptionSearchService, int pageSize, ExportDataRequest exportRequest)
+        public DescriptionExportPagedDataSource(
+            IProductDescriptionSearchService productDescriptionSearchService,
+            IItemService itemService,
+            int pageSize,
+            ExportDataRequest exportRequest
+            )
         {
             _productDescriptionSearchService = productDescriptionSearchService;
+            _itemService = itemService;
+
             _exportRequest = exportRequest;
             PageSize = pageSize;
         }
@@ -38,7 +49,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             if (CurrentPageNumber * PageSize >= await GetTotalCountAsync())
             {
-                Items = Array.Empty<IExportable>();
+                Items = Array.Empty<CsvEditorialReview>();
                 return false;
             }
 
@@ -48,8 +59,30 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var searchResult = await _productDescriptionSearchService.SearchProductDescriptionsAsync(searchCriteria);
 
+            Items = searchResult
+                .Results
+                .OfType<ExtendedEditorialReview>()
+                .Select(async x =>
+                {
+                    var product = await _itemService.GetByIdAsync(x.ItemId, ItemResponseGroup.ItemInfo.ToString());
+                    var result = new CsvEditorialReview
+                    {
+                        ProductName = product.Name,
+                        ProductSku = product.Code,
+                        Id = x.Id,
+                        Content = x.Content,
+                        LanguageCode = x.LanguageCode,
+                        ReviewType = x.ReviewType,
+                    };
+
+                    return result;
+                })
+                .Select(x => x.Result)
+                .ToArray<IExportable>();
+
             CurrentPageNumber++;
-            return false;
+
+            return true;
         }
     }
 }
