@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
@@ -60,7 +61,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    var descriptions = dataSource.Items;
+                    var descriptions = dataSource.Items.OfType<CsvEditorialReview>().ToArray();
 
                     exportProgress.ProcessedCount += dataSource.Items.Length;
                     exportProgress.Description = string.Format(exportDescription, exportProgress.ProcessedCount,

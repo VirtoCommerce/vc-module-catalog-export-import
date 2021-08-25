@@ -5,6 +5,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
     public interface IExportWriter : IDisposable
     {
-        void WriteRecords(IExportable[] records);
+        void WriteRecords(CsvEditorialReview[] records);
     }
 }

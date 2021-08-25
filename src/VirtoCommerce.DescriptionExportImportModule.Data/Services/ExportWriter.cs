@@ -19,7 +19,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _csvWriter = new CsvWriter(_streamWriter, csvConfiguration);
         }
 
-        public void WriteRecords(IExportable[] records)
+        public void WriteRecords(CsvEditorialReview[] records)
         {
             _csvWriter.WriteRecords(records);
         }
