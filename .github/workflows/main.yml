@@ -127,11 +127,11 @@ jobs:
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
-      - name: Publish Manifest
-        if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name != 'workflow_dispatch' }}
-        uses: VirtoCommerce/vc-github-actions/publish-manifest@master
-        with:
-          packageUrl: ${{ steps.blobRelease.outputs.packageUrl }}
+#      - name: Publish Manifest
+#        if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name != 'workflow_dispatch' }}
+#        uses: VirtoCommerce/vc-github-actions/publish-manifest@master
+#        with:
+#          packageUrl: ${{ steps.blobRelease.outputs.packageUrl }}
 
       - name: Invoke Module deployment workflow
         if: ${{ github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
