@@ -15,21 +15,21 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
     public class DataExporter : IDataExporter
     {
-        private readonly IExportPagedDataSourceFactory _descriptionExportPagedDataSourceFactory;
+        private readonly IExportPagedDataSourceFactory _exportPagedDataSourceFactory;
         private readonly IExportWriterFactory _exportWriterFactory;
         private readonly PlatformOptions _platformOptions;
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
         public DataExporter(
-            IExportPagedDataSourceFactory descriptionExportPagedDataSourceFactory,
+            IExportPagedDataSourceFactory exportPagedDataSourceFactory,
             IExportWriterFactory exportWriterFactory,
             IOptions<PlatformOptions> platformOptions,
             IBlobStorageProvider blobStorageProvider,
             IBlobUrlResolver blobUrlResolver
             )
         {
-            _descriptionExportPagedDataSourceFactory = descriptionExportPagedDataSourceFactory;
+            _exportPagedDataSourceFactory = exportPagedDataSourceFactory;
             _exportWriterFactory = exportWriterFactory;
             _platformOptions = platformOptions.Value;
             _blobStorageProvider = blobStorageProvider;
@@ -45,7 +45,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             const string exportDescription = "{0} out of {1} have been exported.";
             var exportedDescriptionFilePath = GetExportFilePath("Descriptions");
 
-            var dataSource = _descriptionExportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
+            var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
             var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, new ExportConfiguration());
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
