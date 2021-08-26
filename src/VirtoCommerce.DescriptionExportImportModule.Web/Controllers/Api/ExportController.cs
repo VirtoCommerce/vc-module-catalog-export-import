@@ -9,15 +9,15 @@ using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
 {
-    [Route("api/catalog/description/export")]
+    [Route("api/description/export")]
     [Authorize]
     [ApiController]
-    public class DescriptionExportController : ControllerBase
+    public class ExportController : ControllerBase
     {
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
 
-        public DescriptionExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
+        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
         {
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
