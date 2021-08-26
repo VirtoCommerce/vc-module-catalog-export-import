@@ -13,7 +13,7 @@ using VirtoCommerce.Platform.Core.Extensions;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public class DescriptionDataExporter : IDescriptionDataExporter
+    public class DataExporter : IDataExporter
     {
         private readonly IExportPagedDataSourceFactory _descriptionExportPagedDataSourceFactory;
         private readonly IExportWriterFactory _exportWriterFactory;
@@ -21,7 +21,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
-        public DescriptionDataExporter(
+        public DataExporter(
             IExportPagedDataSourceFactory descriptionExportPagedDataSourceFactory,
             IExportWriterFactory exportWriterFactory,
             IOptions<PlatformOptions> platformOptions,

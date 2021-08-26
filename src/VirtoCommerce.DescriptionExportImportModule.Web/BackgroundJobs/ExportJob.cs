@@ -13,12 +13,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs
     public sealed class ExportJob
     {
         private readonly IPushNotificationManager _pushNotificationManager;
-        private readonly IDescriptionDataExporter _descriptionDataExporter;
+        private readonly IDataExporter _dataExporter;
 
-        public ExportJob(IPushNotificationManager pushNotificationManager, IDescriptionDataExporter descriptionDataExporter)
+        public ExportJob(IPushNotificationManager pushNotificationManager, IDataExporter dataExporter)
         {
             _pushNotificationManager = pushNotificationManager;
-            _descriptionDataExporter = descriptionDataExporter;
+            _dataExporter = dataExporter;
         }
 
         public async Task ExportBackgroundAsync(ExportDataRequest request, ExportPushNotification pushNotification, IJobCancellationToken jobCancellationToken, PerformContext context)
@@ -30,7 +30,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs
 
             try
             {
-                await _descriptionDataExporter.ExportAsync(request,
+                await _dataExporter.ExportAsync(request,
                     progressInfo => ProgressCallback(progressInfo, pushNotification, context),
                     new JobCancellationTokenWrapper(jobCancellationToken));
             }

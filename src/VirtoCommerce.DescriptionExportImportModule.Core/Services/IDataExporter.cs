@@ -5,7 +5,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
-    public interface IDescriptionDataExporter
+    public interface IDataExporter
     {
         Task ExportAsync(ExportDataRequest request, Action<ExportProgressInfo> progressCallback, ICancellationToken cancellationToken);
     }
