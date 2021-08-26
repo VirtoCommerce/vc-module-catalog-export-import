@@ -6,7 +6,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
     public sealed class CsvEditorialReview : IImportable, IExportable
     {
         [Optional]
-        [Name("Product name")]
+        [Name("Product Name")]
         public string ProductName { get; set; }
 
         [Required]
