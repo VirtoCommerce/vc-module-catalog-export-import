@@ -49,7 +49,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             if (CurrentPageNumber * PageSize >= await GetTotalCountAsync())
             {
-                Items = Array.Empty<CsvEditorialReview>();
+                Items = Array.Empty<IExportable>();
                 return false;
             }
 
