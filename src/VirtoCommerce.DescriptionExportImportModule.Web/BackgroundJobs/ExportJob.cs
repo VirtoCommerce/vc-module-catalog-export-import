@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.Server;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
+using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core.Exceptions;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Hangfire;
