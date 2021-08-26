@@ -34,8 +34,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var descriptionQuery = catalogRepository.EditorialReviews;
 
-            descriptionQuery = descriptionQuery
-                .Where(x => x.CatalogItem.CategoryId == criteria.CategoryId && x.CatalogItem.CatalogId == criteria.CatalogId);
+            descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CatalogId == criteria.CatalogId);
+
+            if (!string.IsNullOrEmpty(criteria.CategoryId))
+            {
+                descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CategoryId == criteria.CategoryId);
+            }
 
             result.TotalCount = await descriptionQuery.CountAsync();
 
