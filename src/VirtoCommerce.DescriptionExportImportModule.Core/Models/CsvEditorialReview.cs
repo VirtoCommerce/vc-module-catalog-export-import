@@ -5,6 +5,14 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 {
     public sealed class CsvEditorialReview : IImportable, IExportable
     {
+        [Optional]
+        [Name("Product name")]
+        public string ProductName { get; set; }
+
+        [Required]
+        [Name("Product SKU")]
+        public string ProductSku { get; set; }
+
         private string _id;
 
         [Optional]
@@ -14,14 +22,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
             get => _id;
             set => _id = value?.Trim();
         }
-
-        [Optional]
-        [Name("Product name")]
-        public string ProductName { get; set; }
-
-        [Required]
-        [Name("Product SKU")]
-        public string ProductSku { get; set; }
 
         [Required]
         [Name("Description Content")]

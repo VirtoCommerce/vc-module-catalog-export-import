@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -49,6 +48,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
 
         public static class Settings
         {
+            public const int PageSize = 50;
+
             public static class General
             {
                 public static SettingDescriptor ImportLimitOfLines { get; } = new SettingDescriptor
