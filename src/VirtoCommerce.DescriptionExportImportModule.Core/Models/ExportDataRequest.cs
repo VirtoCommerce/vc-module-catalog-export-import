@@ -5,9 +5,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         public string CatalogId { get; set; }
         public string CategoryId { get; set; }
 
-        public ProductDescriptionSearchCriteria ToSearchCriteria()
+        public ProductEditorialReviewSearchCriteria ToSearchCriteria()
         {
-            return new ProductDescriptionSearchCriteria
+            return new ProductEditorialReviewSearchCriteria
             {
                 CatalogId = CatalogId,
                 CategoryId = CategoryId,

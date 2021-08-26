@@ -34,10 +34,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddOptions<ImportOptions>().Bind(Configuration.GetSection("DescriptionExportImport:Import")).ValidateDataAnnotations();
             serviceCollection.AddTransient<ICsvDataValidator, CsvDataValidator>();
 
-            serviceCollection.AddTransient<IProductDescriptionSearchService, ProductDescriptionSearchService>();
-            serviceCollection.AddTransient<IDescriptionExportPagedDataSourceFactory, DescriptionExportPagedDataSourceFactory>();
+            serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
+            serviceCollection.AddTransient<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IDescriptionDataExporter, DescriptionDataExporter>();
-            serviceCollection.AddTransient<IProductDescriptionService, ProductDescriptionService>();
+            serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
             serviceCollection.AddTransient<IExportWriterFactory, ExportWriterFactory>();
         }
 

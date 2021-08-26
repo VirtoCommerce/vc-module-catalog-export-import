@@ -8,10 +8,10 @@ using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public class DescriptionExportPagedDataSource : IDescriptionExportPagedDataSource
+    public class ExportPagedDataSource : IExportPagedDataSource
 
     {
-        private readonly IProductDescriptionSearchService _productDescriptionSearchService;
+        private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
         private readonly IItemService _itemService;
         private readonly ExportDataRequest _exportRequest;
 
@@ -21,14 +21,14 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
         public IExportable[] Items { get; private set; }
 
-        public DescriptionExportPagedDataSource(
-            IProductDescriptionSearchService productDescriptionSearchService,
+        public ExportPagedDataSource(
+            IProductEditorialReviewSearchService productEditorialReviewSearchService,
             IItemService itemService,
             int pageSize,
             ExportDataRequest exportRequest
             )
         {
-            _productDescriptionSearchService = productDescriptionSearchService;
+            _productEditorialReviewSearchService = productEditorialReviewSearchService;
             _itemService = itemService;
 
             _exportRequest = exportRequest;
@@ -40,7 +40,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var searchCriteria = _exportRequest.ToSearchCriteria();
             searchCriteria.Take = 0;
 
-            var searchResult = await _productDescriptionSearchService.SearchProductDescriptionsAsync(searchCriteria);
+            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria);
 
             return searchResult.TotalCount;
         }
@@ -57,7 +57,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;
 
-            var searchResult = await _productDescriptionSearchService.SearchProductDescriptionsAsync(searchCriteria);
+            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria);
 
             Items = searchResult
                 .Results

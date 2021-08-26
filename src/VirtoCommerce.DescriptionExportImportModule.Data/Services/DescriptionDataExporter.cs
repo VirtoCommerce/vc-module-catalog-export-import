@@ -15,14 +15,14 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
     public class DescriptionDataExporter : IDescriptionDataExporter
     {
-        private readonly IDescriptionExportPagedDataSourceFactory _descriptionExportPagedDataSourceFactory;
+        private readonly IExportPagedDataSourceFactory _descriptionExportPagedDataSourceFactory;
         private readonly IExportWriterFactory _exportWriterFactory;
         private readonly PlatformOptions _platformOptions;
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
         public DescriptionDataExporter(
-            IDescriptionExportPagedDataSourceFactory descriptionExportPagedDataSourceFactory,
+            IExportPagedDataSourceFactory descriptionExportPagedDataSourceFactory,
             IExportWriterFactory exportWriterFactory,
             IOptions<PlatformOptions> platformOptions,
             IBlobStorageProvider blobStorageProvider,

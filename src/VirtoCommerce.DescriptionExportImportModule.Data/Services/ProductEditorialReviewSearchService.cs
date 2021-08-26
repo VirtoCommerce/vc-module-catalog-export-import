@@ -12,20 +12,20 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public class ProductDescriptionSearchService : IProductDescriptionSearchService
+    public class ProductEditorialReviewSearchService : IProductEditorialReviewSearchService
     {
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
-        private readonly IProductDescriptionService _productDescriptionService;
+        private readonly IProductEditorialReviewService _productEditorialReviewService;
 
-        public ProductDescriptionSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductDescriptionService productDescriptionService)
+        public ProductEditorialReviewSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductEditorialReviewService productEditorialReviewService)
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
-            _productDescriptionService = productDescriptionService;
+            _productEditorialReviewService = productEditorialReviewService;
         }
 
-        public async Task<ProductDescriptionSearchResult> SearchProductDescriptionsAsync(ProductDescriptionSearchCriteria criteria)
+        public async Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ProductEditorialReviewSearchCriteria criteria)
         {
-            var result = new ProductDescriptionSearchResult();
+            var result = new ProductEditorialReviewSearchResult();
 
             using var catalogRepository = _catalogRepositoryFactory();
 
@@ -55,13 +55,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                     .AsNoTracking()
                     .ToArrayAsync();
 
-                result.Results = await _productDescriptionService.GetByIdsAsync(ids);
+                result.Results = await _productEditorialReviewService.GetByIdsAsync(ids);
             }
 
             return result;
         }
 
-        protected virtual IList<SortInfo> BuildSortExpression(ProductDescriptionSearchCriteria criteria)
+        protected virtual IList<SortInfo> BuildSortExpression(ProductEditorialReviewSearchCriteria criteria)
         {
             var sortInfos = criteria.SortInfos;
             if (sortInfos.IsNullOrEmpty())

@@ -3,7 +3,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 {
-    public class ProductDescriptionSearchResult : GenericSearchResult<EditorialReview>
+    public class ProductEditorialReviewSearchResult : GenericSearchResult<EditorialReview>
     {
     }
 }

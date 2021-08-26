@@ -3,7 +3,7 @@ using VirtoCommerce.CatalogModule.Core.Model;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
-    public interface IProductDescriptionService
+    public interface IProductEditorialReviewService
     {
         Task<EditorialReview[]> GetByIdsAsync(string[] ids);
     }

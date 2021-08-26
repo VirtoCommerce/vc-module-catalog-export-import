@@ -14,12 +14,12 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public class ProductDescriptionService : IProductDescriptionService
+    public class ProductEditorialReviewService : IProductEditorialReviewService
     {
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
         private readonly IPlatformMemoryCache _platformMemoryCache;
 
-        public ProductDescriptionService(
+        public ProductEditorialReviewService(
             Func<ICatalogRepository> catalogRepositoryFactory,
             IPlatformMemoryCache platformMemoryCache
             )
