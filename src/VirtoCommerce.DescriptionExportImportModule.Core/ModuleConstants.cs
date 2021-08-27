@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -37,6 +36,15 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
             public const string NotUniqueValue = "not-unique-value";
         }
 
+        public static readonly Dictionary<string, string> ValidationMessages = new Dictionary<string, string>
+        {
+            { ValidationErrors.MissingRequiredValues, "The required value in column '{0}' is missing." },
+            { ValidationErrors.ExceedingMaxLength, "Value in column '{0}' may have maximum {1} characters." },
+            { ValidationErrors.ArrayValuesExceedingMaxLength, "Every value in column '{0}' may have maximum {1} characters. The number of values is unlimited." },
+            { ValidationErrors.InvalidValue, "This row has invalid value in the column '{0}'." },
+            { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
+        };
+
         public static class Security
         {
             public static class Permissions
@@ -49,6 +57,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
 
         public static class Settings
         {
+            public const int PageSize = 50;
+
             public static class General
             {
                 public static SettingDescriptor ImportLimitOfLines { get; } = new SettingDescriptor
@@ -69,6 +79,15 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
                     DefaultValue = 1 // MB
                 };
 
+                public static SettingDescriptor ExportLimitOfLines { get; } = new SettingDescriptor
+                {
+                    Name = "DescriptionExportImport.Export.LimitOfLines",
+                    GroupName = "DescriptionExportImport|Export",
+                    ValueType = SettingValueType.PositiveInteger,
+                    IsHidden = true,
+                    DefaultValue = 10000
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
@@ -76,7 +95,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
                         return new List<SettingDescriptor>
                         {
                             ImportLimitOfLines,
-                            ImportFileMaxSize
+                            ImportFileMaxSize,
+                            ExportLimitOfLines
                         };
                     }
                 }

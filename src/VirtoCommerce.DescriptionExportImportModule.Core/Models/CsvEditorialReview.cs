@@ -1,10 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
+using VirtoCommerce.CatalogModule.Core.Model;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 {
     public sealed class CsvEditorialReview : IImportable, IExportable
     {
+        [Optional]
+        [Name("Product Name")]
+        public string ProductName { get; set; }
+
+        [Optional]
+        [Name("Product SKU")]
+        public string ProductSku { get; set; }
+
         private string _id;
 
         [Optional]
@@ -14,14 +23,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
             get => _id;
             set => _id = value?.Trim();
         }
-
-        [Optional]
-        [Name("Product name")]
-        public string ProductName { get; set; }
-
-        [Required]
-        [Name("Product SKU")]
-        public string ProductSku { get; set; }
 
         [Required]
         [Name("Description Content")]
@@ -34,5 +35,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         [Required]
         [Name("Language")]
         public string LanguageCode { get; set; }
+
+        public void PatchModel(EditorialReview target)
+        {
+            target.Content = Content;
+            target.ReviewType = ReviewType;
+            target.LanguageCode = LanguageCode;
+        }
+
     }
 }

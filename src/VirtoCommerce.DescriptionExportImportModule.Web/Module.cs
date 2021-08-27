@@ -1,14 +1,18 @@
 using System.Linq;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Data.Services;
+using VirtoCommerce.DescriptionExportImportModule.Data.Validation;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -25,28 +29,47 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
         {
             // initialize DB
             serviceCollection.AddDbContext<VirtoCommerceDescriptionExportImportDbContext>((provider, options) =>
-           {
-               var configuration = provider.GetRequiredService<IConfiguration>();
-               options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
-           });
-            serviceCollection.AddTransient<ICsvDataValidator, CsvDataValidator>();
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
+            });
             serviceCollection.AddOptions<ImportOptions>().Bind(Configuration.GetSection("DescriptionExportImport:Import")).ValidateDataAnnotations();
+            serviceCollection.AddOptions<ExportOptions>().Bind(Configuration.GetSection("DescriptionExportImport:Export")).ValidateDataAnnotations();
+
+            serviceCollection.AddTransient<ICsvDataValidator, CsvDataValidator>();
+
+            serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
+            serviceCollection.AddTransient<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
+            serviceCollection.AddTransient<IDataExporter, DataExporter>();
+            serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
+            serviceCollection.AddTransient<IExportWriterFactory, ExportWriterFactory>();
+            serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
+            serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
+            serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
+
+            serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
+            AbstractTypeFactory<EditorialReview>.OverrideType<EditorialReview, ExtendedEditorialReview>();
+
             // register settings
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
             var descriptionImportOptions = appBuilder.ApplicationServices.GetService<IOptions<ImportOptions>>().Value;
+            var descriptionExportOptions = appBuilder.ApplicationServices.GetService<IOptions<ExportOptions>>().Value;
 
             settingsManager.SetValue(ModuleConstants.Settings.General.ImportLimitOfLines.Name,
                 descriptionImportOptions.LimitOfLines ?? ModuleConstants.Settings.General.ImportLimitOfLines.DefaultValue);
 
             settingsManager.SetValue(ModuleConstants.Settings.General.ImportFileMaxSize.Name,
                 descriptionImportOptions.FileMaxSize ?? ModuleConstants.Settings.General.ImportFileMaxSize.DefaultValue);
+
+            settingsManager.SetValue(ModuleConstants.Settings.General.ExportLimitOfLines.Name,
+                descriptionExportOptions.LimitOfLines ?? ModuleConstants.Settings.General.ExportLimitOfLines.DefaultValue);
 
             // register permissions
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();

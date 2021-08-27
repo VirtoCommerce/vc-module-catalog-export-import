@@ -20,29 +20,27 @@
                     <div class="progress-bar absolute" ng-style="{'width': blade.progressPercentage + '%'}"></div>
                 </div>
 
-                <div class="block" ng-if="blade.notification.contactsCreated || blade.notification.contactsUpdated || blade.notification.errorCount || blade.notification.totalCount">
-                    <ul class="list __info list-main">
-                        <li class="list-item" id="contacts">
-                            <p class="list-item-title">{{ blade.dataType.key }}</p>
-                            <ul class="list __info list-sub">
-                                <li class="list-item mr-30">
+                <div class="block" ng-if="blade.notification.createdCount || blade.notification.updatedCount || blade.notification.errorCount || blade.notification.totalCount">
+                    <ul class="list __info">
+                        <li class="list-item">
+                            <ul class="list __info">
+                                <li class="list-item pb-15">
+                                    <div class="list-t">{{ 'descriptionExportImport.blades.import-processing.labels.total-count' | translate }}</div>
+                                    <div class="list-descr">{{blade.notification.totalCount | number:0}}</div>
+                                </li>
+                                <li class="list-item pb-15">
                                     <div class="list-t">{{ 'descriptionExportImport.blades.import-processing.labels.lines-created' | translate }}</div>
-                                    <div class="list-descr">{{blade.notification.contactsCreated | number:0}}</div>
+                                    <div class="list-descr">{{blade.notification.createdCount | number:0}}</div>
                                 </li>
-                                <li class="list-item">
+                                <li class="list-item pb-15">
                                     <div class="list-t">{{ 'descriptionExportImport.blades.import-processing.labels.lines-updated' | translate }}</div>
-                                    <div class="list-descr">{{blade.notification.contactsUpdated | number:0}}</div>
+                                    <div class="list-descr">{{blade.notification.updatedCount | number:0}}</div>
                                 </li>
-                            </ul>
-                        </li>
-                        <li class="list-item" id="errors">
-                            <p class="list-item-title">{{ 'descriptionExportImport.blades.import-processing.subtitles.errors' | translate }}</p>
-                            <ul class="list __info list-sub flex-column">
-                                <li class="list-item">
+                                <li class="list-item pb-15">
                                     <div class="list-t">{{ 'descriptionExportImport.blades.import-processing.labels.error-count' | translate }}</div>
                                     <div class="list-descr">{{ blade.notification.errorCount }}</div>
                                 </li>
-                                <li class="list-item mt-10" ng-if="blade.notification.reportUrl">
+                                <li class="list-item" ng-if="blade.notification.reportUrl">
                                     <div class="list-t">{{ 'descriptionExportImport.blades.import-processing.labels.errors-report' | translate }}</div>
                                     <div class="list-descr"><a href="{{blade.notification.reportUrl}}" target="_blank">{{blade.notification.reportUrl}}</a></div>
                                 </li>

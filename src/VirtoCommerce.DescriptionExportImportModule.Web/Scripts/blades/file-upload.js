@@ -192,17 +192,15 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 dataType: blade.dataType.value,
             };
 
-            { filePath: string; dataType: string }
-
             importResources.run(importDataRequest, (data) => {
                 var newBlade = {
                     id: "descriptionsImportProcessing",
                     notification: data,
                     dataType: blade.dataType,
                     headIcon: "fa fa-download",
-                    title: "descriptionExportImportModule.blades.import-processing.title",
+                    title: "descriptionExportImport.blades.import-processing.title",
                     controller: "virtoCommerce.descriptionExportImportModule.importProcessingController",
-                    template: "Modules/$(VirtoCommerce.descriptionExportImportModule)/Scripts/blades/import-processing.tpl.html",
+                    template: "Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/blades/import-processing.tpl.html",
                 };
 
                 bladeNavigationService.showBlade(newBlade, blade);
