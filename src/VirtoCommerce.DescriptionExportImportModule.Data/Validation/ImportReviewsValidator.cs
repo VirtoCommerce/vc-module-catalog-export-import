@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 using VirtoCommerce.CatalogModule.Core.Search;
@@ -24,13 +24,17 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
 
         protected override bool PreValidate(ValidationContext<ImportRecord<CsvEditorialReview>[]> context, ValidationResult result)
         {
-            var reviewTypes = _settingsManager.GetValue(catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name,
-                Array.Empty<string>());
+            var reviewTypesSetting =
+                _settingsManager.GetObjectSettingAsync(catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name).GetAwaiter().GetResult();
+
+            var reviewTypes = reviewTypesSetting.AllowedValues.OfType<string>().ToArray();
 
             context.RootContextData[catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name] =
                 reviewTypes;
 
-            var languages = _settingsManager.GetValue(coreModuleCore.ModuleConstants.Settings.General.Languages.Name, Array.Empty<string>());
+            var languagesSetting = _settingsManager.GetObjectSettingAsync(coreModuleCore.ModuleConstants.Settings.General.Languages.Name).GetAwaiter().GetResult();
+
+            var languages = languagesSetting.AllowedValues.OfType<string>().ToArray();
 
             context.RootContextData[coreModuleCore.ModuleConstants.Settings.General.Languages.Name] = languages;
 
