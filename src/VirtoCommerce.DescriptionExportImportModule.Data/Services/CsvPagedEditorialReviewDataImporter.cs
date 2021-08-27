@@ -14,12 +14,13 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
-    public class CsvPagedReviewDataImporter : CsvPagedDataImporter<CsvEditorialReview>
+    public class CsvPagedEditorialReviewDataImporter : CsvPagedDataImporter<CsvEditorialReview>
     {
         private readonly IProductSearchService _productSearchService;
         private readonly IItemService _itemService;
         private readonly IProductEditorialReviewService _editorialReviewService;
-        public CsvPagedReviewDataImporter(IImportPagedDataSourceFactory dataSourceFactory,
+
+        public CsvPagedEditorialReviewDataImporter(IImportPagedDataSourceFactory dataSourceFactory,
             IValidator<ImportRecord<CsvEditorialReview>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IProductSearchService productSearchService,
@@ -33,6 +34,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         }
 
         public override string MemberType => nameof(EditorialReview);
+
 
         protected override async Task ProcessChunkAsync(ImportDataRequest request,
             Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<CsvEditorialReview> dataSource,
@@ -116,6 +118,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                                             importProgress.UpdatedCount;
             }
         }
+
+
         private static void SetIdAndSkuToNullByExistence(ImportRecord<CsvEditorialReview>[] importReviewRecords, EditorialReview[] existedReviews)
         {
             foreach (var importRecord in importReviewRecords)
