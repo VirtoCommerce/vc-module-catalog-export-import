@@ -36,10 +36,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CatalogId == criteria.CatalogId);
 
-            if (!string.IsNullOrEmpty(criteria.CategoryId))
-            {
-                descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CategoryId == criteria.CategoryId);
-            }
+            descriptionQuery = !string.IsNullOrEmpty(criteria.CategoryId) ?
+                descriptionQuery.Where(x => x.CatalogItem.CategoryId == criteria.CategoryId) :
+                descriptionQuery.Where(x => x.CatalogItem.CategoryId == null);
 
             result.TotalCount = await descriptionQuery.CountAsync();
 
