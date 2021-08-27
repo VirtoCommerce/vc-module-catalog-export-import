@@ -186,6 +186,29 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             return result === translateKey ? errorCode : result;
         }
 
+        $scope.startImportProcess = () => {
+            const importDataRequest = {
+                filePath: blade.csvFilePath,
+                dataType: blade.dataType.value,
+            };
+
+            { filePath: string; dataType: string }
+
+            importResources.run(importDataRequest, (data) => {
+                var newBlade = {
+                    id: "descriptionsImportProcessing",
+                    notification: data,
+                    dataType: blade.dataType,
+                    headIcon: "fa fa-download",
+                    title: "descriptionExportImportModule.blades.import-processing.title",
+                    controller: "virtoCommerce.descriptionExportImportModule.importProcessingController",
+                    template: "Modules/$(VirtoCommerce.descriptionExportImportModule)/Scripts/blades/import-processing.tpl.html",
+                };
+
+                bladeNavigationService.showBlade(newBlade, blade);
+            });
+        }
+
         function uploadNewCsv(asset) {
             blade.csvFilePath = asset[0].relativeUrl;
 
