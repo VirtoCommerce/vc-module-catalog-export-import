@@ -33,7 +33,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _editorialReviewService = editorialReviewService;
         }
 
-        public override string DataType => nameof(EditorialReview);
+        public override string MemberType => nameof(EditorialReview);
 
 
         protected override async Task ProcessChunkAsync(ImportDataRequest request,
@@ -74,7 +74,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 if (importReviewsForAdding.Length > 0)
                 {
                     var productSearchResult = await _productSearchService.SearchProductsAsync(
-                        new ProductSearchCriteria() { Skus = productsSkuArray, ResponseGroup = ItemResponseGroup.ItemEditorialReviews.ToString(), Take = int.MaxValue });
+                        new ProductSearchCriteria() { Skus = productsSkuArray, ResponseGroup = ItemResponseGroup.ItemEditorialReviews.ToString() });
 
                     var productsForReviewAdding = productSearchResult.Results;
 
@@ -90,9 +90,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 {
                     var productIds = existedReviews.Select(x => x.ItemId).ToArray();
 
-                    var productsForReviewUpdating = await _itemService.GetByIdsAsync(productIds, respGroup: ItemResponseGroup.ItemEditorialReviews.ToString());
+                    var productSearchResult = await _productSearchService.SearchProductsAsync(
+                        new ProductSearchCriteria() { ObjectIds = productIds, ResponseGroup = ItemResponseGroup.ItemEditorialReviews.ToString() });
 
-                    CorrectProductsForUpdatingWithForAdding(productsForReviewUpdating, allProductsForSaving);
+                    var productsForReviewUpdating = productSearchResult.Results;
 
                     PatchProductsReviews(productsForReviewUpdating, importReviewsForUpdating);
 
@@ -118,30 +119,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             }
         }
 
-        private static void CorrectProductsForUpdatingWithForAdding(CatalogProduct[] productsForReviewUpdating, List<CatalogProduct> allProductsForSaving)
-        {
-            if (allProductsForSaving.Count > 0)
-            {
-                for (var i = 0; i < productsForReviewUpdating.Length; i++)
-                {
-                    var updateProduct = productsForReviewUpdating[i];
-                    var addProduct = allProductsForSaving.FirstOrDefault(x => x.Id.EqualsInvariant(updateProduct.Id));
 
-                    if (addProduct != null)
-                    {
-                        productsForReviewUpdating[i] = addProduct;
-                        allProductsForSaving.Remove(addProduct);
-                    }
-                }
-            }
-        }
-
-
-        private static void SetIdAndSkuToNullByExistence(ImportRecord<CsvEditorialReview>[] importReviewRecords, ExtendedEditorialReview[] existedReviews)
+        private static void SetIdAndSkuToNullByExistence(ImportRecord<CsvEditorialReview>[] importReviewRecords, EditorialReview[] existedReviews)
         {
             foreach (var importRecord in importReviewRecords)
             {
-                if (existedReviews.Any(x => x.Id.EqualsInvariant(importRecord.Record.Id)))
+                if (existedReviews.Any(x => x.Id == importRecord.Record.Id))
                 {
                     importRecord.Record.ProductSku = null;
                 }
@@ -156,7 +139,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             foreach (var product in productsForReviewAdding)
             {
-                foreach (var productImportReview in importReviewsForAdding.Where(x => x.ProductSku.EqualsInvariant(product.Code)))
+                var productImportReviews =
+                    importReviewsForAdding.Where(x => x.ProductSku.EqualsInvariant(product.Code)).ToArray();
+
+                foreach (var productImportReview in productImportReviews)
                 {
                     var newReview = AbstractTypeFactory<EditorialReview>.TryCreateInstance<EditorialReview>();
                     productImportReview.PatchModel(newReview);
