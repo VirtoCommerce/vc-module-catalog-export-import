@@ -1,6 +1,18 @@
 {
   "descriptionExportImport": {
     "blades": {
+      "export-processing": {
+        "title": "Export progress",
+        "labels": {
+          "start": "Start",
+          "end": "End",
+          "errors": "Error count",
+          "total": "Total count",
+          "processed": "Processed count",
+          "contacts-url": "Download Contacts:",
+          "error-log": "Errors"
+        }
+      },
       "file-upload": {
         "title": "Upload CSV",
         "subtitle": "Upload your file for import",
@@ -35,6 +47,13 @@
       "csv-file-delete-and-close-preview": {
         "title": "Delete CSV",
         "subtitle": "Are you sure you want to close preview and delete file "
+      },
+      "limits-warning": {
+        "title": "Descriptions export",
+        "main-text-beginning": "You have selected",
+        "items": "items",
+        "main-text-middle": "but export is limited with",
+        "main-text-end": ", you retrive to export more"
       }
     },
     "validation-errors": {

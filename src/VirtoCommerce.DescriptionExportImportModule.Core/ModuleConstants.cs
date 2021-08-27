@@ -70,6 +70,15 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
                     DefaultValue = 1 // MB
                 };
 
+                public static SettingDescriptor ExportLimitOfLines { get; } = new SettingDescriptor
+                {
+                    Name = "DescriptionExportImport.Export.LimitOfLines",
+                    GroupName = "DescriptionExportImport|Export",
+                    ValueType = SettingValueType.PositiveInteger,
+                    IsHidden = true,
+                    DefaultValue = 10000
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
@@ -77,7 +86,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
                         return new List<SettingDescriptor>
                         {
                             ImportLimitOfLines,
-                            ImportFileMaxSize
+                            ImportFileMaxSize,
+                            ExportLimitOfLines
                         };
                     }
                 }

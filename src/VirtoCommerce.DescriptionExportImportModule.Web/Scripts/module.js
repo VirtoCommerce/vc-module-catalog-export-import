@@ -5,12 +5,20 @@ if (AppDependencies !== undefined) {
     AppDependencies.push(moduleName);
 }
 
-angular.module(moduleName, []).run(['virtoCommerce.catalogModule.catalogImportService', function (catalogImportService) {
+angular.module(moduleName, []).run(['virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (catalogImportService, catalogExportService) {
     catalogImportService.register({
         name: 'Description import',
         description: 'Descriptions data import from CSV',
         icon: 'fa fa-list-alt',
         controller: 'virtoCommerce.descriptionExportImportModule.fileUploadController',
         template: 'Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/blades/file-upload.tpl.html'
+    });
+
+    catalogExportService.register({
+        name: 'Description export',
+        description: 'Export only product descriptions',
+        icon: 'fa fa-list-alt',
+        controller: 'virtoCommerce.descriptionExportImportModule.exportProcessingController',
+        template: 'Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/blades/export-processing.tpl.html'
     });
 }]);
