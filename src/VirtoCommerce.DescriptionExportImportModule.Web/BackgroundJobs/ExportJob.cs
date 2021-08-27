@@ -58,6 +58,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs
             pushNotification.ProcessedCount = x.ProcessedCount;
             pushNotification.TotalCount = x.TotalCount;
             pushNotification.JobId = context.BackgroundJob.Id;
+            pushNotification.FileUrl = x.FileUrl;
 
             _pushNotificationManager.Send(pushNotification);
         }
