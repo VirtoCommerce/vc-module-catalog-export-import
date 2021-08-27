@@ -29,7 +29,6 @@
       "import-processing": {
         "title": "Import progress",
         "subtitles": {
-          "contacts": "Contacts",
           "errors": "Errors"
         },
         "labels": {

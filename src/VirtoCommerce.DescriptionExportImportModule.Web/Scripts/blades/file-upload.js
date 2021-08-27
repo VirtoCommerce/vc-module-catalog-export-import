@@ -198,7 +198,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                     notification: data,
                     dataType: blade.dataType,
                     headIcon: "fa fa-download",
-                    title: "descriptionExportImportModule.blades.import-processing.title",
+                    title: "descriptionExportImport.blades.import-processing.title",
                     controller: "virtoCommerce.descriptionExportImportModule.importProcessingController",
                     template: "Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/blades/import-processing.tpl.html",
                 };
