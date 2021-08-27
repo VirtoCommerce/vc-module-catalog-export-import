@@ -11,8 +11,8 @@ using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Data.Services;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.DescriptionExportImportModule.Data.Validation;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -43,6 +43,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddTransient<IExportWriterFactory, ExportWriterFactory>();
             serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
+
+            serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedReviewDataImporter>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
