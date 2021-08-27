@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\Api\" />
       <Folder Include="Properties\" />
       <Folder Include="Scripts\blades\" />
       <Folder Include="Scripts\resources\" />
