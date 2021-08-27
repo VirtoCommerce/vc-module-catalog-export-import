@@ -1,4 +1,3 @@
-using System;
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 {
     public sealed class ExportOptions
