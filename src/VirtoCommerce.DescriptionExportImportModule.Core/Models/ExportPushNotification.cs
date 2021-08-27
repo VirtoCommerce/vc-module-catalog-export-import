@@ -17,5 +17,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         public int TotalCount { get; set; }
         public ICollection<string> Errors { get; set; }
         public DateTime? Finished { get; set; }
+        public string FileUrl { get; set; }
     }
 }
