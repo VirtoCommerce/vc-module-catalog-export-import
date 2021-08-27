@@ -98,6 +98,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                     allProductsForSaving.AddRange(productsForReviewUpdating);
                 }
 
+                await _itemService.SaveChangesAsync(allProductsForSaving.ToArray());
+
 
                 importProgress.CreatedCount += importReviewsForAdding.Length;
                 importProgress.UpdatedCount += importReviewsForUpdating.Length;
