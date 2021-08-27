@@ -43,6 +43,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddTransient<IExportWriterFactory, ExportWriterFactory>();
             serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
+            serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
 
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedReviewDataImporter>();
         }
