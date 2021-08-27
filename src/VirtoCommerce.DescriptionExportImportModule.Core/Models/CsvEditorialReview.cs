@@ -10,7 +10,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         [Name("Product Name")]
         public string ProductName { get; set; }
 
-        [Required]
+        [Optional]
         [Name("Product SKU")]
         public string ProductSku { get; set; }
 
