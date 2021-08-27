@@ -25,7 +25,7 @@
                             <div class="list-descr">{{blade.notification.errors.length | number:0}}</div>
                         </li>
                         <li class="list-item" ng-if="blade.notification.fileUrl">
-                            <div class="list-t">{{ 'descriptionExportImport.blades.export-processing.labels.contacts-url' | translate }}</div>
+                            <div class="list-t">{{ 'descriptionExportImport.blades.export-processing.labels.file-url' | translate }}</div>
                             <div class="list-descr"><a href="{{blade.notification.fileUrl}}" target="_blank">{{extractFileName(blade.notification.fileUrl)}}</a></div>
                         </li>
                     </ul>

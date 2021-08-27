@@ -9,7 +9,7 @@
           "errors": "Error count",
           "total": "Total count",
           "processed": "Processed count",
-          "contacts-url": "Download Contacts:",
+          "file-url": "Download Descriptions:",
           "error-log": "Errors"
         }
       },
