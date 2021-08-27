@@ -10,6 +10,7 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
@@ -115,17 +116,47 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         }
         private static void SetIdAndSkuToNullByExistence(ImportRecord<CsvEditorialReview>[] importReviewRecords, EditorialReview[] existedReviews)
         {
-            throw new NotImplementedException();
+            foreach (var importRecord in importReviewRecords)
+            {
+                if (existedReviews.Any(x => x.Id == importRecord.Record.Id))
+                {
+                    importRecord.Record.ProductSku = null;
+                }
+                else
+                {
+                    importRecord.Record.Id = null;
+                }
+            }
+        }
+
+        private static void AddReviewsToProducts(IList<CatalogProduct> productsForReviewAdding, CsvEditorialReview[] importReviewsForAdding)
+        {
+            foreach (var product in productsForReviewAdding)
+            {
+                var productImportReviews =
+                    importReviewsForAdding.Where(x => x.ProductSku.EqualsInvariant(product.Code)).ToArray();
+
+                foreach (var productImportReview in productImportReviews)
+                {
+                    var newReview = AbstractTypeFactory<EditorialReview>.TryCreateInstance<EditorialReview>();
+                    productImportReview.PatchModel(newReview);
+                    product.Reviews.Add(newReview);
+                }
+            }
         }
 
         private static void PatchProductsReviews(IList<CatalogProduct> productsForReviewUpdating, CsvEditorialReview[] importReviewForUpdating)
         {
-            throw new NotImplementedException();
-        }
+            foreach (var product in productsForReviewUpdating)
+            {
+                foreach (var review in product.Reviews)
+                {
+                    var importReviewForUpdate =
+                        importReviewForUpdating.LastOrDefault(x => x.Id.EqualsInvariant(review.Id));
 
-        private static void AddReviewsToProducts(object productsForReviewAdding, CsvEditorialReview[] importReviewsForAdding)
-        {
-            throw new NotImplementedException();
+                    importReviewForUpdate?.PatchModel(review);
+                }
+            }
         }
     }
 }
