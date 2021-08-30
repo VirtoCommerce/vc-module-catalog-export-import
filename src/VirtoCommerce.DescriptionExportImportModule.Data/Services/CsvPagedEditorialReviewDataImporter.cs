@@ -156,10 +156,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             foreach (var product in productsForReviewAdding)
             {
-                var productImportReviews =
-                    importReviewsForAdding.Where(x => x.ProductSku.EqualsInvariant(product.Code)).ToArray();
-
-                foreach (var productImportReview in productImportReviews)
+                foreach (var productImportReview in importReviewsForAdding.Where(x => x.ProductSku.EqualsInvariant(product.Code)))
                 {
                     var newReview = AbstractTypeFactory<EditorialReview>.TryCreateInstance<EditorialReview>();
                     productImportReview.PatchModel(newReview);
