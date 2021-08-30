@@ -1,11 +1,14 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs;
+using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
@@ -20,13 +23,19 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
         private readonly ICsvDataValidator _csvDataValidator;
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
+        private readonly IBlobStorageProvider _blobStorageProvider;
+        private readonly IImportPagedDataSourceFactory _importPagedDataSourceFactory;
 
         public ImportController(ICsvDataValidator csvDataValidator,
-            IUserNameResolver userNameResolver, IPushNotificationManager pushNotificationManager)
+            IUserNameResolver userNameResolver, IPushNotificationManager pushNotificationManager,
+            IBlobStorageProvider blobStorageProvider,
+            IImportPagedDataSourceFactory importPagedDataSourceFactory)
         {
             _csvDataValidator = csvDataValidator;
             _userNameResolver = userNameResolver;
             _pushNotificationManager = pushNotificationManager;
+            _blobStorageProvider = blobStorageProvider;
+            _importPagedDataSourceFactory = importPagedDataSourceFactory;
         }
 
         [HttpPost]
@@ -67,6 +76,40 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
         {
             BackgroundJob.Delete(cancellationRequest.JobId);
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("preview")]
+        public async Task<ActionResult<ImportDataPreview>> GetImportPreview([FromBody] ImportDataPreviewRequest request)
+        {
+            if (request.FilePath.IsNullOrEmpty())
+            {
+                return BadRequest($"{nameof(request.FilePath)} can not be null");
+            }
+
+            var blobInfo = await _blobStorageProvider.GetBlobInfoAsync(request.FilePath);
+
+            if (blobInfo == null)
+            {
+                return BadRequest("Blob with the such url does not exist.");
+            }
+
+            var result = new ImportDataPreview();
+
+            switch (request.DataType)
+            {
+                case nameof(EditorialReview):
+                    using (var csvDataSource = _importPagedDataSourceFactory.Create<CsvEditorialReview>(request.FilePath,
+                        10, null))
+                    {
+                        result.TotalCount = csvDataSource.GetTotalCount();
+                        await csvDataSource.FetchAsync();
+                        result.Results = csvDataSource.Items.Select(item => item.Record).ToArray();
+                    }
+                    break;
+            }
+
+            return Ok(result);
         }
     }
 }
