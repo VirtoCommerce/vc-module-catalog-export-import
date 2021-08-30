@@ -29,7 +29,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                                         coreModuleCore.ModuleConstants.Settings.General.Languages.Name];
                                 return languages.Contains(language, StringComparer.InvariantCultureIgnoreCase);
                             })
-                            .WithInvalidValueCodeAndMessage("")
+                            .WithInvalidValueCodeAndMessage("Language")
                             .WithImportState()
                 );
 
@@ -45,7 +45,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                                 catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name];
                             return reviewTypes.Contains(reviewType, StringComparer.InvariantCultureIgnoreCase);
                         })
-                        .WithInvalidValueCodeAndMessage("")
+                        .WithInvalidValueCodeAndMessage("Type")
                         .WithImportState()
                 );
 
