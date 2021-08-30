@@ -33,7 +33,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _editorialReviewService = editorialReviewService;
         }
 
-        public override string MemberType => nameof(EditorialReview);
+        public override string DataType => nameof(EditorialReview);
 
 
         protected override async Task ProcessChunkAsync(ImportDataRequest request,

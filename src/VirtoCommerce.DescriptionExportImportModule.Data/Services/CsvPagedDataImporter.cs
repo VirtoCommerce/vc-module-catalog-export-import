@@ -22,7 +22,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private readonly IValidator<ImportRecord<TImportable>[]> _importRecordsValidator;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
-        public abstract string MemberType { get; }
+        public abstract string DataType { get; }
 
         protected CsvPagedDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory,
