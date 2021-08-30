@@ -34,6 +34,7 @@
         "labels": {
           "start": "Start",
           "end": "End",
+          "total-count": "Total count",
           "lines-created": "Lines created",
           "lines-updated": "Lines updated",
           "error-count": "Error count",
