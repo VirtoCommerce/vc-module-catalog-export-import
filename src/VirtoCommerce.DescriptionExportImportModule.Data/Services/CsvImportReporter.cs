@@ -16,7 +16,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private const string ErrorsColumnName = "Error description";
         private readonly object _lock = new object();
 
-        public bool ReportIsNotEmpty { get; private set; } = false;
+        public bool ReportIsNotEmpty { get; private set; }
 
         public string FilePath => _filePath;
 
