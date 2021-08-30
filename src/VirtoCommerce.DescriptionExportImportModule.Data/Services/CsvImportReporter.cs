@@ -42,6 +42,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             lock (_lock)
             {
+                ReportIsNotEmpty = true;
                 _streamWriter.WriteLine(GetLine(error));
             }
         }
