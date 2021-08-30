@@ -30,7 +30,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs
 
             try
             {
-                var importer = _dataImporters.First(x => x.MemberType == request.DataType);
+                var importer = _dataImporters.First(x => x.DataType == request.DataType);
 
                 await importer.ImportAsync(request,
                     progressInfo => ProgressCallback(progressInfo, pushNotification, context),
@@ -67,7 +67,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs
                 throw new ArgumentNullException(nameof(pushNotification));
             }
 
-            var importer = _dataImporters.FirstOrDefault(x => x.MemberType == request.DataType);
+            var importer = _dataImporters.FirstOrDefault(x => x.DataType == request.DataType);
 
             if (importer == null)
             {
