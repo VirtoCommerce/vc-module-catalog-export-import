@@ -14,6 +14,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private readonly string _delimiter;
         private readonly StreamWriter _streamWriter;
         private const string ErrorsColumnName = "Error description";
+        private readonly object _lock = new object();
 
         public bool ReportIsNotEmpty { get; private set; } = false;
 
@@ -34,6 +35,14 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             {
                 ReportIsNotEmpty = true;
                 await _streamWriter.WriteLineAsync(GetLine(error));
+            }
+        }
+
+        public void Write(ImportError error)
+        {
+            lock (_lock)
+            {
+                _streamWriter.WriteLine(GetLine(error));
             }
         }
 

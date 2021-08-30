@@ -10,5 +10,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
         bool ReportIsNotEmpty { get; }
         Task WriteHeaderAsync(string header);
         Task WriteAsync(ImportError error);
+        void Write(ImportError error);
     }
 }
