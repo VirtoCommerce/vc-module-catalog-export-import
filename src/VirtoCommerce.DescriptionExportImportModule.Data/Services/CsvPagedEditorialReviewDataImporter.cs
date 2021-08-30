@@ -137,7 +137,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         }
 
 
-        private static void SetIdAndSkuToNullByExistence(ImportRecord<CsvEditorialReview>[] importReviewRecords, EditorialReview[] existedReviews)
+        private static void SetIdAndSkuToNullByExistence(ImportRecord<CsvEditorialReview>[] importReviewRecords, ExtendedEditorialReview[] existedReviews)
         {
             foreach (var importRecord in importReviewRecords)
             {
