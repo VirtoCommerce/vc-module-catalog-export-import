@@ -74,7 +74,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 if (importReviewsForAdding.Length > 0)
                 {
                     var productSearchResult = await _productSearchService.SearchProductsAsync(
-                        new ProductSearchCriteria() { Skus = productsSkuArray, ResponseGroup = ItemResponseGroup.ItemEditorialReviews.ToString() });
+                        new ProductSearchCriteria() { Skus = productsSkuArray, ResponseGroup = ItemResponseGroup.ItemEditorialReviews.ToString(), Take = int.MaxValue });
 
                     var productsForReviewAdding = productSearchResult.Results;
 
@@ -90,10 +90,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 {
                     var productIds = existedReviews.Select(x => x.ItemId).ToArray();
 
-                    var productSearchResult = await _productSearchService.SearchProductsAsync(
-                        new ProductSearchCriteria() { ObjectIds = productIds, ResponseGroup = ItemResponseGroup.ItemEditorialReviews.ToString() });
+                    var productsForReviewUpdating = await _itemService.GetByIdsAsync(productIds, respGroup: ItemResponseGroup.ItemEditorialReviews.ToString());
 
-                    var productsForReviewUpdating = productSearchResult.Results;
+                    CorrectProductsForUpdatingWithForAdding(productsForReviewUpdating, allProductsForSaving);
 
                     PatchProductsReviews(productsForReviewUpdating, importReviewsForUpdating);
 
@@ -116,6 +115,24 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                     importProgress.TotalCount);
                 importProgress.ErrorCount = importProgress.ProcessedCount - importProgress.CreatedCount -
                                             importProgress.UpdatedCount;
+            }
+        }
+
+        private static void CorrectProductsForUpdatingWithForAdding(CatalogProduct[] productsForReviewUpdating, List<CatalogProduct> allProductsForSaving)
+        {
+            if (allProductsForSaving.Count > 0)
+            {
+                for (var i = 0; i < productsForReviewUpdating.Length; i++)
+                {
+                    var updateProduct = productsForReviewUpdating[i];
+                    var addProduct = allProductsForSaving.FirstOrDefault(x => x.Id.EqualsInvariant(updateProduct.Id));
+
+                    if (addProduct != null)
+                    {
+                        productsForReviewUpdating[i] = addProduct;
+                        allProductsForSaving.Remove(addProduct);
+                    }
+                }
             }
         }
 
