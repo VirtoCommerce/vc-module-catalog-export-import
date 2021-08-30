@@ -141,7 +141,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             foreach (var importRecord in importReviewRecords)
             {
-                if (existedReviews.Any(x => x.Id == importRecord.Record.Id))
+                if (existedReviews.Any(x => x.Id.EqualsInvariant(importRecord.Record.Id)))
                 {
                     importRecord.Record.ProductSku = null;
                 }
