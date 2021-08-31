@@ -1,0 +1,66 @@
+using System;
+using System.Linq;
+using FluentValidation;
+using VirtoCommerce.DescriptionExportImportModule.Core.Models;
+using VirtoCommerce.DescriptionExportImportModule.Data.Helpers;
+using catalogCore = VirtoCommerce.CatalogModule.Core;
+using coreModuleCore = VirtoCommerce.CoreModule.Core;
+
+namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
+{
+    public class ImportReviewValidator : AbstractValidator<ImportRecord<CsvEditorialReview>>
+    {
+        public ImportReviewValidator()
+        {
+            AttachValidators();
+        }
+
+        private void AttachValidators()
+        {
+            RuleFor(x => x.Record.LanguageCode)
+                .NotEmpty()
+                .WithMissingRequiredValueCodeAndMessage("Language")
+                .WithImportState()
+                .DependentRules(() =>
+                        RuleFor(x => x.Record.LanguageCode)
+                            .Must((_, language, context) =>
+                            {
+                                var languages = (string[])context.ParentContext.RootContextData[
+                                        coreModuleCore.ModuleConstants.Settings.General.Languages.Name];
+                                return languages.Contains(language, StringComparer.InvariantCultureIgnoreCase);
+                            })
+                            .WithInvalidValueCodeAndMessage("Language")
+                            .WithImportState()
+                );
+
+            RuleFor(x => x.Record.ReviewType)
+                .NotEmpty()
+                .WithMissingRequiredValueCodeAndMessage("Type")
+                .WithImportState()
+                .DependentRules(() =>
+                    RuleFor(x => x.Record.ReviewType)
+                        .Must((_, reviewType, context) =>
+                        {
+                            var reviewTypes = (string[])context.ParentContext.RootContextData[
+                                catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name];
+                            return reviewTypes.Contains(reviewType, StringComparer.InvariantCultureIgnoreCase);
+                        })
+                        .WithInvalidValueCodeAndMessage("Type")
+                        .WithImportState()
+                );
+
+            RuleFor(x => x.Record.Content)
+                .NotEmpty()
+                .WithMissingRequiredValueCodeAndMessage("Description Content")
+                .WithImportState();
+
+            When(x => string.IsNullOrEmpty(x.Record.Id),
+                () =>
+                    RuleFor(x => x.Record.ProductSku)
+                        .NotEmpty()
+                        .WithMissingRequiredValueCodeAndMessage("Product SKU")
+                        .WithImportState()
+            );
+        }
+    }
+}

@@ -37,6 +37,22 @@
           "import": "Start import",
           "delete": "Delete"
         }
+      },
+      "import-processing": {
+        "title": "Import progress",
+        "subtitles": {
+          "errors": "Errors"
+        },
+        "labels": {
+          "start": "Start",
+          "end": "End",
+          "total-count": "Total count",
+          "lines-created": "Lines created",
+          "lines-updated": "Lines updated",
+          "error-count": "Error count",
+          "errors-report": "Errors report download Url:",
+          "error-log": "Errors"
+        }
       }
     },
     "dialogs": {
@@ -65,10 +81,8 @@
       "no-data": "File has no data."
     }
   },
-  "permissions": {
-  },
+  "permissions": {},
   "settings": {
-    "VirtoCommerceDescriptionExportImport": {
-    }
+    "VirtoCommerceDescriptionExportImport": {}
   }
 }
