@@ -151,7 +151,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             var importError = new ImportError { Error = "This row has invalid data. Quotes should be closed.", RawRow = context.RawRecord };
 
-            reporter.WriteAsync(importError).GetAwaiter().GetResult();
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Row);
             HandleError(progressCallback, importProgress);
@@ -162,7 +162,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var invalidFieldName = context.HeaderRecord[context.CurrentIndex];
             var importError = new ImportError { Error = string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], invalidFieldName), RawRow = context.RawRecord };
 
-            reporter.WriteAsync(importError).GetAwaiter().GetResult();
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Row);
             HandleError(progressCallback, importProgress);
@@ -189,7 +189,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 importError.Error = $"The required values in columns: {string.Join(", ", missedValueColumns)} - are missing.";
             }
 
-            reporter.WriteAsync(importError).GetAwaiter().GetResult();
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Row);
             HandleError(progressCallback, importProgress);
