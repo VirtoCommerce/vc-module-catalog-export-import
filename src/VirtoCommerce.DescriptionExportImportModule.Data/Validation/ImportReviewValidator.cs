@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using FluentValidation;
-using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
+using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Data.Helpers;
 using catalogCore = VirtoCommerce.CatalogModule.Core;
@@ -71,10 +71,11 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
             When(x => !string.IsNullOrEmpty(x.Record.ProductSku),
             () =>
                 RuleFor(x => x.Record.ProductSku)
-                    .MustAsync(async (sku, _) =>
+                    .Must((_, sku, context) =>
                     {
-                        var productSearchResult = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria { Take = 0, Skus = new[] { sku }, });
-                        return productSearchResult.TotalCount > 0;
+                        var skus = (string[])context.ParentContext.RootContextData[ModuleConstants.ContextDataSkus];
+
+                        return skus.Contains(sku);
                     })
                     .WithErrorCode("sku-is-not-exist")
                     .WithMessage("Product SKU is not exist")

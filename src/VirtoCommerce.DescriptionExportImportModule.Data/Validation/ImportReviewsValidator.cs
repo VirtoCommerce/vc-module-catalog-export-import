@@ -1,7 +1,9 @@
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
+using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
+using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.Platform.Core.Settings;
 using catalogCore = VirtoCommerce.CatalogModule.Core;
@@ -37,6 +39,14 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
             var languages = languagesSetting.AllowedValues.OfType<string>().ToArray();
 
             context.RootContextData[coreModuleCore.ModuleConstants.Settings.General.Languages.Name] = languages;
+
+            var skus = context.InstanceToValidate.Select(x => x.Record.ProductSku).ToArray();
+            var products = _productSearchService
+                .SearchProductsAsync(new ProductSearchCriteria { Skus = skus, Take = skus.Length })
+                .GetAwaiter()
+                .GetResult();
+
+            context.RootContextData[ModuleConstants.ContextDataSkus] = products.Results.Select(x => x.Code).ToArray();
 
             return base.PreValidate(context, result);
         }
