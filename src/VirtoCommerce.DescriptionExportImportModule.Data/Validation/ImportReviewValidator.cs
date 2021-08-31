@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using FluentValidation;
-using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Data.Helpers;
@@ -12,12 +11,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
 {
     public class ImportReviewValidator : AbstractValidator<ImportRecord<CsvEditorialReview>>
     {
-        private readonly IProductSearchService _productSearchService;
-
-        public ImportReviewValidator(IProductSearchService productSearchService)
+        public ImportReviewValidator()
         {
-            _productSearchService = productSearchService;
-
             AttachValidators();
         }
 

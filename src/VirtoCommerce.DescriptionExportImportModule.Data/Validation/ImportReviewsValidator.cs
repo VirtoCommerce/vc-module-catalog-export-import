@@ -53,7 +53,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
 
         private void AttachValidators()
         {
-            RuleForEach(importRecords => importRecords).SetValidator(new ImportReviewValidator(_productSearchService));
+            RuleForEach(importRecords => importRecords).SetValidator(new ImportReviewValidator());
         }
     }
 }
