@@ -17,7 +17,5 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         public override Func<CsvHelperException, bool> ReadingExceptionOccurred { get; set; } = ex => false;
 
         public override Action<ReadingContext> BadDataFound { get; set; } = null;
-
-        public override Action<string[], int, ReadingContext> MissingFieldFound { get; set; } = null;
     }
 }
