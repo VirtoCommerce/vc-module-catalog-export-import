@@ -73,7 +73,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                         return skus.Contains(sku);
                     })
                     .WithErrorCode("sku-is-not-exist")
-                    .WithMessage("Product SKU is not exist")
+                    .WithMessage("Product with such SKU does not exist.")
                     .WithImportState()
                 );
 
