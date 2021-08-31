@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using FluentValidation;
+using VirtoCommerce.CatalogModule.Core.Model.Search;
+using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Data.Helpers;
 using catalogCore = VirtoCommerce.CatalogModule.Core;
@@ -10,8 +12,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
 {
     public class ImportReviewValidator : AbstractValidator<ImportRecord<CsvEditorialReview>>
     {
-        public ImportReviewValidator()
+        private readonly IProductSearchService _productSearchService;
+
+        public ImportReviewValidator(IProductSearchService productSearchService)
         {
+            _productSearchService = productSearchService;
+
             AttachValidators();
         }
 
@@ -61,6 +67,20 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                         .WithMissingRequiredValueCodeAndMessage("Product SKU")
                         .WithImportState()
             );
+
+            When(x => !string.IsNullOrEmpty(x.Record.ProductSku),
+            () =>
+                RuleFor(x => x.Record.ProductSku)
+                    .MustAsync(async (sku, _) =>
+                    {
+                        var productSearchResult = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria { Take = 0, Skus = new[] { sku }, });
+                        return productSearchResult.TotalCount > 0;
+                    })
+                    .WithErrorCode("sku-is-not-exist")
+                    .WithMessage("Product SKU is not exist")
+                    .WithImportState()
+                );
+
         }
     }
 }
