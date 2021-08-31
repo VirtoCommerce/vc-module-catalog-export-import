@@ -1,3 +1,5 @@
+import 'ui-grid-auto-fit-columns';
+
 // Call this to register your module to main application
 var moduleName = "virtoCommerce.descriptionExportImportModule";
 
