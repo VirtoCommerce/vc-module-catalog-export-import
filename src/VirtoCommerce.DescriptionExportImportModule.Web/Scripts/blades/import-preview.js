@@ -13,7 +13,10 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             importResources.preview({ filePath: blade.csvFilePath, dataType: blade.dataType }, (response) => {
                 const records = response.results;
 
+                $scope.originalRecords = _.map(records, record => ({...record}));
+
                 _.each(records, record => {
+                    record.id = truncateId(record.id);
                     record.descriptionContent = truncateContent(record.descriptionContent);
                 });
 
@@ -69,6 +72,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 gridApi.grid.registerDataChangeCallback((grid) => {
                     grid.buildColumns();
                     _.each(gridApi.grid.options.columnDefs, column => {
+                        column.cellTooltip = getCellTooltip;
                         column.headerCellClass = 'br-0 font-weight-500 fs-13';
                     });
 
@@ -94,6 +98,21 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             }
 
             return content;
+        }
+
+        function truncateId(content) {
+            if (content === null) return "";
+
+            if (content.length > 9) {
+                return content.substr(0, 3) + '...' + content.substr(content.length - 3, content.length);
+            }
+
+            return content;
+        }
+
+        function getCellTooltip(row, col) {
+            const index = blade.currentEntities.indexOf(row.entity);
+            return $scope.originalRecords[index][col.name];
         }
 
         initialize();
