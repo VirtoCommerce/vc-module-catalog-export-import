@@ -83,7 +83,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
             var duplicates = importRecords
                 .Where(x => !string.IsNullOrEmpty(x.Id))
                 .GroupBy(x => x.Id)
-                .SelectMany(x => x.Take(x.Count() - 1)) // x.Take(x.Count()) - 1 means that we want to keep one (last) object as effective value
+                .SelectMany(x => x.Take(x.Count() - 1)) // x.Take(x.Count() - 1) means that we want to keep one (last) object as effective value
                 .ToArray();
 
             return duplicates;
