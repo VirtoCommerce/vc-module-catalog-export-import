@@ -18,7 +18,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 
         [Optional]
         [Name("Description Id")]
-        public string Id
+        public string DescriptionId
         {
             get => _id;
             set => _id = value?.Trim();

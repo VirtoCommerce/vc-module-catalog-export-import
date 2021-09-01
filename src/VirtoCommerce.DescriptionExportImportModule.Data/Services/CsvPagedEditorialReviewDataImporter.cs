@@ -47,7 +47,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             try
             {
-                var reviewsIds = importReviewRecords.Select(x => x.Record?.Id).Distinct()
+                var reviewsIds = importReviewRecords.Select(x => x.Record?.DescriptionId).Distinct()
                     .Where(x => !string.IsNullOrEmpty(x))
                     .ToArray();
 
@@ -83,7 +83,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                     allProductsForSaving.AddRange(productsForReviewAdding);
                 }
 
-                var importReviewsForUpdating = importReviewRecords.Where(x => !string.IsNullOrEmpty(x.Record.Id))
+                var importReviewsForUpdating = importReviewRecords.Where(x => !string.IsNullOrEmpty(x.Record.DescriptionId))
                     .Select(x => x.Record).ToArray();
 
                 if (importReviewsForUpdating.Length > 0)
@@ -141,13 +141,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             foreach (var importRecord in importReviewRecords)
             {
-                if (existedReviews.Any(x => x.Id.EqualsInvariant(importRecord.Record.Id)))
+                if (existedReviews.Any(x => x.Id.EqualsInvariant(importRecord.Record.DescriptionId)))
                 {
                     importRecord.Record.ProductSku = null;
                 }
                 else
                 {
-                    importRecord.Record.Id = null;
+                    importRecord.Record.DescriptionId = null;
                 }
             }
         }
@@ -172,7 +172,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 foreach (var review in product.Reviews)
                 {
                     var importReviewForUpdate =
-                        importReviewForUpdating.LastOrDefault(x => x.Id.EqualsInvariant(review.Id));
+                        importReviewForUpdating.LastOrDefault(x => x.DescriptionId.EqualsInvariant(review.Id));
 
                     importReviewForUpdate?.PatchModel(review);
                 }

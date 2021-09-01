@@ -54,7 +54,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                 .WithMissingRequiredValueCodeAndMessage("Description Content")
                 .WithImportState();
 
-            When(x => string.IsNullOrEmpty(x.Record.Id),
+            When(x => string.IsNullOrEmpty(x.Record.DescriptionId),
                 () =>
                     RuleFor(x => x.Record.ProductSku)
                         .NotEmpty()
