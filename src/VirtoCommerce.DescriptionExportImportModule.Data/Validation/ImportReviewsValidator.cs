@@ -81,8 +81,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
             var importRecords = context.InstanceToValidate.Select(x => x.Record).ToArray();
 
             var duplicates = importRecords
-                .Where(x => !string.IsNullOrEmpty(x.Id))
-                .GroupBy(x => x.Id)
+                .Where(x => !string.IsNullOrEmpty(x.DescriptionId))
+                .GroupBy(x => x.DescriptionId)
                 .SelectMany(x => x.Take(x.Count() - 1)) // x.Take(x.Count() - 1) means that we want to keep one (last) object as effective value
                 .ToArray();
 
