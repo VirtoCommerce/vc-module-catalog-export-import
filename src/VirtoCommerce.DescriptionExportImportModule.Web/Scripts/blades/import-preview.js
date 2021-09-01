@@ -14,7 +14,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 const records = response.results;
 
                 _.each(records, record => {
-                    record.content = truncateContent(record.content);
+                    record.descriptionContent = truncateContent(record.descriptionContent);
                 });
 
                 blade.currentEntities = records;

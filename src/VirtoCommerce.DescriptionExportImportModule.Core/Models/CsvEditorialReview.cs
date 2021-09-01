@@ -26,21 +26,21 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 
         [Required]
         [Name("Description Content")]
-        public string Content { get; set; }
+        public string DescriptionContent { get; set; }
 
         [Required]
         [Name("Type")]
-        public string ReviewType { get; set; }
+        public string Type { get; set; }
 
         [Required]
         [Name("Language")]
-        public string LanguageCode { get; set; }
+        public string Language { get; set; }
 
         public void PatchModel(EditorialReview target)
         {
-            target.Content = Content;
-            target.ReviewType = ReviewType;
-            target.LanguageCode = LanguageCode;
+            target.Content = DescriptionContent;
+            target.ReviewType = Type;
+            target.LanguageCode = Language;
         }
 
     }
