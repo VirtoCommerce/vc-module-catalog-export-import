@@ -1,3 +1,5 @@
+import 'ui-grid-auto-fit-columns';
+
 // Call this to register your module to main application
 var moduleName = "virtoCommerce.descriptionExportImportModule";
 
@@ -5,7 +7,7 @@ if (AppDependencies !== undefined) {
     AppDependencies.push(moduleName);
 }
 
-angular.module(moduleName, []).run(['virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (catalogImportService, catalogExportService) {
+angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (catalogImportService, catalogExportService) {
     catalogImportService.register({
         name: 'Description import',
         description: 'Descriptions data import from CSV',

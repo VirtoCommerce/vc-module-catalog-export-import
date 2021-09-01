@@ -17,12 +17,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
 
         private void AttachValidators()
         {
-            RuleFor(x => x.Record.LanguageCode)
+            RuleFor(x => x.Record.Language)
                 .NotEmpty()
                 .WithMissingRequiredValueCodeAndMessage("Language")
                 .WithImportState()
                 .DependentRules(() =>
-                        RuleFor(x => x.Record.LanguageCode)
+                        RuleFor(x => x.Record.Language)
                             .Must((_, language, context) =>
                             {
                                 var languages = (string[])context.ParentContext.RootContextData[
@@ -33,12 +33,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                             .WithImportState()
                 );
 
-            RuleFor(x => x.Record.ReviewType)
+            RuleFor(x => x.Record.Type)
                 .NotEmpty()
                 .WithMissingRequiredValueCodeAndMessage("Type")
                 .WithImportState()
                 .DependentRules(() =>
-                    RuleFor(x => x.Record.ReviewType)
+                    RuleFor(x => x.Record.Type)
                         .Must((_, reviewType, context) =>
                         {
                             var reviewTypes = (string[])context.ParentContext.RootContextData[
@@ -49,12 +49,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                         .WithImportState()
                 );
 
-            RuleFor(x => x.Record.Content)
+            RuleFor(x => x.Record.DescriptionContent)
                 .NotEmpty()
                 .WithMissingRequiredValueCodeAndMessage("Description Content")
                 .WithImportState();
 
-            When(x => string.IsNullOrEmpty(x.Record.Id),
+            When(x => string.IsNullOrEmpty(x.Record.DescriptionId),
                 () =>
                     RuleFor(x => x.Record.ProductSku)
                         .NotEmpty()

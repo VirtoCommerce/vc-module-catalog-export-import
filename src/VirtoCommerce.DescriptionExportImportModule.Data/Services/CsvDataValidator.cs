@@ -139,7 +139,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var existedColumns = csvReader.Context.HeaderRecord;
 
-            var missedColumns = requiredColumns.Except(existedColumns, StringComparer.InvariantCultureIgnoreCase).ToArray();
+            var missedColumns = requiredColumns.Except(existedColumns, StringComparer.InvariantCulture).ToArray();
 
             if (missedColumns.Length > 0)
             {

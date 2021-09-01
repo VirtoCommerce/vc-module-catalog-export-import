@@ -34,8 +34,16 @@
           "file-type-error": "CSV format is required. The suggested file is in different format."
         },
         "actions": {
-          "import": "Start import",
+          "preview": "Preview",
           "delete": "Delete"
+        }
+      },
+      "import-preview": {
+        "title": "Preview",
+        "subtitle": "Uploaded CSV file preview",
+        "preview-legend": "Please use horizontal scroll to see all columns from the import preview",
+        "labels": {
+          "preview-count": "Preview count:"
         }
       },
       "import-processing": {

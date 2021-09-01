@@ -69,10 +69,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                     {
                         ProductName = product.Name,
                         ProductSku = product.Code,
-                        Id = x.Id,
-                        Content = x.Content,
-                        LanguageCode = x.LanguageCode,
-                        ReviewType = x.ReviewType,
+                        DescriptionId = x.Id,
+                        DescriptionContent = x.Content,
+                        Language = x.LanguageCode,
+                        Type = x.ReviewType,
                     };
 
                     return result;

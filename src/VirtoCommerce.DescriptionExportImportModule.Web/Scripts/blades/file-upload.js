@@ -186,25 +186,19 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             return result === translateKey ? errorCode : result;
         }
 
-        $scope.startImportProcess = () => {
-            const importDataRequest = {
-                filePath: blade.csvFilePath,
+        $scope.showPreview = () => {
+            var newBlade = {
+                id: "descriptionsImportPreview",
+                csvFilePath: blade.csvFilePath,
                 dataType: blade.dataType.value,
+                headIcon: "fas fa-file-csv",
+                title: "descriptionExportImport.blades.import-preview.title",
+                subtitle: 'descriptionExportImport.blades.import-preview.subtitle',
+                controller: "virtoCommerce.descriptionExportImportModule.importPreviewController",
+                template: "Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/blades/import-preview.tpl.html",
             };
 
-            importResources.run(importDataRequest, (data) => {
-                var newBlade = {
-                    id: "descriptionsImportProcessing",
-                    notification: data,
-                    dataType: blade.dataType,
-                    headIcon: "fa fa-download",
-                    title: "descriptionExportImport.blades.import-processing.title",
-                    controller: "virtoCommerce.descriptionExportImportModule.importProcessingController",
-                    template: "Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/blades/import-processing.tpl.html",
-                };
-
-                bladeNavigationService.showBlade(newBlade, blade);
-            });
+            bladeNavigationService.showBlade(newBlade, blade);
         }
 
         function uploadNewCsv(asset) {
