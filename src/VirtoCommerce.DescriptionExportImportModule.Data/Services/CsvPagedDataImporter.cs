@@ -147,16 +147,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             HandleError(progressCallback, importProgress);
         }
 
-        private static void HandleNotClosedQuoteError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
-        {
-            var importError = new ImportError { Error = "This row has invalid data. Quotes should be closed.", RawRow = context.RawRecord };
-
-            reporter.Write(importError);
-
-            errorsContext.ErrorsRows.Add(context.Row);
-            HandleError(progressCallback, importProgress);
-        }
-
         private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
         {
             var invalidFieldName = context.HeaderRecord[context.CurrentIndex];
@@ -220,11 +210,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 {
                     var fieldSourceValue = context.Record[context.CurrentIndex];
 
-                    if (context.HeaderRecord.Length != context.Record.Length)
-                    {
-                        HandleNotClosedQuoteError(progressCallback, importProgress, importReporter, context, errorsContext);
-                    }
-                    else if (fieldSourceValue == "")
+                    if (fieldSourceValue == string.Empty)
                     {
                         HandleRequiredValueError(progressCallback, importProgress, importReporter, context, errorsContext);
                     }
