@@ -24,35 +24,74 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
             AttachValidators();
         }
 
+
         protected override bool PreValidate(ValidationContext<ImportRecord<CsvEditorialReview>[]> context, ValidationResult result)
+        {
+            var reviewTypes = GetAvailableReviewTypes();
+
+            context.RootContextData[catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name] = reviewTypes;
+
+            var languages = GetAvailableLanguages();
+
+            context.RootContextData[coreModuleCore.ModuleConstants.Settings.General.Languages.Name] = languages;
+
+            var skus = GetExistedSkus(context);
+
+            context.RootContextData[ModuleConstants.ContextDataSkus] = skus;
+
+            var duplicates = GetDescriptionDuplicates(context);
+
+            context.RootContextData[ModuleConstants.DuplicatedImportReview] = duplicates;
+
+            return base.PreValidate(context, result);
+        }
+
+        protected virtual string[] GetAvailableReviewTypes()
         {
             var reviewTypesSetting =
                 _settingsManager.GetObjectSettingAsync(catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name).GetAwaiter().GetResult();
 
             var reviewTypes = reviewTypesSetting.AllowedValues.OfType<string>().ToArray();
 
-            context.RootContextData[catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name] =
-                reviewTypes;
+            return reviewTypes;
+        }
 
+        protected virtual string[] GetAvailableLanguages()
+        {
             var languagesSetting = _settingsManager.GetObjectSettingAsync(coreModuleCore.ModuleConstants.Settings.General.Languages.Name).GetAwaiter().GetResult();
 
             var languages = languagesSetting.AllowedValues.OfType<string>().ToArray();
 
-            context.RootContextData[coreModuleCore.ModuleConstants.Settings.General.Languages.Name] = languages;
+            return languages;
+        }
 
+        protected virtual string[] GetExistedSkus(ValidationContext<ImportRecord<CsvEditorialReview>[]> context)
+        {
             var skus = context.InstanceToValidate.Select(x => x.Record.ProductSku).ToArray();
             var products = _productSearchService
                 .SearchProductsAsync(new ProductSearchCriteria { Skus = skus, Take = skus.Length })
                 .GetAwaiter()
                 .GetResult();
 
-            context.RootContextData[ModuleConstants.ContextDataSkus] = products.Results.Select(x => x.Code).ToArray();
+            return products.Results.Select(x => x.Code).ToArray();
+        }
 
-            return base.PreValidate(context, result);
+        protected virtual CsvEditorialReview[] GetDescriptionDuplicates(ValidationContext<ImportRecord<CsvEditorialReview>[]> context)
+        {
+            var importRecords = context.InstanceToValidate.Select(x => x.Record).ToArray();
+
+            var duplicates = importRecords
+                .Where(x => !string.IsNullOrEmpty(x.Id))
+                .GroupBy(x => x.Id)
+                .SelectMany(x => x.Take(x.Count() - 1)) // x.Take(x.Count()) - 1 means that we want to keep one (last) object as effective value
+                .ToArray();
+
+            return duplicates;
         }
 
         private void AttachValidators()
         {
+            RuleForEach(importRecords => importRecords).SetValidator(new ImportEntityIsNotDuplicateValidator());
             RuleForEach(importRecords => importRecords).SetValidator(new ImportReviewValidator());
         }
     }
