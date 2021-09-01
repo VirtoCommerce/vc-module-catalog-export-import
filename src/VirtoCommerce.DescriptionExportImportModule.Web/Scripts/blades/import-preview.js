@@ -16,7 +16,9 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 $scope.originalRecords = _.map(records, record => ({...record}));
 
                 _.each(records, record => {
-                    record.descriptionId = truncateId(record.descriptionId);
+                    if (record.descriptionId) {
+                        record.descriptionId = truncateId(record.descriptionId);
+                    }
                     record.descriptionContent = truncateContent(record.descriptionContent);
                 });
 
