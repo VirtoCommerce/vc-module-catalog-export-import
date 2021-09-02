@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using FluentValidation;
+using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Data.Helpers;
 using catalogCore = VirtoCommerce.CatalogModule.Core;
@@ -61,6 +62,21 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Validation
                         .WithMissingRequiredValueCodeAndMessage("Product SKU")
                         .WithImportState()
             );
+
+            When(x => !string.IsNullOrEmpty(x.Record.ProductSku),
+            () =>
+                RuleFor(x => x.Record.ProductSku)
+                    .Must((_, sku, context) =>
+                    {
+                        var skus = (string[])context.ParentContext.RootContextData[ModuleConstants.ContextDataSkus];
+
+                        return skus.Contains(sku);
+                    })
+                    .WithErrorCode("sku-is-not-exist")
+                    .WithMessage("Product with such SKU does not exist.")
+                    .WithImportState()
+                );
+
         }
     }
 }

@@ -9,6 +9,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core
 
         public const int MByte = 1024 * KByte;
 
+        public const string ContextDataSkus = "skus";
+
+        public const string DuplicatedImportReview = nameof(DuplicatedImportReview);
+
         public static class ValidationErrors
         {
             public const string DuplicateError = "Duplicate";

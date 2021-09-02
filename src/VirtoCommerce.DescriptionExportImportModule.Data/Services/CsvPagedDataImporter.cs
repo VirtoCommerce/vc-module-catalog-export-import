@@ -147,22 +147,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             HandleError(progressCallback, importProgress);
         }
 
-        private static void HandleNotClosedQuoteError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
-        {
-            var importError = new ImportError { Error = "This row has invalid data. Quotes should be closed.", RawRow = context.RawRecord };
-
-            reporter.WriteAsync(importError).GetAwaiter().GetResult();
-
-            errorsContext.ErrorsRows.Add(context.Row);
-            HandleError(progressCallback, importProgress);
-        }
-
         private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
         {
             var invalidFieldName = context.HeaderRecord[context.CurrentIndex];
             var importError = new ImportError { Error = string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], invalidFieldName), RawRow = context.RawRecord };
 
-            reporter.WriteAsync(importError).GetAwaiter().GetResult();
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Row);
             HandleError(progressCallback, importProgress);
@@ -189,7 +179,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 importError.Error = $"The required values in columns: {string.Join(", ", missedValueColumns)} - are missing.";
             }
 
-            reporter.WriteAsync(importError).GetAwaiter().GetResult();
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Row);
             HandleError(progressCallback, importProgress);
@@ -200,7 +190,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var headerColumns = context.HeaderRecord;
             var recordFields = context.Record;
             var missedColumns = headerColumns.Skip(recordFields.Length).ToArray();
-            var error = $"This row has next missing columns: {string.Join(", ", missedColumns)}.";
+            var error = $"This row has unclosed quote or missed columns: {string.Join(", ", missedColumns)}.";
             var importError = new ImportError { Error = error, RawRow = context.RawRecord };
 
             await reporter.WriteAsync(importError);
@@ -220,11 +210,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 {
                     var fieldSourceValue = context.Record[context.CurrentIndex];
 
-                    if (context.HeaderRecord.Length != context.Record.Length)
-                    {
-                        HandleNotClosedQuoteError(progressCallback, importProgress, importReporter, context, errorsContext);
-                    }
-                    else if (fieldSourceValue == "")
+                    if (fieldSourceValue == string.Empty)
                     {
                         HandleRequiredValueError(progressCallback, importProgress, importReporter, context, errorsContext);
                     }
