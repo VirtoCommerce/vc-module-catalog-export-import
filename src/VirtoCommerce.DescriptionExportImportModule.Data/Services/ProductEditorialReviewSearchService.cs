@@ -36,20 +36,16 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CatalogId == criteria.CatalogId);
 
-            //var predicate = PredicateBuilder.True<EditorialReviewEntity>();
-
-            //predicate = predicate.And(x => x.CatalogItem.CatalogId == criteria.CatalogId);
-
-            //var predicate2 = PredicateBuilder.False<EditorialReviewEntity>();
-
-
-
-            if (criteria.CategoryIds.Length > 0)
+            if (criteria.CategoryIds.Length > 0 && criteria.ItemIds.Length > 0)
+            {
+                descriptionQuery = descriptionQuery.Where(x => criteria.CategoryIds.Contains(x.CatalogItem.CategoryId)
+                || criteria.ItemIds.Contains(x.ItemId));
+            }
+            else if (criteria.CategoryIds.Length > 0)
             {
                 descriptionQuery = descriptionQuery.Where(x => criteria.CategoryIds.Contains(x.CatalogItem.CategoryId));
             }
-
-            if (criteria.ItemIds.Length > 0)
+            else if (criteria.ItemIds.Length > 0)
             {
                 descriptionQuery = descriptionQuery.Where(x => criteria.ItemIds.Contains(x.ItemId));
             }
