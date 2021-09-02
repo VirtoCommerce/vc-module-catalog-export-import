@@ -10,7 +10,7 @@
           "total": "Total count",
           "processed": "Processed count",
           "file-url": "Download Descriptions:",
-          "error-log": "Errors"
+          "errors-log": "Errors"
         }
       },
       "file-upload": {

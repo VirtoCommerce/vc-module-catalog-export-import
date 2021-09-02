@@ -17,8 +17,14 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                     showWarningDialog(productsTotalNumber, exportLimit);
                 } else {
                     const exportDataRequest = {
-                        categoryId: blade.parentBlade.categoryId,
-                        catalogId: blade.parentBlade.catalogId
+                        catalogId:
+                            blade.catalog.id || "",
+                        categoryIds:
+                            blade.selectedCategories.length > 0 ? blade.selectedCategories.map((category) => category.id) : getParentCategoryId(blade),
+                        itemIds:
+                            blade.selectedProducts.length > 0 ? blade.selectedProducts.map((product) => product.id) : [],
+                        keyword:
+                            blade.parentBlade.filter.keyword || "",
                     }
                     exportResources.run(exportDataRequest, (data) => {
                         blade.notification = data;
@@ -52,6 +58,15 @@ angular.module('virtoCommerce.descriptionExportImportModule')
         $scope.extractFileName = (fileUrl) => {
             return fileUrl.split(/[\\\/]/).pop();
         }
+
+        function getParentCategoryId(currentBlade) {
+            const parentBlade = currentBlade.parentBlade;
+            if (parentBlade) {
+                return parentBlade.categoryId ? [parentBlade.categoryId] : getParentCategoryId(parentBlade);
+            } else {
+                return [];
+            }
+        };
 
         function showWarningDialog(itemsQty, limitQty) {
             const dialog = {
