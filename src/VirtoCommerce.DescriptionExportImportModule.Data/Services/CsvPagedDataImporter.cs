@@ -190,7 +190,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var headerColumns = context.HeaderRecord;
             var recordFields = context.Record;
             var missedColumns = headerColumns.Skip(recordFields.Length).ToArray();
-            var error = $"This row has unclosed quote or missing columns: {string.Join(", ", missedColumns)}.";
+            var error = $"This row has unclosed quote or missed columns: {string.Join(", ", missedColumns)}.";
             var importError = new ImportError { Error = error, RawRow = context.RawRecord };
 
             await reporter.WriteAsync(importError);
