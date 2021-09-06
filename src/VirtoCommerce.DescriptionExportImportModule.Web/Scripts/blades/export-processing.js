@@ -72,7 +72,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             } else {
                 return [];
             }
-        };
+        }
 
         function showWarningDialog(itemsQty, limitQty) {
             const dialog = {
