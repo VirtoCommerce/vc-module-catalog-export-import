@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
+using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.DescriptionExportImportModule.Web.BackgroundJobs;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
@@ -16,11 +17,25 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
     {
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
+        private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
 
-        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
+        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IProductEditorialReviewSearchService productEditorialReviewSearchService)
         {
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
+            _productEditorialReviewSearchService = productEditorialReviewSearchService;
+        }
+
+        [HttpPost]
+        [Route("count")]
+        public async Task<ActionResult<int>> GetTotalCount([FromBody] ExportDataRequest request)
+        {
+            var criteria = request.ToSearchCriteria();
+            criteria.Take = 0;
+
+            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria, deepSearch: true);
+
+            return Ok(searchResult.TotalCount);
         }
 
         [HttpPost]
