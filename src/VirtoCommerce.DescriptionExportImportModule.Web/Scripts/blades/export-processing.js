@@ -1,37 +1,43 @@
 angular.module('virtoCommerce.descriptionExportImportModule')
-.controller('virtoCommerce.descriptionExportImportModule.exportProcessingController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.catalogModule.listEntries', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.descriptionExportImportModule.export',
-    function ($scope, bladeNavigationService, catalogListEntriesApi, settings, $q, dialogService, exportResources) {
+.controller('virtoCommerce.descriptionExportImportModule.exportProcessingController', ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.descriptionExportImportModule.export',
+    function ($scope, bladeNavigationService, settings, $q, dialogService, exportResources) {
         var blade = $scope.blade;
         blade.title = 'descriptionExportImport.blades.export-processing.title';
         blade.headIcon = "fa fa-download";
 
         function initialize() {
-            const catalogSearchRequest = catalogListEntriesApi.listitemssearch({ categoryId: blade.parentBlade.categoryId, catalogId: blade.parentBlade.catalogId }).$promise;
-            const getExportLimits = settings.getValues({ id: 'DescriptionExportImport.Export.LimitOfLines' }).$promise;
+            const exportDataRequest = getExportRequest();
+            const getTotalCountPromise = exportResources.count(exportDataRequest).$promise;
+            const getExportLimitsPromise = settings.getValues({ id: 'DescriptionExportImport.Export.LimitOfLines' }).$promise;
 
-            $q.all([catalogSearchRequest, getExportLimits]).then(([catalogSearchResponse, exportLimitResponse]) => {
-                const productsTotalNumber = catalogSearchResponse.totalCount;
+            $q.all([getTotalCountPromise, getExportLimitsPromise]).then(([totalCountResponse, exportLimitResponse]) => {
+                const descriptionsTotalCount = totalCountResponse.totalCount;
                 const exportLimit = exportLimitResponse[0];
-                if (productsTotalNumber > exportLimit) {
+                if (descriptionsTotalCount > exportLimit) {
                     $scope.bladeClose();
-                    showWarningDialog(productsTotalNumber, exportLimit);
+                    showWarningDialog(descriptionsTotalCount, exportLimit);
                 } else {
-                    const exportDataRequest = {
-                        catalogId:
-                            blade.catalog.id || "",
-                        categoryIds:
-                            blade.selectedCategories.length > 0 ? blade.selectedCategories.map((category) => category.id) : getParentCategoryId(blade),
-                        itemIds:
-                            blade.selectedProducts.length > 0 ? blade.selectedProducts.map((product) => product.id) : [],
-                        keyword:
-                            blade.parentBlade.filter.keyword || "",
-                    }
                     exportResources.run(exportDataRequest, (data) => {
                         blade.notification = data;
                         blade.isLoading = false;
                     });
                 }
             });
+        }
+
+        function getExportRequest() {
+            return {
+                catalogId:
+                    blade.catalog.id || "",
+                categoryIds:
+                    blade.selectedCategories.length > 0
+                        ? blade.selectedCategories.map((category) => category.id)
+                        : getParentCategoryId(blade),
+                itemIds:
+                    blade.selectedProducts.length > 0 ? blade.selectedProducts.map((product) => product.id) : [],
+                keyword:
+                    blade.parentBlade.filter.keyword || "",
+            };
         }
 
         $scope.$on("new-notification-event", function (event, notification) {
