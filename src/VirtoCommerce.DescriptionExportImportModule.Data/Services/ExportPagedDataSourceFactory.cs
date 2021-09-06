@@ -12,7 +12,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         public ExportPagedDataSourceFactory(
             IProductEditorialReviewSearchService productEditorialReviewSearchService,
             IItemService itemService
-        )
+            )
         {
             _productEditorialReviewSearchService = productEditorialReviewSearchService;
             _itemService = itemService;

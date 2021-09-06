@@ -119,13 +119,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 if (listEntrySearchResult.TotalCount > 0)
                 {
                     var listEntries = listEntrySearchResult.Results;
-
                     var categoriesIds = listEntries.Where(x => x.Type.EqualsInvariant("category")).Select(x => x.Id).ToArray();
-
                     var productsIds = listEntries.Where(x => x.Type.EqualsInvariant("product")).Select(x => x.Id).ToArray();
-
                     searchCriteria.CategoryIds = categoriesIds;
-
                     searchCriteria.ItemIds = productsIds;
 
                     return;
@@ -149,13 +145,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 if (listEntrySearchResult.TotalCount > 0)
                 {
                     var listEntries = listEntrySearchResult.Results;
-
                     var categoriesIds = listEntries.Where(x => x.Type.EqualsInvariant("category")).Select(x => x.Id).ToArray();
-
                     var productsIds = listEntries.Where(x => x.Type.EqualsInvariant("product")).Select(x => x.Id).ToArray();
-
                     searchCriteria.CategoryIds = categoriesIds;
-
                     searchCriteria.ItemIds = productsIds;
                 }
             }
@@ -177,9 +169,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
                 if (listEntrySearchResult.TotalCount > 0)
                 {
-
                     var categoryIds = listEntrySearchResult.Results.Select(x => x.Id).ToArray();
-
                     searchCriteria.CategoryIds = searchCriteria.CategoryIds.Union(categoryIds).ToArray();
                 }
             }
