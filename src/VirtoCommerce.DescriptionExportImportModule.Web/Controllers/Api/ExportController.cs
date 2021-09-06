@@ -28,14 +28,14 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
 
         [HttpPost]
         [Route("count")]
-        public async Task<ActionResult<ExportTotalCountResponse>> GetTotalCount([FromBody] ExportDataRequest request)
+        public async Task<ActionResult<object>> GetTotalCount([FromBody] ExportDataRequest request)
         {
             var criteria = request.ToSearchCriteria();
             criteria.Take = 0;
 
             var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria, deepSearch: true);
 
-            return Ok(new ExportTotalCountResponse { TotalCount = searchResult.TotalCount });
+            return Ok(new { searchResult.TotalCount });
         }
 
         [HttpPost]
