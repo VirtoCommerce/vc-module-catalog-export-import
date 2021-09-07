@@ -33,7 +33,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             if (deepSearch)
             {
-                await ExtendSearchCriteriaForDeepSearch(criteria);
+                await ExtendSearchCriteriaForDeepSearchAsync(criteria);
             }
 
             var result = new ProductEditorialReviewSearchResult();
@@ -101,7 +101,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         /// </summary>
         /// <param name="searchCriteria"></param>
         /// <returns></returns>
-        private async Task ExtendSearchCriteriaForDeepSearch(ProductEditorialReviewSearchCriteria searchCriteria)
+        private async Task ExtendSearchCriteriaForDeepSearchAsync(ProductEditorialReviewSearchCriteria searchCriteria)
         {
             // All from catalog
             if (string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
