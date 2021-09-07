@@ -47,16 +47,16 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CatalogId == criteria.CatalogId);
 
-            if (criteria.CategoryIds.Length > 0 && criteria.ItemIds.Length > 0)
+            if (!criteria.CategoryIds.IsNullOrEmpty() && !criteria.ItemIds.IsNullOrEmpty())
             {
                 descriptionQuery = descriptionQuery.Where(x => criteria.CategoryIds.Contains(x.CatalogItem.CategoryId)
                 || criteria.ItemIds.Contains(x.ItemId));
             }
-            else if (criteria.CategoryIds.Length > 0)
+            else if (!criteria.CategoryIds.IsNullOrEmpty())
             {
                 descriptionQuery = descriptionQuery.Where(x => criteria.CategoryIds.Contains(x.CatalogItem.CategoryId));
             }
-            else if (criteria.ItemIds.Length > 0)
+            else if (!criteria.ItemIds.IsNullOrEmpty())
             {
                 descriptionQuery = descriptionQuery.Where(x => criteria.ItemIds.Contains(x.ItemId));
             }
@@ -104,7 +104,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private async Task ExtendSearchCriteriaForDeepSearch(ProductEditorialReviewSearchCriteria searchCriteria)
         {
             // All from catalog
-            if (string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.Length == 0 && searchCriteria.ItemIds.Length == 0)
+            if (string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
             {
                 var listEntrySearchCriteria = new CatalogListEntrySearchCriteria()
                 {
@@ -129,7 +129,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             }
 
             // All with search by keyword 
-            if (!string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.Length == 0 && searchCriteria.ItemIds.Length == 0)
+            if (!string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
             {
                 var listEntrySearchCriteria = new CatalogListEntrySearchCriteria()
                 {
@@ -153,7 +153,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             }
 
             // Extend CategoryIds with children. In case with searching by keyword this will work also. 
-            if (searchCriteria.CategoryIds.Length > 0)
+            if (!searchCriteria.CategoryIds.IsNullOrEmpty())
             {
                 var listEntrySearchCriteria = new CatalogListEntrySearchCriteria()
                 {
