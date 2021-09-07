@@ -103,31 +103,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         /// <returns></returns>
         private async Task ExtendSearchCriteriaForDeepSearchAsync(ProductEditorialReviewSearchCriteria searchCriteria)
         {
-            // All from catalog
-            if (string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
-            {
-                var listEntrySearchCriteria = new CatalogListEntrySearchCriteria()
-                {
-                    CatalogId = searchCriteria.CatalogId,
-                    SearchInChildren = true,
-                    SearchInVariations = true,
-                    Take = int.MaxValue
-                };
-
-                var listEntrySearchResult = await _listEntrySearchService.SearchAsync(listEntrySearchCriteria);
-
-                if (listEntrySearchResult.TotalCount > 0)
-                {
-                    var listEntries = listEntrySearchResult.Results;
-                    var categoriesIds = listEntries.Where(x => x.Type.EqualsInvariant("category")).Select(x => x.Id).ToArray();
-                    var productsIds = listEntries.Where(x => x.Type.EqualsInvariant("product")).Select(x => x.Id).ToArray();
-                    searchCriteria.CategoryIds = categoriesIds;
-                    searchCriteria.ItemIds = productsIds;
-
-                    return;
-                }
-            }
-
             // All with search by keyword 
             if (!string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
             {
