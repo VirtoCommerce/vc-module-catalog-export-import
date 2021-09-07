@@ -29,9 +29,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _listEntrySearchService = listEntrySearchService;
         }
 
-        public async Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ProductEditorialReviewSearchCriteria criteria, bool deepSearch = false)
+        public async Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ProductEditorialReviewSearchCriteria criteria)
         {
-            if (deepSearch)
+            if (criteria.DeepSearch)
             {
                 await ExtendSearchCriteriaForDeepSearchAsync(criteria);
             }

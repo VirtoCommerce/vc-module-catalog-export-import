@@ -7,5 +7,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
         public string CatalogId { get; set; }
         public string[] CategoryIds { get; set; }
         public string[] ItemIds { get; set; }
+        public bool DeepSearch { get; set; }
     }
 }

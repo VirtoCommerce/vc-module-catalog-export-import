@@ -40,7 +40,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var searchCriteria = _exportRequest.ToSearchCriteria();
             searchCriteria.Take = 0;
 
-            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria, deepSearch: true);
+            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria);
 
             return searchResult.TotalCount;
         }

@@ -16,7 +16,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
                 CatalogId = CatalogId,
                 CategoryIds = CategoryIds,
                 ItemIds = ItemIds,
-                Keyword = Keyword
+                Keyword = Keyword,
+                DeepSearch = true,
             };
         }
     }

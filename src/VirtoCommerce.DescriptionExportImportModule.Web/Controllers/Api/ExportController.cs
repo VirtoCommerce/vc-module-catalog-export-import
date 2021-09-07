@@ -33,7 +33,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
             var criteria = request.ToSearchCriteria();
             criteria.Take = 0;
 
-            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria, deepSearch: true);
+            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
 
             return Ok(new { searchResult.TotalCount });
         }
