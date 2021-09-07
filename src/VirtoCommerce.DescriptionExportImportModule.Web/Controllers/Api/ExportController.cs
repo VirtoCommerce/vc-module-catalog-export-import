@@ -35,7 +35,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web.Controllers.Api
 
             var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
 
-            return Ok(new { searchResult.TotalCount });
+            return Ok(new ExportTotalCountResponse { TotalCount = searchResult.TotalCount });
         }
 
         [HttpPost]

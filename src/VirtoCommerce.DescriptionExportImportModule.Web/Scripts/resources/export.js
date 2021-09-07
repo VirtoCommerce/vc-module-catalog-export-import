@@ -4,7 +4,9 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             {
                 run: { method: 'POST', url: 'api/description/export/run'},
                 cancel: { method: 'POST', url: 'api/description/export/cancel'},
-                count: { method: 'POST', url:  'api/description/export/count'}
+                count: {
+                    method: 'POST', url: 'api/description/export/count'
+                }
             });
 
     }])
