@@ -4,6 +4,9 @@ angular.module('virtoCommerce.descriptionExportImportModule')
         var blade = $scope.blade;
         blade.title = 'descriptionExportImport.blades.export-processing.title';
         blade.headIcon = "fa fa-download";
+        blade.isLoading = true;
+
+        const isSelectedAll = getIsSelectedAll();
 
         function initialize() {
             const exportDataRequest = getExportRequest();
@@ -30,11 +33,11 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 catalogId:
                     blade.catalog.id || "",
                 categoryIds:
-                    blade.selectedCategories.length > 0
+                    !isSelectedAll
                         ? blade.selectedCategories.map((category) => category.id)
                         : getParentCategoryId(blade),
                 itemIds:
-                    blade.selectedProducts.length > 0 ? blade.selectedProducts.map((product) => product.id) : [],
+                    !isSelectedAll ? blade.selectedProducts.map((product) => product.id) : [],
                 keyword:
                     blade.parentBlade.filter.keyword || "",
             };
@@ -81,6 +84,42 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 limitQty
             };
             dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/dialogs/exportLimitWarning-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+        }
+
+        function showConfirmDialog(exportDataRequest, itemsQty) {
+
+            const dialog = {
+                id: 'exportDescriptionConfirmDialog',
+                itemsQty,
+                exportAll: isSelectedAll,
+                callback: function(confirm) {
+                    if (confirm) {
+                        exportResources.run(exportDataRequest,
+                            (data) => {
+                                blade.notification = data;
+                                blade.isLoading = false;
+                            });
+                    } else {
+                        bladeNavigationService.closeBlade(blade);
+                    }
+                    
+                }
+            };
+            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.DescriptionExportImport)/Scripts/dialogs/export-descriptions-confirm-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+        }
+
+        function getIsSelectedAll() {
+            const itemsBlade = blade.parentBlade;
+
+            console.log(itemsBlade);
+
+            const selectAllState = itemsBlade.$scope.gridApi.selection.getSelectAllState();
+            const result = selectAllState || (blade.selectedCategories.length === 0 || blade.selectedProducts.length === 0);
+
+            console.log(selectAllState);
+            console.log(result);
+
+            return result;
         }
 
         initialize();
