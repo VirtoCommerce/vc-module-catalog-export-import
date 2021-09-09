@@ -113,7 +113,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
             console.log(itemsBlade);
 
             const selectAllState = itemsBlade.$scope.gridApi.selection.getSelectAllState();
-            const result = selectAllState || (blade.selectedCategories.length === 0 || blade.selectedProducts.length === 0);
+            const result = selectAllState || (blade.selectedCategories.length === 0 && blade.selectedProducts.length === 0);
 
             console.log(selectAllState);
             console.log(result);
