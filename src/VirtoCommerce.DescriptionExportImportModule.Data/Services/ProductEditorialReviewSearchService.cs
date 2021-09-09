@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
-using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CatalogModule.Data.Model;
 using VirtoCommerce.CatalogModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
@@ -19,10 +18,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
     {
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
         private readonly IProductEditorialReviewService _productEditorialReviewService;
-        private readonly IListEntrySearchService _listEntrySearchService;
+        private readonly IListEntryIndexedSearchService _listEntrySearchService;
 
         public ProductEditorialReviewSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductEditorialReviewService productEditorialReviewService,
-            IListEntrySearchService listEntrySearchService)
+            IListEntryIndexedSearchService listEntrySearchService)
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
             _productEditorialReviewService = productEditorialReviewService;
@@ -104,14 +103,16 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private async Task ExtendSearchCriteriaForDeepSearchAsync(ProductEditorialReviewSearchCriteria searchCriteria)
         {
             // All with search by keyword 
-            if (!string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.ItemIds.IsNullOrEmpty()
+                                                              && searchCriteria.CategoryIds.IsNullOrEmpty())
             {
                 var listEntrySearchCriteria = new CatalogListEntrySearchCriteria()
                 {
                     CatalogId = searchCriteria.CatalogId,
+                    CategoryId = searchCriteria.CategoryId,
                     Keyword = searchCriteria.Keyword,
-                    SearchInChildren = true,
-                    SearchInVariations = true,
+                    SearchInChildren = true, // at index searching it search in children always. in this case flag means nothing. 
+                    SearchInVariations = true, // at index searching it search in variations always. in this case flag means nothing.
                     Take = int.MaxValue
                 };
 

@@ -20,10 +20,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                     $scope.bladeClose();
                     showWarningDialog(descriptionsTotalCount, exportLimit);
                 } else {
-                    exportResources.run(exportDataRequest, (data) => {
-                        blade.notification = data;
-                        blade.isLoading = false;
-                    });
+                    showConfirmDialog(exportDataRequest, descriptionsTotalCount);
                 }
             });
         }
@@ -31,11 +28,12 @@ angular.module('virtoCommerce.descriptionExportImportModule')
         function getExportRequest() {
             return {
                 catalogId:
-                    blade.catalog.id || "",
+                    blade.catalog.id,
+                categoryId: getParentCategoryId(blade),
                 categoryIds:
                     !isSelectedAll
                         ? blade.selectedCategories.map((category) => category.id)
-                        : getParentCategoryId(blade),
+                        : [],
                 itemIds:
                     !isSelectedAll ? blade.selectedProducts.map((product) => product.id) : [],
                 keyword:
@@ -70,10 +68,11 @@ angular.module('virtoCommerce.descriptionExportImportModule')
 
         function getParentCategoryId(currentBlade) {
             const parentBlade = currentBlade.parentBlade;
+
             if (parentBlade) {
-                return parentBlade.categoryId ? [parentBlade.categoryId] : getParentCategoryId(parentBlade);
+                return parentBlade.categoryId ? parentBlade.categoryId : getParentCategoryId(parentBlade);
             } else {
-                return [];
+                return null;
             }
         }
 
