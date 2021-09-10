@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CatalogModule.Core;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Data.Model;
@@ -10,22 +11,29 @@ using VirtoCommerce.CatalogModule.Data.Repositories;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
 using VirtoCommerce.DescriptionExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 {
     public class ProductEditorialReviewSearchService : IProductEditorialReviewSearchService
     {
+        private const int ElasticMaxTake = 10000;
+
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
         private readonly IProductEditorialReviewService _productEditorialReviewService;
         private readonly IListEntryIndexedSearchService _listEntrySearchService;
+        private readonly ISettingsManager _settingsManager;
 
         public ProductEditorialReviewSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductEditorialReviewService productEditorialReviewService,
-            IListEntryIndexedSearchService listEntrySearchService)
+            IListEntryIndexedSearchService listEntrySearchService,
+            ISettingsManager settingsManager
+            )
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
             _productEditorialReviewService = productEditorialReviewService;
             _listEntrySearchService = listEntrySearchService;
+            _settingsManager = settingsManager;
         }
 
         public async Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ProductEditorialReviewSearchCriteria criteria)
@@ -102,10 +110,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         /// <returns></returns>
         private async Task ExtendSearchCriteriaForDeepSearchAsync(ProductEditorialReviewSearchCriteria searchCriteria)
         {
-            // All with search by keyword 
+            // All with searching by keyword from catalog or category
             if (!string.IsNullOrEmpty(searchCriteria.Keyword) && searchCriteria.ItemIds.IsNullOrEmpty()
                                                               && searchCriteria.CategoryIds.IsNullOrEmpty())
             {
+                var useIndexedSearch = _settingsManager.GetValue(ModuleConstants.Settings.Search.UseCatalogIndexedSearchInManager.Name, true);
+
                 var listEntrySearchCriteria = new CatalogListEntrySearchCriteria()
                 {
                     CatalogId = searchCriteria.CatalogId,
@@ -113,7 +123,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                     Keyword = searchCriteria.Keyword,
                     SearchInChildren = true, // at index searching it search in children always. in this case flag means nothing. 
                     SearchInVariations = true, // at index searching it search in variations always. in this case flag means nothing.
-                    Take = int.MaxValue
+                    Take = useIndexedSearch ? ElasticMaxTake : int.MaxValue // workaround for ElasticSearch
                 };
 
                 var listEntrySearchResult = await _listEntrySearchService.SearchAsync(listEntrySearchCriteria);
