@@ -138,6 +138,12 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 }
             }
 
+            // Set current as selected if there is not selected or founded cats and products
+            if (!string.IsNullOrEmpty(searchCriteria.CategoryId) && searchCriteria.CategoryIds.IsNullOrEmpty() && searchCriteria.ItemIds.IsNullOrEmpty())
+            {
+                searchCriteria.CategoryIds = new[] { searchCriteria.CategoryId };
+            }
+
             // Extend CategoryIds with children. In case with searching by keyword this will work also. 
             if (!searchCriteria.CategoryIds.IsNullOrEmpty())
             {
@@ -156,7 +162,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 if (listEntrySearchResult.TotalCount > 0)
                 {
                     var categoryIds = listEntrySearchResult.Results.Select(x => x.Id).ToArray();
-                    searchCriteria.CategoryIds = searchCriteria.CategoryIds.Union(categoryIds).ToArray();
+                    searchCriteria.CategoryIds = searchCriteria.CategoryIds.Union(categoryIds, StringComparer.InvariantCulture).ToArray();
                 }
             }
         }
