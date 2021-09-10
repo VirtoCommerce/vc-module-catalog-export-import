@@ -54,6 +54,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             }
 
             var searchCriteria = _exportRequest.ToSearchCriteria();
+
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;
 

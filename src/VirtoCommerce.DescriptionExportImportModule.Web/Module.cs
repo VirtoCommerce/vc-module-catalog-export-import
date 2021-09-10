@@ -48,6 +48,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Web
             serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
 
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
+
+            // Workaround. Should be excluded when the catalog module's bug  will be excepted https://virtocommerce.atlassian.net/browse/PT-4224. 
+            serviceCollection.AddTransient<IListEntryIndexedSearchService, ListEntryIndexedSearchService>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

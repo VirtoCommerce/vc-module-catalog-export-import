@@ -10,7 +10,7 @@
           "total": "Total count",
           "processed": "Processed count",
           "file-url": "Download Descriptions:",
-          "error-log": "Errors"
+          "errors-log": "Errors"
         }
       },
       "file-upload": {
@@ -71,6 +71,13 @@
       "csv-file-delete-and-close-preview": {
         "title": "Delete CSV",
         "subtitle": "Are you sure you want to close preview and delete file "
+      },
+      "descriptions-export": {
+        "title": "Descriptions export",
+        "subtitle-all": "All {{count}} descriptions",
+        "subtitle-not-all": "{{count}} descriptions",
+        "subtitle-end": "will be exported to csv file.",
+        "export": "Export"
       },
       "limits-warning": {
         "title": "Descriptions export",
