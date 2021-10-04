@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.DescriptionExportImportModule.Core;
 using VirtoCommerce.DescriptionExportImportModule.Core.Models;
@@ -47,7 +49,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
 
-            var csvConfiguration = ImportConfiguration.GetCsvConfiguration();
+            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" };
 
             var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, csvConfiguration);
 
