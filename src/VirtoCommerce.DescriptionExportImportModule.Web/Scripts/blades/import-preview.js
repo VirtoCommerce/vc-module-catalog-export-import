@@ -56,7 +56,7 @@ angular.module('virtoCommerce.descriptionExportImportModule')
                 permission: blade.importPermission
             },
             {
-                name: "priceExportImport.blades.import-preview.upload-new",
+                name: "descriptionExportImport.blades.import-preview.upload-new",
                 icon: 'fas fa-plus',
                 canExecuteMethod: () => true,
                 executeMethod: () => {
