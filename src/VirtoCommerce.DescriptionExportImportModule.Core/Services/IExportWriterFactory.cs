@@ -4,6 +4,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Core.Services
 {
     public interface IExportWriterFactory
     {
-        IExportWriter Create(string filepath, Configuration csvConfiguration);
+        IExportWriter Create(string filepath, CsvConfiguration csvConfiguration);
     }
 }

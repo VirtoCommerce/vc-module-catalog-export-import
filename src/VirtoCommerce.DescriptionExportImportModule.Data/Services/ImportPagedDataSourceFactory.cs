@@ -15,9 +15,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _blobStorageProvider = blobStorageProvider;
         }
 
-        public IImportPagedDataSource<TImportable> Create<TImportable>(string filePath, int pageSize, Configuration configuration = null) where TImportable : IImportable
+        public IImportPagedDataSource<TImportable> Create<TImportable>(string filePath, int pageSize, CsvConfiguration configuration = null) where TImportable : IImportable
         {
-            configuration ??= new ImportConfiguration();
+            configuration ??= ImportConfiguration.GetCsvConfiguration();
+
             return new ImportPagedDataSource<TImportable>(filePath, _blobStorageProvider, pageSize, configuration);
         }
     }

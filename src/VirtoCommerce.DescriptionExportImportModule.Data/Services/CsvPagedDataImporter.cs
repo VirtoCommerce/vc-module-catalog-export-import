@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using FluentValidation;
 using FluentValidation.Results;
 using VirtoCommerce.DescriptionExportImportModule.Core;
@@ -41,7 +42,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var errorsContext = new ImportErrorsContext();
 
-            var configuration = new ImportConfiguration();
+            var configuration = ImportConfiguration.GetCsvConfiguration();
 
             var reportFilePath = GetReportFilePath(request.FilePath);
             await using var importReporter = await _importReporterFactory.CreateAsync(reportFilePath, configuration.Delimiter);
@@ -137,42 +138,42 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         }
 
 
-        private static async Task HandleBadDataErrorAsync(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
+        private static async Task HandleBadDataErrorAsync(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
-            var importError = new ImportError { Error = "This row has invalid data. The data after field with not escaped quote was lost.", RawRow = context.RawRecord };
+            var importError = new ImportError { Error = "This row has invalid data. The data after field with not escaped quote was lost.", RawRow = context.Parser.RawRecord };
 
             await reporter.WriteAsync(importError);
 
-            errorsContext.ErrorsRows.Add(context.Row);
+            errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
         }
 
-        private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
+        private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
-            var invalidFieldName = context.HeaderRecord[context.CurrentIndex];
-            var importError = new ImportError { Error = string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], invalidFieldName), RawRow = context.RawRecord };
+            var invalidFieldName = context.Reader.HeaderRecord[context.Reader.CurrentIndex];
+            var importError = new ImportError { Error = string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], invalidFieldName), RawRow = context.Parser.RawRecord };
 
             reporter.Write(importError);
 
-            errorsContext.ErrorsRows.Add(context.Row);
+            errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
         }
 
-        private static void HandleRequiredValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
+        private static void HandleRequiredValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
-            var fieldName = context.HeaderRecord[context.CurrentIndex];
+            var fieldName = context.Reader.HeaderRecord[context.Reader.CurrentIndex];
             var requiredFields = CsvImportHelper.GetImportCustomerRequiredColumns<TImportable>();
             var missedValueColumns = new List<string>();
 
-            for (var i = 0; i < context.HeaderRecord.Length; i++)
+            for (var i = 0; i < context.Reader.HeaderRecord.Length; i++)
             {
-                if (requiredFields.Contains(context.HeaderRecord[i], StringComparer.InvariantCultureIgnoreCase) && context.Record[i].IsNullOrEmpty())
+                if (requiredFields.Contains(context.Reader.HeaderRecord[i], StringComparer.InvariantCultureIgnoreCase) && context.Reader[i].IsNullOrEmpty())
                 {
-                    missedValueColumns.Add(context.HeaderRecord[i]);
+                    missedValueColumns.Add(context.Reader.HeaderRecord[i]);
                 }
             }
 
-            var importError = new ImportError { Error = $"The required value in column {fieldName} is missing.", RawRow = context.RawRecord };
+            var importError = new ImportError { Error = $"The required value in column {fieldName} is missing.", RawRow = context.Parser.RawRecord };
 
             if (missedValueColumns.Count > 1)
             {
@@ -181,34 +182,34 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             reporter.Write(importError);
 
-            errorsContext.ErrorsRows.Add(context.Row);
+            errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
         }
 
-        private static async Task HandleMissedColumnError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, ReadingContext context, ImportErrorsContext errorsContext)
+        private static async Task HandleMissedColumnError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
-            var headerColumns = context.HeaderRecord;
-            var recordFields = context.Record;
+            var headerColumns = context.Reader.HeaderRecord;
+            var recordFields = context.Parser.Record;
             var missedColumns = headerColumns.Skip(recordFields.Length).ToArray();
             var error = $"This row has unclosed quote or missed columns: {string.Join(", ", missedColumns)}.";
-            var importError = new ImportError { Error = error, RawRow = context.RawRecord };
+            var importError = new ImportError { Error = error, RawRow = context.Parser.RawRecord };
 
             await reporter.WriteAsync(importError);
 
-            errorsContext.ErrorsRows.Add(context.Row);
+            errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
         }
 
-        private static void SetupErrorHandlers(Action<ImportProgressInfo> progressCallback, ImportConfiguration configuration,
+        private static void SetupErrorHandlers(Action<ImportProgressInfo> progressCallback, CsvConfiguration configuration,
             ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter)
         {
             configuration.ReadingExceptionOccurred = exception =>
             {
-                var context = exception.ReadingContext;
+                var context = exception.Exception.Context;
 
-                if (!errorsContext.ErrorsRows.Contains(context.Row))
+                if (!errorsContext.ErrorsRows.Contains(context.Parser.Row))
                 {
-                    var fieldSourceValue = context.Record[context.CurrentIndex];
+                    var fieldSourceValue = context.Reader[context.Reader.CurrentIndex];
 
                     if (fieldSourceValue == string.Empty)
                     {
@@ -223,13 +224,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 return false;
             };
 
-            configuration.BadDataFound = async context =>
+            configuration.BadDataFound = async args =>
             {
-                await HandleBadDataErrorAsync(progressCallback, importProgress, importReporter, context, errorsContext);
+                await HandleBadDataErrorAsync(progressCallback, importProgress, importReporter, args.Context, errorsContext);
             };
 
-            configuration.MissingFieldFound = async (headerNames, index, context) =>
-                await HandleMissedColumnError(progressCallback, importProgress, importReporter, context, errorsContext);
+            configuration.MissingFieldFound = async args =>
+                await HandleMissedColumnError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
         }
 
         protected static string GetReportFilePath(string filePath)

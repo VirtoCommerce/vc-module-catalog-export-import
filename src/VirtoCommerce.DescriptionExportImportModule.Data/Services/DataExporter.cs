@@ -46,7 +46,10 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var exportedDescriptionFilePath = GetExportFilePath("Descriptions");
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
-            var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, new ExportConfiguration());
+
+            var csvConfiguration = ImportConfiguration.GetCsvConfiguration();
+
+            var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, csvConfiguration);
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             exportProgress.Description = "Fetching...";

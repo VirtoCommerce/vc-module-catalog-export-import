@@ -58,7 +58,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             else
             {
                 var stream = _blobStorageProvider.OpenRead(filePath);
-                var csvConfiguration = new ImportConfiguration();
+                var csvConfiguration = ImportConfiguration.GetCsvConfiguration();
 
                 var requiredColumns = CsvImportHelper.GetImportCustomerRequiredColumns<T>();
 
@@ -76,7 +76,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             return result;
         }
 
-        private static async Task ValidateDelimiterAndDataExists(Stream stream, Configuration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
+        private static async Task ValidateDelimiterAndDataExists(Stream stream, CsvConfiguration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
         {
 
             var notCompatibleErrors = new[]
@@ -115,7 +115,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             }
         }
 
-        private static void ValidateRequiredColumns(Stream stream, Configuration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
+        private static void ValidateRequiredColumns(Stream stream, CsvConfiguration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
         {
             var notCompatibleErrors = new[]
             {
@@ -137,7 +137,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             csvReader.Read();
             csvReader.ReadHeader();
 
-            var existedColumns = csvReader.Context.HeaderRecord;
+            var existedColumns = csvReader.HeaderRecord;
 
             var missedColumns = requiredColumns.Except(existedColumns, StringComparer.InvariantCulture).ToArray();
 
@@ -149,7 +149,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             }
         }
 
-        private void ValidateLineLimit(Stream stream, Configuration csvConfiguration, List<ImportDataValidationError> errorsList)
+        private void ValidateLineLimit(Stream stream, CsvConfiguration csvConfiguration, List<ImportDataValidationError> errorsList)
         {
             var notCompatibleErrors = new[]
             {

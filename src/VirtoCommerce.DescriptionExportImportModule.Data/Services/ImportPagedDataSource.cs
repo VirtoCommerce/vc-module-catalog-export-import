@@ -13,13 +13,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
     public sealed class ImportPagedDataSource<T> : IImportPagedDataSource<T> where T : IImportable
     {
         private readonly Stream _stream;
-        private readonly Configuration _configuration;
+        private readonly CsvConfiguration _configuration;
         private readonly StreamReader _streamReader;
         private readonly CsvReader _csvReader;
         private int? _totalCount;
 
         public ImportPagedDataSource(string filePath, IBlobStorageProvider blobStorageProvider, int pageSize,
-            Configuration configuration)
+            CsvConfiguration configuration)
         {
             var stream = blobStorageProvider.OpenRead(filePath);
 
@@ -49,7 +49,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _stream.Seek(0, SeekOrigin.Begin);
 
             using var streamReader = new StreamReader(_stream, leaveOpen: true);
-            using var csvReader = new CsvReader(streamReader, _configuration, true);
+            using var csvReader = new CsvReader(streamReader, _configuration);
             try
             {
                 csvReader.Read();
@@ -79,7 +79,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             _stream.Seek(0, SeekOrigin.Begin);
 
             using var streamReader = new StreamReader(_stream, leaveOpen: true);
-            using var csvReader = new CsvReader(streamReader, _configuration, true);
+            using var csvReader = new CsvReader(streamReader, _configuration);
 
             try
             {
@@ -87,7 +87,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 csvReader.ReadHeader();
                 csvReader.ValidateHeader<T>();
 
-                result = string.Join(csvReader.Configuration.Delimiter, csvReader.Context.HeaderRecord);
+                result = string.Join(csvReader.Configuration.Delimiter, csvReader.Context.Reader.HeaderRecord);
 
             }
             finally
@@ -114,8 +114,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
                 if (record != null)
                 {
-                    var rawRecord = _csvReader.Context.RawRecord;
-                    var row = _csvReader.Context.Row;
+                    var rawRecord = _csvReader.Context.Parser.RawRecord;
+                    var row = _csvReader.Context.Parser.Row;
 
                     items.Add(new ImportRecord<T> { Row = row, RawRecord = rawRecord, Record = record });
                 }
