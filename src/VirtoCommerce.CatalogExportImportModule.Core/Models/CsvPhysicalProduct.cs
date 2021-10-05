@@ -22,7 +22,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Name("Product Outer Id")]
         public string ProductOuterId { get; set; }
 
-        [Required]
+        [Optional]
         [Name("Category Id")]
         public string CategoryId { get; set; }
 
