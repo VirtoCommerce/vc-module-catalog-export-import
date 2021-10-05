@@ -1,5 +1,5 @@
 {
-    "artifactKey": "VirtoCommerce.DescriptionExportImport",
+    "artifactKey": "VirtoCommerce.CatalogExportImport",
     "deployRepo": "vc-webstore-deploy",
     "dev": {
         "deployAppName": "webstore-dev",
