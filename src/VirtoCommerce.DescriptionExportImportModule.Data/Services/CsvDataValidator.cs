@@ -18,11 +18,13 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
     {
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly ISettingsManager _settingsManager;
+        private readonly ImportConfigurationFactory _importConfigurationFactory;
 
-        public CsvDataValidator(IBlobStorageProvider blobStorageProvider, ISettingsManager settingsManager)
+        public CsvDataValidator(IBlobStorageProvider blobStorageProvider, ISettingsManager settingsManager, ImportConfigurationFactory importConfigurationFactory)
         {
             _blobStorageProvider = blobStorageProvider;
             _settingsManager = settingsManager;
+            _importConfigurationFactory = importConfigurationFactory;
         }
 
         public async Task<ImportDataValidationResult> ValidateAsync(string dataType, string filePath)
@@ -58,7 +60,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             else
             {
                 var stream = _blobStorageProvider.OpenRead(filePath);
-                var csvConfiguration = ImportConfiguration.GetCsvConfiguration();
+                var csvConfiguration = _importConfigurationFactory.Create();
 
                 var requiredColumns = CsvImportHelper.GetImportCustomerRequiredColumns<T>();
 

@@ -25,8 +25,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IProductSearchService productSearchService,
             IItemService itemService,
-            IProductEditorialReviewService editorialReviewService)
-            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver)
+            IProductEditorialReviewService editorialReviewService,
+            ImportConfigurationFactory importConfigurationFactory)
+            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
         {
             _itemService = itemService;
             _productSearchService = productSearchService;

@@ -22,18 +22,22 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         private readonly IImportPagedDataSourceFactory _dataSourceFactory;
         private readonly IValidator<ImportRecord<TImportable>[]> _importRecordsValidator;
         private readonly IBlobUrlResolver _blobUrlResolver;
+        private readonly ImportConfigurationFactory _importConfigurationFactory;
 
         public abstract string DataType { get; }
 
         protected CsvPagedDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory,
             IValidator<ImportRecord<TImportable>[]> importRecordsValidator,
-            ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver)
+            ICsvImportReporterFactory importReporterFactory,
+            IBlobUrlResolver blobUrlResolver,
+            ImportConfigurationFactory importConfigurationFactory)
         {
             _importReporterFactory = importReporterFactory;
             _dataSourceFactory = dataSourceFactory;
             _importRecordsValidator = importRecordsValidator;
             _blobUrlResolver = blobUrlResolver;
+            _importConfigurationFactory = importConfigurationFactory;
         }
 
         public virtual async Task ImportAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback, ICancellationToken cancellationToken)
@@ -42,7 +46,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var errorsContext = new ImportErrorsContext();
 
-            var configuration = ImportConfiguration.GetCsvConfiguration();
+            var configuration = _importConfigurationFactory.Create();
 
             var reportFilePath = GetReportFilePath(request.FilePath);
             await using var importReporter = await _importReporterFactory.CreateAsync(reportFilePath, configuration.Delimiter);

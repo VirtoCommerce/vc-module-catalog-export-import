@@ -3,9 +3,9 @@ using CsvHelper.Configuration;
 
 namespace VirtoCommerce.DescriptionExportImportModule.Core.Models
 {
-    public static class ImportConfiguration
+    public class ImportConfigurationFactory
     {
-        public static CsvConfiguration GetCsvConfiguration()
+        public virtual CsvConfiguration Create()
         {
             var result = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
