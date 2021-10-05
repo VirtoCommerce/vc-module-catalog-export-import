@@ -9,7 +9,7 @@ if (AppDependencies !== undefined) {
 
 angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (catalogImportService, catalogExportService) {
     catalogImportService.register({
-        name: 'Description import',
+        name: 'Descriptions import',
         description: 'Descriptions data import from CSV',
         icon: 'fa fa-list-alt',
         controller: 'virtoCommerce.catalogExportImportModule.fileUploadController',
@@ -17,7 +17,7 @@ angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.catal
     });
 
     catalogExportService.register({
-        name: 'Description export',
+        name: 'Descriptions export',
         description: 'Export only product descriptions',
         icon: 'fa fa-list-alt',
         controller: 'virtoCommerce.catalogExportImportModule.exportProcessingController',
