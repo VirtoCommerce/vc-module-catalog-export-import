@@ -77,8 +77,13 @@
         "title": "Descriptions export",
         "subtitle-all": "All {{count}} descriptions",
         "subtitle-not-all": "{{count}} descriptions",
-        "subtitle-end": "will be exported to csv file.",
-        "export": "Export"
+        "subtitle-end": "will be exported to csv file."
+      },
+      "physicalProducts-export": {
+        "title": "Products export",
+        "subtitle-all": "All {{count}} products",
+        "subtitle-not-all": "{{count}} products",
+        "subtitle-end": "will be exported to csv file."
       },
       "limits-warning": {
         "title": "Descriptions export",
@@ -86,6 +91,9 @@
         "items": "items",
         "main-text-middle": "but export is limited with",
         "main-text-end": ", you retrive to export more"
+      },
+      "shared-export": {
+        "export": "Export"
       }
     },
     "validation-errors": {

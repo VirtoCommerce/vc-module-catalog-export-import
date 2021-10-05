@@ -1,0 +1,21 @@
+<div class="modal-header catalog-export-import"  ng-switch on="dataType">
+    <h3 class="modal-title" ng-switch-when="descriptions">{{ 'catalogExportImport.dialogs.limits-warning.title' | translate }}</h3>
+    <h3 class="modal-title" ng-switch-when="physicalProducts">{{ 'catalogExportImport.dialogs.physicalProducts-export.title' | translate }}</h3>
+</div>
+<div class="modal-body" ng-switch on="dataType">
+    <div ng-switch-when="descriptions">
+        <b ng-if="exportAll">{{ 'catalogExportImport.dialogs.descriptions-export.subtitle-all' | translate: {count: itemsQty} }}</b>
+        <b ng-if="!exportAll">{{ 'catalogExportImport.dialogs.descriptions-export.subtitle-not-all' | translate: {count: itemsQty} }}</b>
+        {{ 'catalogExportImport.dialogs.descriptions-export.subtitle-end' | translate }}
+    </div>
+    <div ng-switch-when="physicalProducts">
+        <b ng-if="exportAll">{{ 'catalogExportImport.dialogs.physicalProducts-export.subtitle-all' | translate: {count: itemsQty} }}</b>
+        <b ng-if="!exportAll">{{ 'catalogExportImport.dialogs.physicalProducts-export.subtitle-not-all' | translate: {count: itemsQty} }}</b>
+        {{ 'catalogExportImport.dialogs.physicalProducts-export.subtitle-end' | translate }}
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn cancel-btn" ng-click="no()">{{ 'platform.commands.cancel' | translate }}</button>
+    <button class="btn" ng-click="yes()">{{ 'catalogExportImport.dialogs.shared-export.export' | translate }}</button>
+</div>
