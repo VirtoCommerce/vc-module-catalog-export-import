@@ -1,0 +1,12 @@
+<div class="modal-header catalog-export-import modal-warning">
+    <h3 class="modal-title">{{ 'catalogExportImport.dialogs.limits-warning.title' | translate }}</h3>
+</div>
+<div class="modal-body">
+    <div>
+        <p>{{ 'catalogExportImport.dialogs.limits-warning.main-text-beginning' | translate }} <b>{{ itemsQty }} {{ 'catalogExportImport.dialogs.limits-warning.items' | translate }}</b> {{ 'catalogExportImport.dialogs.limits-warning.main-text-middle' | translate }} <b>{{ limitQty }} {{ 'catalogExportImport.dialogs.limits-warning.items' | translate }}</b>{{ 'catalogExportImport.dialogs.limits-warning.main-text-end' | translate }}</p>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn" ng-click="cancel()">{{ 'platform.commands.ok' | translate }}</button>
+</div>
