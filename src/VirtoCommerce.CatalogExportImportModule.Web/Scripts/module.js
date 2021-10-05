@@ -7,7 +7,7 @@ if (AppDependencies !== undefined) {
     AppDependencies.push(moduleName);
 }
 
-angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.featureManagerSubscriber', 'virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (featureManagerSubscriber, catalogImportService, catalogExportService) {
+var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.featureManagerSubscriber', 'virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (featureManagerSubscriber, catalogImportService, catalogExportService) {
 
     catalogImportService.register({
         name: 'Description import',
@@ -37,3 +37,6 @@ angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.featu
         });
     });
 }]);
+
+module.constant('availableDataTypes', [{ key: 'Descriptions', value: 'EditorialReview' }, { key: 'Physical Products', value: 'CatalogProduct' }]);
+module.constant('editorialReview', 'EditorialReview');

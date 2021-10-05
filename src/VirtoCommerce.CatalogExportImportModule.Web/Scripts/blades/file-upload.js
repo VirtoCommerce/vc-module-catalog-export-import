@@ -1,10 +1,11 @@
 angular.module('virtoCommerce.catalogExportImportModule')
 .controller('virtoCommerce.catalogExportImportModule.fileUploadController',
-    ['FileUploader', '$document', '$scope', '$timeout', 'platformWebApp.bladeNavigationService', 'platformWebApp.assets.api', '$translate', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.catalogExportImportModule.import',
-        function (FileUploader, $document, $scope, $timeout, bladeNavigationService, assetsApi,  $translate, settings, $q, dialogService, importResources) {
+    ['FileUploader', '$document', '$scope', '$timeout', 'platformWebApp.bladeNavigationService', 'platformWebApp.assets.api', '$translate', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.catalogExportImportModule.import', 'availableDataTypes', 'editorialReview',
+        function (FileUploader, $document, $scope, $timeout, bladeNavigationService, assetsApi,  $translate, settings, $q, dialogService, importResources, availableDataTypes, editorialReview) {
         const blade = $scope.blade;
         const oneKb = 1024;
         const oneMb = 1024 * oneKb;
+        $scope.editorialReview = editorialReview;
         $scope.maxCsvSize = oneMb;
         blade.headIcon = 'fas fa-file-alt';
         blade.title = 'catalogExportImport.blades.file-upload.title';
@@ -23,7 +24,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
         }];
 
         blade.dataType = blade.predefinedDataType;
-        blade.availableDataTypes = [{ key: 'Descriptions', value: 'EditorialReview' }, { key: 'Physical Products', value: 'CatalogProduct' }];
+        blade.availableDataTypes = availableDataTypes;
 
         function initialize () {
             resetState();
