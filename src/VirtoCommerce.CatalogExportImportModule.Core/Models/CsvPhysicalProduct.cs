@@ -36,7 +36,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 
         [Optional]
         [Name("Priority")]
-        public string Priority { get; set; }
+        public int? Priority { get; set; }
 
         [Optional]
         [Name("Gtin")]
