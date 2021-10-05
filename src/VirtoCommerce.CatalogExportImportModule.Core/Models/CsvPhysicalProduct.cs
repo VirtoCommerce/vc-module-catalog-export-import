@@ -86,15 +86,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 
         [Optional]
         [Name("Weight")]
-        public string Weight { get; set; }
+        public decimal? Weight { get; set; }
 
         [Optional]
         [Name("Lenght")]
-        public string Lenght { get; set; }
+        public decimal? Lenght { get; set; }
 
         [Optional]
         [Name("Width")]
-        public string Width { get; set; }
+        public decimal? Width { get; set; }
 
         [Optional]
         [Name("Tax Type")]
