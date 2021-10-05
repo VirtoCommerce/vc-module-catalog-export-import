@@ -5,17 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Repositories;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Validation;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.FeatureManagementModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
+using featureManagementCore = VirtoCommerce.FeatureManagementModule.Core;
 
 namespace VirtoCommerce.CatalogExportImportModule.Web
 {
@@ -83,6 +85,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
                     ModuleId = ModuleInfo.Id,
                     Name = x
                 }).ToArray());
+
+            var featureStorage = appBuilder.ApplicationServices.GetService<IFeatureStorage>();
+            featureStorage.TryAddFeatureDefinition(ModuleConstants.Features.CatalogExportImport, featureManagementCore.ModuleConstants.FeatureFilters.Developers);
 
             // ensure that all pending migrations are applied
             using var serviceScope = appBuilder.ApplicationServices.CreateScope();
