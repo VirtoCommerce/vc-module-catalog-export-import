@@ -35,7 +35,8 @@
         },
         "actions": {
           "preview": "Preview",
-          "delete": "Delete"
+          "delete": "Delete",
+          "import": "Import"
         }
       },
       "import-preview": {
