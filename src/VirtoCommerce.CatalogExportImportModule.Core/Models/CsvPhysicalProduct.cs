@@ -66,11 +66,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 
         [Optional]
         [Name("Max Quantity")]
-        public string MaxQuantity { get; set; }
+        public int? MaxQuantity { get; set; }
 
         [Optional]
         [Name("Min Quantity")]
-        public string MinQuantity { get; set; }
+        public int? MinQuantity { get; set; }
 
         [Optional]
         [Name("Manufacturer Part Number")]
