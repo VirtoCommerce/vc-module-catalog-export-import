@@ -59,8 +59,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         {
             using (await AsyncLock.GetLockByKey(_filePath).LockAsync())
             {
-                await _streamWriter.FlushAsync();
-                _streamWriter.Close();
+                await _streamWriter.DisposeAsync();
 
                 if (!ReportIsNotEmpty)
                 {

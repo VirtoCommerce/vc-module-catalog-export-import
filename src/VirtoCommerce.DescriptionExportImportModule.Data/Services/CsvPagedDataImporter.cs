@@ -51,6 +51,8 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
 
             var importProgress = new ImportProgressInfo { Description = "Import has started" };
 
+            SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress, importReporter);
+
             using var dataSource = _dataSourceFactory.Create<TImportable>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
 
             var headerRaw = dataSource.GetHeaderRaw();
@@ -63,8 +65,6 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             progressCallback(importProgress);
 
             const string importDescription = "{0} out of {1} have been imported.";
-
-            SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress, importReporter);
 
             try
             {
@@ -138,11 +138,11 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
         }
 
 
-        private static async Task HandleBadDataErrorAsync(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleBadDataError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
             var importError = new ImportError { Error = "This row has invalid data. The data after field with not escaped quote was lost.", RawRow = context.Parser.RawRecord };
 
-            await reporter.WriteAsync(importError);
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
@@ -186,7 +186,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             HandleError(progressCallback, importProgress);
         }
 
-        private static async Task HandleMissedColumnError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleMissedColumnError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
             var headerColumns = context.Reader.HeaderRecord;
             var recordFields = context.Parser.Record;
@@ -194,7 +194,7 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
             var error = $"This row has unclosed quote or missed columns: {string.Join(", ", missedColumns)}.";
             var importError = new ImportError { Error = error, RawRow = context.Parser.RawRecord };
 
-            await reporter.WriteAsync(importError);
+            reporter.Write(importError);
 
             errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
@@ -224,13 +224,9 @@ namespace VirtoCommerce.DescriptionExportImportModule.Data.Services
                 return false;
             };
 
-            configuration.BadDataFound = async args =>
-            {
-                await HandleBadDataErrorAsync(progressCallback, importProgress, importReporter, args.Context, errorsContext);
-            };
+            configuration.BadDataFound = args => HandleBadDataError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
 
-            configuration.MissingFieldFound = async args =>
-                await HandleMissedColumnError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
+            configuration.MissingFieldFound = args => HandleMissedColumnError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
         }
 
         protected static string GetReportFilePath(string filePath)
