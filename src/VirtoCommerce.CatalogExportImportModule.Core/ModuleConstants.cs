@@ -49,6 +49,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
         };
 
+        public static class Features
+        {
+            public const string CatalogExportImport = "CatalogExportImport";
+        }
+
         public static class Security
         {
             public static class Permissions
