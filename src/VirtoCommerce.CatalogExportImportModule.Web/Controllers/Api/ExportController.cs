@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
@@ -31,12 +32,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         [Route("count")]
         public async Task<ActionResult<object>> GetTotalCount([FromBody] ExportDataRequest request)
         {
-            var criteria = request.ToSearchCriteria();
-            criteria.Take = 0;
+            var result = new ExportTotalCountResponse();
 
-            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
+            switch (request.DataType)
+            {
+                case ModuleConstants.DataTypes.EditorialReview:
+                    var criteria = request.ToProductEditorialReviewSearchCriteria();
+                    criteria.Take = 0;
+                    var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
+                    result.TotalCount = searchResult.TotalCount;
+                    break;
+                case ModuleConstants.DataTypes.PhysicalProduct:
+                    result.TotalCount = 0;
+                    break;
+            }
 
-            return Ok(new ExportTotalCountResponse { TotalCount = searchResult.TotalCount });
+            return Ok();
         }
 
         [HttpPost]
@@ -45,7 +56,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         {
             var notification = new ExportPushNotification(_userNameResolver.GetCurrentUserName())
             {
-                Title = "Product descriptions export",
+                Title = ModuleConstants.PushNotificationsTitles.Export[ModuleConstants.DataTypes.EditorialReview],
                 Description = "Starting export task...",
             };
 

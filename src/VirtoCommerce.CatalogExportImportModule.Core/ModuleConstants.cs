@@ -5,6 +5,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 {
     public static class ModuleConstants
     {
+        public static class DataTypes
+        {
+            public const string EditorialReview = nameof(EditorialReview);
+
+            public const string PhysicalProduct = "PhysicalProduct";
+        }
+
+        public static class PushNotificationsTitles
+        {
+            public static readonly IReadOnlyDictionary<string, string> Export = new Dictionary<string, string>()
+            {
+                {DataTypes.EditorialReview, "Product descriptions export"},
+                {DataTypes.PhysicalProduct, "Physical product export"},
+            };
+        }
+
         public const int KByte = 1024;
 
         public const int MByte = 1024 * KByte;
@@ -40,7 +56,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string NotUniqueValue = "not-unique-value";
         }
 
-        public static readonly Dictionary<string, string> ValidationMessages = new Dictionary<string, string>
+        public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
         {
             { ValidationErrors.MissingRequiredValues, "The required value in column '{0}' is missing." },
             { ValidationErrors.ExceedingMaxLength, "Value in column '{0}' may have maximum {1} characters." },
