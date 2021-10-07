@@ -9,7 +9,7 @@ using VirtoCommerce.CatalogModule.Core.Services;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public class ExportPagedDataSource : IExportPagedDataSource
+    public class EditorialReviewExportPagedDataSource : IExportPagedDataSource
 
     {
         private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
@@ -22,7 +22,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         public IExportable[] Items { get; private set; }
 
-        public ExportPagedDataSource(
+        public EditorialReviewExportPagedDataSource(
             IProductEditorialReviewSearchService productEditorialReviewSearchService,
             IItemService itemService,
             int pageSize,

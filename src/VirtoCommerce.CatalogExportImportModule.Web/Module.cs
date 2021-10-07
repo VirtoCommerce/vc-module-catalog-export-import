@@ -44,6 +44,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
             serviceCollection.AddSingleton<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IDataExporter, DataExporter>();
             serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
+            serviceCollection.AddTransient<IExportProductSearchService, ExportProductSearchService>();
             serviceCollection.AddSingleton<IExportWriterFactory, ExportWriterFactory>();
             serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();

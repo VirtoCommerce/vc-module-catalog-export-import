@@ -10,7 +10,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public sealed class ExportProductSearchService : IExportProductSearchService
     {
-        private const string _physicalProductType = "Physical";
+        private const string PhysicalProductType = "Physical";
 
         private readonly IProductSearchService _productSearchService;
         public ExportProductSearchService(IProductSearchService productSearchService)
@@ -24,7 +24,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var resultByCategories = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
             {
-                ProductTypes = new[] { _physicalProductType },
+                ProductTypes = new[] { PhysicalProductType },
                 CatalogId = criteria.CatalogId,
                 CategoryIds = criteria.CategoryIds,
                 SearchInChildren = true,
@@ -42,7 +42,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var resultByItems = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
             {
-                ProductTypes = new[] { _physicalProductType },
+                ProductTypes = new[] { PhysicalProductType },
                 CatalogId = criteria.CatalogId,
                 ObjectIds = criteria.CategoryIds,
                 SearchInChildren = true,

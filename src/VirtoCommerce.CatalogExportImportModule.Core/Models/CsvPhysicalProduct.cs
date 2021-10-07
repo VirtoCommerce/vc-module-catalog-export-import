@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
+using VirtoCommerce.CatalogModule.Core.Model;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
@@ -115,6 +116,38 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Optional]
         [Name("Listing Expires On")]
         public DateTime? ListingExpiresOn { get; set; }
+
+        public CsvPhysicalProduct FromModel(CatalogProduct product)
+        {
+            ProductName = product.Name;
+            ProductId = product.Id;
+            ProductSku = product.Code;
+            ProductOuterId = product.OuterId;
+            CategoryId = product.CategoryId;
+            CategoryOuterId = product.Category?.OuterId;
+            ProductType = product.ProductType;
+            Priority = product.Priority;
+            Gtin = product.Gtin;
+            CanBePurchased = product.IsBuyable;
+            Visible = product.IsActive;
+            TrackInventory = product.TrackInventory;
+            PackageType = product.PackageType;
+            MaxQuantity = product.MaxQuantity;
+            MinQuantity = product.MinQuantity;
+            ManufacturerPartNumber = product.ManufacturerPartNumber;
+            MeasureUnit = product.MeasureUnit;
+            WeightUnit = product.WeightUnit;
+            Weight = product.Weight;
+            Lenght = product.Length;
+            Width = product.Width;
+            TaxType = product.TaxType;
+            ShippingType = product.ShippingType;
+            Vendor = product.Vendor;
+            FirstListed = product.StartDate;
+            ListingExpiresOn = product.EndDate;
+
+            return this;
+        }
 
     }
 }
