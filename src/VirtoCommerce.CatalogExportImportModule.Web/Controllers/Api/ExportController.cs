@@ -20,12 +20,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
+        private readonly IExportDataRequestPreprocessor _requestPreprocessor;
+        private readonly IExportProductSearchService _productSearchService;
 
-        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IProductEditorialReviewSearchService productEditorialReviewSearchService)
+        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IProductEditorialReviewSearchService productEditorialReviewSearchService, IExportDataRequestPreprocessor requestPreprocessor)
         {
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
             _productEditorialReviewSearchService = productEditorialReviewSearchService;
+            _requestPreprocessor = requestPreprocessor;
         }
 
         [HttpPost]
@@ -34,16 +37,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         {
             var result = new ExportTotalCountResponse();
 
+            await _requestPreprocessor.PreprocessRequestAsync(request);
+
+            var criteria = request.ToExportProductSearchCriteria();
+            criteria.Take = 0;
+
             switch (request.DataType)
             {
                 case ModuleConstants.DataTypes.EditorialReview:
-                    var criteria = request.ToProductEditorialReviewSearchCriteria();
-                    criteria.Take = 0;
-                    var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
-                    result.TotalCount = searchResult.TotalCount;
+                    var reviewSearchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
+                    result.TotalCount = reviewSearchResult.TotalCount;
                     break;
                 case ModuleConstants.DataTypes.PhysicalProduct:
-                    result.TotalCount = 0;
+                    var productSearchResult = await _productSearchService.SearchAsync(criteria);
+                    result.TotalCount = productSearchResult.TotalCount;
                     break;
             }
 
@@ -61,6 +68,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
             };
 
             await _pushNotificationManager.SendAsync(notification);
+
+            await _requestPreprocessor.PreprocessRequestAsync(request);
 
             notification.JobId = BackgroundJob.Enqueue<ExportJob>(exportJob => exportJob.ExportBackgroundAsync(request, notification, JobCancellationToken.Null, null));
 

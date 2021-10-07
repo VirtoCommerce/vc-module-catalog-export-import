@@ -21,6 +21,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             };
         }
 
+        public const int ElasticMaxTake = 10000;
+
         public const int KByte = 1024;
 
         public const int MByte = 1024 * KByte;

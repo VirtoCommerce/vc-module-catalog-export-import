@@ -38,7 +38,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         public async Task<int> GetTotalCountAsync()
         {
-            var searchCriteria = _exportRequest.ToProductEditorialReviewSearchCriteria();
+            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
             searchCriteria.Take = 0;
 
             var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria);
@@ -54,7 +54,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 return false;
             }
 
-            var searchCriteria = _exportRequest.ToProductEditorialReviewSearchCriteria();
+            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
 
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;

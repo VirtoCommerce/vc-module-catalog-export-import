@@ -5,6 +5,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
 {
     public interface IProductEditorialReviewSearchService
     {
-        Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ProductEditorialReviewSearchCriteria criteria);
+        Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ExportProductSearchCriteria criteria);
     }
 }
