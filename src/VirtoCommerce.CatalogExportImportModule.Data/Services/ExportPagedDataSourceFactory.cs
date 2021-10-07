@@ -25,15 +25,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         public IExportPagedDataSource Create(int pageSize, ExportDataRequest request)
         {
-            switch (request.DataType)
+            return request.DataType switch
             {
-                case ModuleConstants.DataTypes.EditorialReview:
-                    return new EditorialReviewExportPagedDataSource(_productEditorialReviewSearchService, _itemService, pageSize, request);
-                case ModuleConstants.DataTypes.PhysicalProduct:
-                    return new ProductExportPagedDataSource(_productSearchService, pageSize, request);
-                default:
-                    throw new ArgumentException(nameof(request.DataType));
-            }
+                ModuleConstants.DataTypes.EditorialReview => new EditorialReviewExportPagedDataSource(_productEditorialReviewSearchService, _itemService, pageSize, request),
+                ModuleConstants.DataTypes.PhysicalProduct => new ProductExportPagedDataSource(_productSearchService, pageSize, request),
+                _ => throw new ArgumentException(nameof(request.DataType)),
+            };
         }
     }
 }
