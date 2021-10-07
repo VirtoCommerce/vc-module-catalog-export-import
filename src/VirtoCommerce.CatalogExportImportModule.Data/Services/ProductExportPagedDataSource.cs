@@ -27,7 +27,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _exportRequest = exportRequest;
         }
 
-
         public async Task<int> GetTotalCountAsync()
         {
             var searchCriteria = _exportRequest.ToExportProductSearchCriteria();

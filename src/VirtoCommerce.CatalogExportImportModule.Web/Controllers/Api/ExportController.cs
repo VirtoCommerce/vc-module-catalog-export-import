@@ -19,16 +19,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
     {
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
-        private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
         private readonly IExportDataRequestPreprocessor _requestPreprocessor;
-        private readonly IExportProductSearchService _productSearchService;
         private readonly IExportPagedDataSourceFactory _exportPagedDataSourceFactory;
 
         public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IProductEditorialReviewSearchService productEditorialReviewSearchService, IExportDataRequestPreprocessor requestPreprocessor, IExportPagedDataSourceFactory exportPagedDataSourceFactory)
         {
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
-            _productEditorialReviewSearchService = productEditorialReviewSearchService;
             _requestPreprocessor = requestPreprocessor;
             _exportPagedDataSourceFactory = exportPagedDataSourceFactory;
         }
@@ -45,23 +42,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
             var dataSource = _exportPagedDataSourceFactory.Create(0, request);
 
             var totalCount = await dataSource.GetTotalCountAsync();
-
-
-
-            //var criteria = request.ToExportProductSearchCriteria();
-            //criteria.Take = 0;
-
-            //switch (request.DataType)
-            //{
-            //    case ModuleConstants.DataTypes.EditorialReview:
-            //        var reviewSearchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
-            //        result.TotalCount = reviewSearchResult.TotalCount;
-            //        break;
-            //    case ModuleConstants.DataTypes.PhysicalProduct:
-            //        var productSearchResult = await _productSearchService.SearchAsync(criteria);
-            //        result.TotalCount = productSearchResult.TotalCount;
-            //        break;
-            //}
 
             return Ok(new ExportTotalCountResponse { TotalCount = totalCount });
         }

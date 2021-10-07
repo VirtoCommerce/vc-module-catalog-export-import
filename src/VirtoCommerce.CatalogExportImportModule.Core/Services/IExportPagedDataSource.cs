@@ -7,8 +7,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
     {
         int CurrentPageNumber { get; }
         int PageSize { get; }
+
         Task<int> GetTotalCountAsync();
+
         Task<bool> FetchAsync();
+
         IExportable[] Items { get; }
     }
 }

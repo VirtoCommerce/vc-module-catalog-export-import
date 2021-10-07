@@ -13,6 +13,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private const string PhysicalProductType = "Physical";
 
         private readonly IProductSearchService _productSearchService;
+
         public ExportProductSearchService(IProductSearchService productSearchService)
         {
             _productSearchService = productSearchService;

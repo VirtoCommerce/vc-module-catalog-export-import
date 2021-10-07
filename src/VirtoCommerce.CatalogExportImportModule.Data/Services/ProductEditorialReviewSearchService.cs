@@ -15,7 +15,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public class ProductEditorialReviewSearchService : IProductEditorialReviewSearchService
     {
-
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
         private readonly IProductEditorialReviewService _productEditorialReviewService;
         private readonly IListEntryIndexedSearchService _listEntrySearchService;

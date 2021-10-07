@@ -42,6 +42,5 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.ReviewType = Type;
             target.LanguageCode = Language;
         }
-
     }
 }

@@ -148,6 +148,5 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 
             return this;
         }
-
     }
 }

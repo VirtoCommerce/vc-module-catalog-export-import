@@ -16,7 +16,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     /// Service for indexed searching of list entries.
     /// Logic moved from
     /// https://github.com/VirtoCommerce/vc-module-catalog/blob/a82b365207d280d25b06b76e933bffd23369fe68/src/VirtoCommerce.CatalogModule.Web/Controllers/Api/CatalogModuleListEntryController.cs#L300
-    /// it should be excluded when next bug will be eliminated https://virtocommerce.atlassian.net/browse/PT-2906. 
+    /// it should be excluded when next bug will be eliminated https://virtocommerce.atlassian.net/browse/PT-2906.
     /// </summary>
     public sealed class ListEntryIndexedSearchService : IListEntryIndexedSearchService
     {
@@ -37,6 +37,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _listEntrySearchService = listEntrySearchService;
             _settingsManager = settingsManager;
         }
+
         public async Task<ListEntrySearchResult> SearchAsync(CatalogListEntrySearchCriteria criteria)
         {
             var result = new ListEntrySearchResult();
