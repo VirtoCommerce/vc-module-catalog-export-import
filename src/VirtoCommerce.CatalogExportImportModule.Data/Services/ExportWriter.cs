@@ -8,7 +8,7 @@ using VirtoCommerce.Platform.Core.Assets;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public class ExportWriter : IExportWriter
+    public class ExportWriter<TExportable> : IExportWriter<TExportable> where TExportable : IExportable
     {
         private readonly StreamWriter _streamWriter;
         private readonly CsvWriter _csvWriter;
@@ -20,7 +20,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _csvWriter = new CsvWriter(_streamWriter, csvConfiguration);
         }
 
-        public void WriteRecords(CsvEditorialReview[] records)
+        public void WriteRecords(TExportable[] records)
         {
             _csvWriter.WriteRecords(records);
         }

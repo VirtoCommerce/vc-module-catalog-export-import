@@ -23,7 +23,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         private readonly IExportDataRequestPreprocessor _requestPreprocessor;
         private readonly IExportPagedDataSourceFactory _exportPagedDataSourceFactory;
 
-        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IProductEditorialReviewSearchService productEditorialReviewSearchService, IExportDataRequestPreprocessor requestPreprocessor, IExportPagedDataSourceFactory exportPagedDataSourceFactory)
+        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IExportDataRequestPreprocessor requestPreprocessor, IExportPagedDataSourceFactory exportPagedDataSourceFactory)
         {
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;

@@ -12,7 +12,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly IExportProductSearchService _productSearchService;
         private readonly ExportDataRequest _exportRequest;
 
-        public int CurrentPageNumber { get; }
+        public int CurrentPageNumber { get; private set; }
         public int PageSize { get; }
 
         public IExportable[] Items { get; private set; }
@@ -52,7 +52,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var searchResult = await _productSearchService.SearchAsync(searchCriteria);
 
-            Items = searchResult.Results.Select(x => new CsvPhysicalProduct().FromModel(x)).ToArray();
+            Items = searchResult.Results.Select(x => new CsvPhysicalProduct().FromModel(x)).ToArray<IExportable>();
+
+            CurrentPageNumber++;
 
             return true;
         }

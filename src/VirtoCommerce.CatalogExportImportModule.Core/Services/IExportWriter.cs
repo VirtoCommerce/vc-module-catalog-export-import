@@ -3,8 +3,8 @@ using VirtoCommerce.CatalogExportImportModule.Core.Models;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Services
 {
-    public interface IExportWriter : IDisposable
+    public interface IExportWriter<in TExportable> : IDisposable where TExportable : IExportable
     {
-        void WriteRecords(CsvEditorialReview[] records);
+        void WriteRecords(TExportable[] records);
     }
 }

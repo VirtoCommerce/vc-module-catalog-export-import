@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.Server;
@@ -13,24 +15,23 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs
     public sealed class ExportJob
     {
         private readonly IPushNotificationManager _pushNotificationManager;
-        private readonly IDataExporter _dataExporter;
+        private readonly IEnumerable<IDataExporter> _dataExporters;
 
-        public ExportJob(IPushNotificationManager pushNotificationManager, IDataExporter dataExporter)
+        public ExportJob(IPushNotificationManager pushNotificationManager, IEnumerable<IDataExporter> dataExporters)
         {
             _pushNotificationManager = pushNotificationManager;
-            _dataExporter = dataExporter;
+            _dataExporters = dataExporters;
         }
 
         public async Task ExportBackgroundAsync(ExportDataRequest request, ExportPushNotification pushNotification, IJobCancellationToken jobCancellationToken, PerformContext context)
         {
-            if (pushNotification is null)
-            {
-                throw new ArgumentException(nameof(pushNotification));
-            }
+            ValidateParameters(request, pushNotification);
 
             try
             {
-                await _dataExporter.ExportAsync(request,
+                var dataExporter = _dataExporters.First(x => x.DataType == request.DataType);
+
+                await dataExporter.ExportAsync(request,
                     progressInfo => ProgressCallback(progressInfo, pushNotification, context),
                     new JobCancellationTokenWrapper(jobCancellationToken));
             }
@@ -61,6 +62,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs
             pushNotification.FileUrl = x.FileUrl;
 
             _pushNotificationManager.Send(pushNotification);
+        }
+
+
+        private void ValidateParameters(ExportDataRequest request, ExportPushNotification pushNotification)
+        {
+            if (pushNotification == null)
+            {
+                throw new ArgumentNullException(nameof(pushNotification));
+            }
+
+            var importer = _dataExporters.FirstOrDefault(x => x.DataType == request.DataType);
+
+            if (importer == null)
+            {
+                throw new ArgumentException($"Not allowed argument value in field {nameof(request.DataType)}", nameof(request));
+            }
         }
     }
 }
