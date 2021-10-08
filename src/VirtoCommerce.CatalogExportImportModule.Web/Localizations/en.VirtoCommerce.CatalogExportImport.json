@@ -73,13 +73,13 @@
         "title": "Delete CSV",
         "subtitle": "Are you sure you want to close preview and delete file "
       },
-      "descriptions-export": {
+      "EditorialReview-export": {
         "title": "Descriptions export",
         "subtitle-all": "All {{count}} descriptions",
         "subtitle-not-all": "{{count}} descriptions",
         "subtitle-end": "will be exported to csv file."
       },
-      "physicalProducts-export": {
+      "PhysicalProduct-export": {
         "title": "Products export",
         "subtitle-all": "All {{count}} products",
         "subtitle-not-all": "{{count}} products",

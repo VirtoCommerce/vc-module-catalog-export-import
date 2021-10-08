@@ -43,6 +43,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
             serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
             serviceCollection.AddSingleton<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IDataExporter, DataExporter>();
+            serviceCollection.AddTransient<IExportDataRequestPreprocessor, ExportDataRequestPreprocessor>();
             serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
             serviceCollection.AddTransient<IExportProductSearchService, ExportProductSearchService>();
             serviceCollection.AddSingleton<IExportWriterFactory, ExportWriterFactory>();

@@ -90,7 +90,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
         function showConfirmDialog(exportDataRequest, itemsQty) {
 
             const dialog = {
-                id: 'exportDescriptionConfirmDialog',
+                id: 'exportCatalogConfirmDialog',
                 itemsQty,
                 dataType,
                 exportAll: isSelectedAll,

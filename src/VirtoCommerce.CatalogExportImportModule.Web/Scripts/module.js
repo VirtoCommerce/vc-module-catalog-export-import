@@ -22,7 +22,7 @@ var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoC
         name: 'Descriptions export',
         description: 'Export only product descriptions',
         icon: 'fa fa-list-alt',
-        dataType: 'descriptions',
+        dataType: 'EditorialReview',
         controller: 'virtoCommerce.catalogExportImportModule.exportProcessingController',
         template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/export-processing.tpl.html'
     });
@@ -31,7 +31,7 @@ var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoC
         name: 'Physical products export',
         description: 'Export only physical products',
         icon: 'fas fa-box',
-        dataType: 'physicalProducts',
+        dataType: 'PhysicalProduct',
         controller: 'virtoCommerce.catalogExportImportModule.exportProcessingController',
         template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/export-processing.tpl.html'
     });
@@ -43,7 +43,7 @@ var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoC
             icon: 'fas fa-box',
             controller: 'virtoCommerce.catalogExportImportModule.fileUploadController',
             template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/file-upload.tpl.html',
-            predefinedDataType: { key: 'Physical Products', value: 'CatalogProduct' }
+            predefinedDataType: { key: 'Physical Products', value: 'PhysicalProduct' }
         });
     });
 }]);
