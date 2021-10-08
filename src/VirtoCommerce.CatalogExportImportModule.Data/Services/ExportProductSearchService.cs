@@ -29,7 +29,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 CatalogId = criteria.CatalogId,
                 CategoryIds = criteria.CategoryIds,
                 SearchInChildren = true,
-                SearchInVariations = true,
+                SearchInVariations = false,
                 Take = criteria.Take,
                 Skip = criteria.Skip,
             });
@@ -47,7 +47,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 CatalogId = criteria.CatalogId,
                 ObjectIds = criteria.CategoryIds,
                 SearchInChildren = true,
-                SearchInVariations = true,
+                SearchInVariations = false,
                 Take = take,
                 Skip = skip,
             });
