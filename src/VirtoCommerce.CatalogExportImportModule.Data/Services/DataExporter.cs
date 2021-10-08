@@ -36,6 +36,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _blobStorageProvider = blobStorageProvider;
             _blobUrlResolver = blobUrlResolver;
         }
+
         public abstract string DataType { get; }
 
         public async Task ExportAsync(ExportDataRequest request, Action<ExportProgressInfo> progressCallback, ICancellationToken cancellationToken)
@@ -96,7 +97,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 progressCallback(exportProgress);
             }
         }
-
 
         private string GetExportFilePath(string entityName)
         {

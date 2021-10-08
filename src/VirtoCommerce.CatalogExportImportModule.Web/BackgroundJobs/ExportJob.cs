@@ -49,9 +49,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs
                 pushNotification.Finished = DateTime.UtcNow;
                 await _pushNotificationManager.SendAsync(pushNotification);
             }
-
         }
-
 
         private void ProgressCallback(ExportProgressInfo x, ExportPushNotification pushNotification, PerformContext context)
         {
@@ -63,7 +61,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs
 
             _pushNotificationManager.Send(pushNotification);
         }
-
 
         private void ValidateParameters(ExportDataRequest request, ExportPushNotification pushNotification)
         {
