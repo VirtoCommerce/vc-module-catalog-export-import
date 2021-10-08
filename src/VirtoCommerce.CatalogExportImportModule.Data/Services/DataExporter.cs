@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
@@ -43,7 +44,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             var exportProgress = new ExportProgressInfo { ProcessedCount = 0, Description = "Export has started" };
 
             const string exportDescription = "{0} out of {1} have been exported.";
-            var exportedDescriptionFilePath = GetExportFilePath("Descriptions");
+            var exportedDescriptionFilePath = GetExportFilePath(request.DataType.ToExportFileNamePrefix());
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
             var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, new ExportConfiguration());

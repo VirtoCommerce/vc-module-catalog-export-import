@@ -21,6 +21,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             };
         }
 
+        public static IReadOnlyDictionary<string, string> ExportFileNamePrefixes = new Dictionary<string, string>()
+        {
+            {DataTypes.EditorialReview, "Descriptions"},
+            {DataTypes.PhysicalProduct, "Physical_products"},
+        };
+
         public const int ElasticMaxTake = 10000;
 
         public const int KByte = 1024;
