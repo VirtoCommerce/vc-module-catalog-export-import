@@ -17,7 +17,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public static readonly IReadOnlyDictionary<string, string> Export = new Dictionary<string, string>()
             {
                 {DataTypes.EditorialReview, "Product descriptions export"},
-                {DataTypes.PhysicalProduct, "Physical product export"},
+                {DataTypes.PhysicalProduct, "Physical products export"},
             };
         }
 
