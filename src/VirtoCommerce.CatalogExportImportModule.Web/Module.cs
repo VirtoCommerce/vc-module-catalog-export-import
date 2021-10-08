@@ -12,6 +12,7 @@ using VirtoCommerce.CatalogExportImportModule.Data.Repositories;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Validation;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.FeatureManagementModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -55,6 +56,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
 
             // Workaround. Should be excluded when the catalog module's bug  will be excepted https://virtocommerce.atlassian.net/browse/PT-4224.
             serviceCollection.AddTransient<IListEntryIndexedSearchService, ListEntryIndexedSearchService>();
+            // Workaround
+            serviceCollection.AddTransient<IProductSearchService, ExtendedProductSearchService>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

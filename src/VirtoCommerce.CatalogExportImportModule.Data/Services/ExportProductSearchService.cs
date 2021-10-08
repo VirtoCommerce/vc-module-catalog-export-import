@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
@@ -23,37 +24,49 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var result = new ProductSearchResult();
 
-            var resultByCategories = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
+            if (!criteria.CategoryIds.IsNullOrEmpty())
             {
-                ProductTypes = new[] { PhysicalProductType },
-                CatalogId = criteria.CatalogId,
-                CategoryIds = criteria.CategoryIds,
-                SearchInChildren = true,
-                SearchInVariations = false,
-                Take = criteria.Take,
-                Skip = criteria.Skip,
-            });
+                var resultByCategories = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
+                {
+                    ProductTypes = new[] { PhysicalProductType },
+                    CatalogId = criteria.CatalogId,
+                    CategoryIds = criteria.CategoryIds,
+                    SearchInChildren = true,
+                    SearchInVariations = false,
+                    Take = criteria.Take,
+                    Skip = criteria.Skip,
+                });
 
-            result.Results = resultByCategories.Results;
-            result.TotalCount = resultByCategories.TotalCount;
+                result.Results = resultByCategories.Results;
+                result.TotalCount = resultByCategories.TotalCount;
+            }
 
-            var totalCount = resultByCategories.TotalCount;
+            var totalCount = result.TotalCount;
             var skip = Math.Min(totalCount, criteria.Skip);
             var take = Math.Min(criteria.Take, Math.Max(0, totalCount - criteria.Skip));
 
-            var resultByItems = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
-            {
-                ProductTypes = new[] { PhysicalProductType },
-                CatalogId = criteria.CatalogId,
-                ObjectIds = criteria.CategoryIds,
-                SearchInChildren = true,
-                SearchInVariations = false,
-                Take = take,
-                Skip = skip,
-            });
+            var itemIds = criteria.ItemIds;
 
-            result.Results.AddRange(resultByItems.Results);
-            result.TotalCount += resultByItems.TotalCount;
+            var foundedItemIds = result.Results.Select(x => x.Id).ToArray();
+
+            itemIds = itemIds.Except(foundedItemIds).ToArray();
+
+            if (!itemIds.IsNullOrEmpty())
+            {
+                var resultByItems = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
+                {
+                    ProductTypes = new[] { PhysicalProductType },
+                    CatalogId = criteria.CatalogId,
+                    ObjectIds = criteria.ItemIds,
+                    SearchInChildren = false,
+                    SearchInVariations = false,
+                    Take = take,
+                    Skip = skip,
+                });
+
+                result.Results.AddRange(resultByItems.Results);
+                result.TotalCount += resultByItems.TotalCount;
+            }
 
             return result;
         }
