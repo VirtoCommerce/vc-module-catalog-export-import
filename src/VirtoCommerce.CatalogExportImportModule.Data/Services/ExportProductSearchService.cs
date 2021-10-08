@@ -1,74 +1,94 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
-using VirtoCommerce.CatalogModule.Core.Search;
+using VirtoCommerce.CatalogModule.Core.Services;
+using VirtoCommerce.CatalogModule.Data.Model;
+using VirtoCommerce.CatalogModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public sealed class ExportProductSearchService : IExportProductSearchService
+    public class ExportProductSearchService : IExportProductSearchService
     {
         private const string PhysicalProductType = "Physical";
 
-        private readonly IProductSearchService _productSearchService;
+        private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
+        private readonly IItemService _itemService;
 
-        public ExportProductSearchService(IProductSearchService productSearchService)
+        public ExportProductSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IItemService itemService)
         {
-            _productSearchService = productSearchService;
+            _catalogRepositoryFactory = catalogRepositoryFactory;
+            _itemService = itemService;
         }
 
         public async Task<ProductSearchResult> SearchAsync(ExportProductSearchCriteria criteria)
         {
             var result = new ProductSearchResult();
 
-            if (!criteria.CategoryIds.IsNullOrEmpty())
-            {
-                var resultByCategories = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
-                {
-                    ProductTypes = new[] { PhysicalProductType },
-                    CatalogId = criteria.CatalogId,
-                    CategoryIds = criteria.CategoryIds,
-                    SearchInChildren = true,
-                    SearchInVariations = false,
-                    Take = criteria.Take,
-                    Skip = criteria.Skip,
-                });
+            using var catalogRepository = _catalogRepositoryFactory();
 
-                result.Results = resultByCategories.Results;
-                result.TotalCount = resultByCategories.TotalCount;
+            // Optimize performance and CPU usage
+            catalogRepository.DisableChangesTracking();
+
+            var query = catalogRepository.Items;
+
+            query = query.Where(x => x.CatalogId == criteria.CatalogId && x.ParentId == null && x.ProductType == PhysicalProductType);
+
+
+            if (!criteria.CategoryIds.IsNullOrEmpty() && !criteria.ItemIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.CategoryIds.Contains(x.CategoryId)
+                                                               || criteria.ItemIds.Contains(x.Id));
+            }
+            else if (!criteria.CategoryIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.CategoryIds.Contains(x.CategoryId));
+            }
+            else if (!criteria.ItemIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.ItemIds.Contains(x.Id));
             }
 
-            var totalCount = result.TotalCount;
-            var skip = Math.Min(totalCount, criteria.Skip);
-            var take = Math.Min(criteria.Take, Math.Max(0, totalCount - criteria.Skip));
+            result.TotalCount = await query.CountAsync();
 
-            var itemIds = criteria.ItemIds;
+            var sortInfos = BuildSortExpression(criteria);
 
-            var foundedItemIds = result.Results.Select(x => x.Id).ToArray();
-
-            itemIds = itemIds.Except(foundedItemIds).ToArray();
-
-            if (!itemIds.IsNullOrEmpty())
+            if (criteria.Take > 0 && result.TotalCount > 0)
             {
-                var resultByItems = await _productSearchService.SearchProductsAsync(new ProductSearchCriteria()
-                {
-                    ProductTypes = new[] { PhysicalProductType },
-                    CatalogId = criteria.CatalogId,
-                    ObjectIds = criteria.ItemIds,
-                    SearchInChildren = false,
-                    SearchInVariations = false,
-                    Take = take,
-                    Skip = skip,
-                });
+                var ids = await query
+                    .OrderBySortInfos(sortInfos)
+                    .Select(x => x.Id)
+                    .Skip(criteria.Skip)
+                    .Take(criteria.Take)
+                    .AsNoTracking()
+                    .ToArrayAsync();
 
-                result.Results.AddRange(resultByItems.Results);
-                result.TotalCount += resultByItems.TotalCount;
+                result.Results = await _itemService.GetByIdsAsync(ids, respGroup: ItemResponseGroup.ItemInfo.ToString());
             }
 
             return result;
+        }
+
+
+        protected virtual IList<SortInfo> BuildSortExpression(ExportProductSearchCriteria criteria)
+        {
+            var sortInfos = criteria.SortInfos;
+            if (sortInfos.IsNullOrEmpty())
+            {
+                sortInfos = new[]
+                {
+                    new SortInfo { SortColumn = nameof(ItemEntity.Id) }
+                };
+            }
+
+            return sortInfos;
         }
     }
 }

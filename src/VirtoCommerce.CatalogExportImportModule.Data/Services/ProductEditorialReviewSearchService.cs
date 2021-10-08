@@ -8,7 +8,6 @@ using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogModule.Data.Model;
 using VirtoCommerce.CatalogModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
@@ -17,18 +16,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     {
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
         private readonly IProductEditorialReviewService _productEditorialReviewService;
-        private readonly IListEntryIndexedSearchService _listEntrySearchService;
-        private readonly ISettingsManager _settingsManager;
 
-        public ProductEditorialReviewSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductEditorialReviewService productEditorialReviewService,
-            IListEntryIndexedSearchService listEntrySearchService,
-            ISettingsManager settingsManager
-            )
+        public ProductEditorialReviewSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductEditorialReviewService productEditorialReviewService)
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
             _productEditorialReviewService = productEditorialReviewService;
-            _listEntrySearchService = listEntrySearchService;
-            _settingsManager = settingsManager;
         }
 
         public async Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ExportProductSearchCriteria criteria)
