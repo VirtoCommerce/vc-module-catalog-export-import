@@ -7,7 +7,6 @@ using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
 
@@ -35,10 +34,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         [Route("count")]
         public async Task<ActionResult<object>> GetTotalCount([FromBody] ExportDataRequest request)
         {
-            var needExtendRequestWithChildCategories =
-                request.DataType.EqualsInvariant(ModuleConstants.DataTypes.EditorialReview);
-
-            await _requestPreprocessor.PreprocessRequestAsync(request, needExtendRequestWithChildCategories);
+            await _requestPreprocessor.PreprocessRequestAsync(request, true);
 
             var dataSource = _exportPagedDataSourceFactory.Create(0, request);
 
@@ -59,7 +55,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
 
             await _pushNotificationManager.SendAsync(notification);
 
-            await _requestPreprocessor.PreprocessRequestAsync(request);
+            await _requestPreprocessor.PreprocessRequestAsync(request, true);
 
             notification.JobId = BackgroundJob.Enqueue<ExportJob>(exportJob => exportJob.ExportBackgroundAsync(request, notification, JobCancellationToken.Null, null));
 

@@ -9,14 +9,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     {
         private readonly IBlobStorageProvider _blobStorageProvider;
 
-        //private static Dictionary<string, Type> registeredTypes = new Dictionary<string, System.Type>();
-
-        //static GenericFactory()
-        //{
-        //    registeredTypes.Add(ModuleConstants.DataTypes.EditorialReview, typeof(ExportWriter<CsvEditorialReview>));
-        //    registeredTypes.Add(ModuleConstants.DataTypes.PhysicalProduct, typeof(GenericString));
-        //}
-
         public ExportWriterFactory(IBlobStorageProvider blobStorageProvider)
         {
             _blobStorageProvider = blobStorageProvider;
