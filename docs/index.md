@@ -1,11 +1,6 @@
 ## 01. Overview
 
-This module allows store managers to manage the product catalog without using the database requests approach. In 1.0 release only the products descriptions export/import was implemented.
-
-If you want to transfer a large amount of products information between Virto Commerce and another system, then you can use a specially-formatted spreadsheet to import or export that data. Virto Commerce uses CSV (semicolon-separated value) files to perform this kind of bulk task.
-
-![Main-Screen](media/main-screen-export.png)
-![Main-Screen-Import](media/main-screen-import.png)
+This module allows store managers to manage the product catalog without using the database requests approach. In 1.0 release only the products descriptions export/import is implemented.
 
 > Note If you want to automated transferring information from 3rd party system, like ERP, then see API, Integration Middleware approach and Azure Logic Apps connectors.
 
@@ -16,7 +11,7 @@ If you want to transfer a large amount of products information between Virto Com
 
 ## 03. Work with module
 
-### Export selected descriptions
+### Export selected descriptions:
 1. Go to Virto Commerce platform.
 2. Open any category inside the Catalog module.
 3. To export all descriptions of all products with descriptions in the current category, click "Export" on the toolbar.
@@ -25,14 +20,14 @@ If you want to transfer a large amount of products information between Virto Com
 5. If you want to export only descriptions in selected categories or selected products descriptions, just select them or use filters to refine.
 ![Docs-screen-2](media/mkdocs_screens/02.png)
 
-### Import descriptions
+### Import descriptions:
 1. Go to Virto Commerce platform.
 2. Open any category inside the Catalog module.
 3. To import descriptions, click "Import" on the toolbar.
 4. Use "Description import" on the "Available importers" blade.
 ![Docs-screen-2](media/mkdocs_screens/03.png)
 
-### Create & update descriptions during the import process
+### Create & update descriptions during the import process:
 <table>
     <tr>
         <th>Description Id</th>
@@ -40,19 +35,19 @@ If you want to transfer a large amount of products information between Virto Com
         <th>Action</th>
     </tr>
     <tr>
-        <th>specified, exist</th>
-        <th>SKU value will be ignored</th>
-        <th>update</th>
+        <th align="left">specified in the file, exists in the database</th>
+        <th align="left">SKU value will be ignored</th>
+        <th align="left">update</th>
     </tr>
     <tr>
-        <th>specified, not exist</th>
-        <th>specified, exist</th>
-        <th>create</th>
+        <th align="left">specified in the file, not exists in the database</th>
+        <th align="left">specified in the file, exists in the database</th>
+        <th align="left">create</th>
     </tr>
     <tr>
-        <th>specified, not exist (or not specified)</th>
-        <th>specified, not exist (or not specified)</th>
-        <th>no action</th>
+        <th align="left">specified in the file, not exists in the database<br>(or not specified in the file)</th>
+        <th align="left">specified in the file, not exists in the database<br>(or not specified in the file)</th>
+        <th align="left">no action</th>
     </tr>
 </table>
 
