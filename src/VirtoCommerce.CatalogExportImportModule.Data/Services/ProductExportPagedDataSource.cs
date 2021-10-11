@@ -11,23 +11,25 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     public class ProductExportPagedDataSource : IExportPagedDataSource
     {
         private readonly IExportProductSearchService _productSearchService;
+        private readonly ExportDataRequest _exportRequest;
 
         public int CurrentPageNumber { get; private set; }
-        public int PageSize { get; set; }
-        public ExportDataRequest Request { get; set; }
+        public int PageSize { get; }
 
         public string DataType => ModuleConstants.DataTypes.PhysicalProduct;
 
         public IExportable[] Items { get; private set; }
 
-        public ProductExportPagedDataSource(IExportProductSearchService productSearchService)
+        public ProductExportPagedDataSource(IExportProductSearchService productSearchService, int pageSize, ExportDataRequest request)
         {
             _productSearchService = productSearchService;
+            PageSize = pageSize;
+            _exportRequest = request;
         }
 
         public async Task<int> GetTotalCountAsync()
         {
-            var searchCriteria = Request.ToExportProductSearchCriteria();
+            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
             searchCriteria.Take = 0;
 
             var searchResult = await _productSearchService.SearchAsync(searchCriteria);
@@ -43,7 +45,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 return false;
             }
 
-            var searchCriteria = Request.ToExportProductSearchCriteria();
+            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
 
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;

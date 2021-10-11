@@ -6,8 +6,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
     public interface IExportPagedDataSource
     {
         int CurrentPageNumber { get; }
-        int PageSize { get; set; }
-        ExportDataRequest Request { get; set; }
+        int PageSize { get; }
         string DataType { get; }
 
         Task<int> GetTotalCountAsync();
