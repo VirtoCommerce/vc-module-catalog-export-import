@@ -1,7 +1,7 @@
 <div class="modal-header catalog-export-import">
     <h3 class="modal-title">{{ 'catalogExportImport.dialogs.'+ dataType + '-export.title' | translate }}</h3>
 </div>
-<div class="modal-body" ng-switch on="dataType">
+<div class="modal-body">
     <div>
         <b ng-if="exportAll">{{ 'catalogExportImport.dialogs.'+ dataType + '-export.subtitle-all' | translate: {count: itemsQty} }}</b>
         <b ng-if="!exportAll">{{ 'catalogExportImport.dialogs.'+ dataType + '-export.subtitle-not-all' | translate: {count: itemsQty} }}</b>
