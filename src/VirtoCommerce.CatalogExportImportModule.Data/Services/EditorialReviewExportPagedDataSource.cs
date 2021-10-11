@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
@@ -14,31 +15,29 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     {
         private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
         private readonly IItemService _itemService;
-        private readonly ExportDataRequest _exportRequest;
+
 
         public int CurrentPageNumber { get; private set; }
 
-        public int PageSize { get; }
+        public int PageSize { get; set; }
+        public ExportDataRequest Request { get; set; }
+
+        public string DataType => ModuleConstants.DataTypes.EditorialReview;
 
         public IExportable[] Items { get; private set; }
 
         public EditorialReviewExportPagedDataSource(
             IProductEditorialReviewSearchService productEditorialReviewSearchService,
-            IItemService itemService,
-            int pageSize,
-            ExportDataRequest exportRequest
+            IItemService itemService
             )
         {
             _productEditorialReviewSearchService = productEditorialReviewSearchService;
             _itemService = itemService;
-
-            _exportRequest = exportRequest;
-            PageSize = pageSize;
         }
 
         public async Task<int> GetTotalCountAsync()
         {
-            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
+            var searchCriteria = Request.ToExportProductSearchCriteria();
             searchCriteria.Take = 0;
 
             var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria);
@@ -54,7 +53,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 return false;
             }
 
-            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
+            var searchCriteria = Request.ToExportProductSearchCriteria();
 
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;

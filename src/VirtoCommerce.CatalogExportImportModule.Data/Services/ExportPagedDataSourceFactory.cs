@@ -1,36 +1,32 @@
 using System;
-using VirtoCommerce.CatalogExportImportModule.Core;
+using System.Collections.Generic;
+using System.Linq;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
-using VirtoCommerce.CatalogModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public class ExportPagedDataSourceFactory : IExportPagedDataSourceFactory
     {
-        private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
-        private readonly IItemService _itemService;
-        private readonly IExportProductSearchService _productSearchService;
-
-        public ExportPagedDataSourceFactory(
-            IProductEditorialReviewSearchService productEditorialReviewSearchService,
-            IExportProductSearchService productSearchService,
-            IItemService itemService
-            )
+        private readonly IEnumerable<Func<ExportDataRequest, int, IExportPagedDataSource>> _dataSourceFactories;
+        public ExportPagedDataSourceFactory(IEnumerable<Func<ExportDataRequest, int, IExportPagedDataSource>> dataSourceFactories)
         {
-            _productEditorialReviewSearchService = productEditorialReviewSearchService;
-            _itemService = itemService;
-            _productSearchService = productSearchService;
+            _dataSourceFactories = dataSourceFactories;
         }
 
         public IExportPagedDataSource Create(int pageSize, ExportDataRequest request)
         {
-            return request.DataType switch
+            var resultFactory = _dataSourceFactories.FirstOrDefault(x => x(request, pageSize).DataType.EqualsInvariant(request.DataType));
+
+            if (resultFactory is null)
             {
-                ModuleConstants.DataTypes.EditorialReview => new EditorialReviewExportPagedDataSource(_productEditorialReviewSearchService, _itemService, pageSize, request),
-                ModuleConstants.DataTypes.PhysicalProduct => new ProductExportPagedDataSource(_productSearchService, pageSize, request),
-                _ => throw new ArgumentException(nameof(request.DataType)),
-            };
+                throw new ArgumentException(nameof(request.DataType));
+            }
+
+            var result = resultFactory(request, pageSize);
+
+            return result;
         }
     }
 }

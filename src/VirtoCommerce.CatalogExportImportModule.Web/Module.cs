@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using VirtoCommerce.CatalogExportImportModule.Data.Repositories;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Validation;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.FeatureManagementModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -51,6 +53,30 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
             serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
             serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
+
+            serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
+                (request, pageSize) =>
+                {
+                    var result =
+                        new EditorialReviewExportPagedDataSource(serviceProvider.GetService<IProductEditorialReviewSearchService>(), serviceProvider.GetService<IItemService>())
+                        {
+                            PageSize = pageSize,
+                            Request = request,
+                        };
+
+                    return result;
+                });
+            serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
+                (request, pageSize) =>
+                {
+                    var result = new ProductExportPagedDataSource(serviceProvider.GetService<IExportProductSearchService>())
+                    {
+                        PageSize = pageSize,
+                        Request = request
+                    };
+
+                    return result;
+                });
 
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
 
