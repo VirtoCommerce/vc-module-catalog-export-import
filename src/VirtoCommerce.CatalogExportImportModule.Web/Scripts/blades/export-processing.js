@@ -1,11 +1,12 @@
 angular.module('virtoCommerce.catalogExportImportModule')
-.controller('virtoCommerce.catalogExportImportModule.exportProcessingController', ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.catalogExportImportModule.export',
-    function ($scope, bladeNavigationService, settings, $q, dialogService, exportResources) {
+.controller('virtoCommerce.catalogExportImportModule.exportProcessingController', ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.catalogExportImportModule.export', 'editorialReview',
+    function ($scope, bladeNavigationService, settings, $q, dialogService, exportResources, editorialReview) {
         var blade = $scope.blade;
         const dataType = blade.dataType;
         blade.title = 'catalogExportImport.blades.export-processing.title';
         blade.headIcon = "fa fa-download";
         blade.isLoading = true;
+        $scope.editorialReview = editorialReview;
 
         const isSelectedAll = getIsSelectedAll();
 
