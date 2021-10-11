@@ -48,5 +48,5 @@ var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoC
     });
 }]);
 
-module.constant('availableDataTypes', [{ key: 'Descriptions', value: 'EditorialReview' }, { key: 'Physical Products', value: 'CatalogProduct' }]);
+module.constant('availableDataTypes', [{ key: 'Descriptions', value: 'EditorialReview' }, { key: 'Physical Products', value: 'PhysicalProduct' }]);
 module.constant('editorialReview', 'EditorialReview');

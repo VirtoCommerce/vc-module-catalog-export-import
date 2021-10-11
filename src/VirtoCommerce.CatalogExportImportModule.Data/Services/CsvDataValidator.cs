@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
@@ -29,8 +28,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             return dataType switch
             {
-                nameof(EditorialReview) => await ValidateAsync<CsvEditorialReview>(filePath),
-                nameof(CatalogProduct) => await ValidateAsync<CsvPhysicalProduct>(filePath),
+                ModuleConstants.DataTypes.EditorialReview => await ValidateAsync<CsvEditorialReview>(filePath),
+                ModuleConstants.DataTypes.PhysicalProduct => await ValidateAsync<CsvPhysicalProduct>(filePath),
                 _ => throw new ArgumentException("Not allowed argument value", nameof(dataType)),
             };
         }
