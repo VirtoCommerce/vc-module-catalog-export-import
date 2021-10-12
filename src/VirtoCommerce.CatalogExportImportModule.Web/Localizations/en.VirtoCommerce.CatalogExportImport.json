@@ -87,11 +87,12 @@
         "subtitle-end": "will be exported to csv file."
       },
       "limits-warning": {
-        "title": "Descriptions export",
+        "EditorialReview-title": "Descriptions export",
+        "PhysicalProduct-title": "Products export",
         "main-text-beginning": "You have selected",
         "items": "items",
         "main-text-middle": "but export is limited with",
-        "main-text-end": ", you retrive to export more"
+        "main-text-end": ", you retrieve to export more"
       },
       "shared-export": {
         "export": "Export"

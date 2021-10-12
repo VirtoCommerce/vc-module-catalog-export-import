@@ -82,6 +82,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
         function showWarningDialog(itemsQty, limitQty) {
             const dialog = {
                 id: 'exportLimitWarningDialog',
+                dataType,
                 itemsQty,
                 limitQty
             };
