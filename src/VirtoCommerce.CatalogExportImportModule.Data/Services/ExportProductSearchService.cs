@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Model.Search;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.CatalogModule.Data.Model;
 using VirtoCommerce.CatalogModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Common;
@@ -12,51 +15,54 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public class ProductEditorialReviewSearchService : IProductEditorialReviewSearchService
+    public class ExportProductSearchService : IExportProductSearchService
     {
-        private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
-        private readonly IProductEditorialReviewService _productEditorialReviewService;
+        private const string PhysicalProductType = "Physical";
 
-        public ProductEditorialReviewSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IProductEditorialReviewService productEditorialReviewService)
+        private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
+        private readonly IItemService _itemService;
+
+        public ExportProductSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IItemService itemService)
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
-            _productEditorialReviewService = productEditorialReviewService;
+            _itemService = itemService;
         }
 
-        public async Task<ProductEditorialReviewSearchResult> SearchEditorialReviewsAsync(ExportProductSearchCriteria criteria)
+        public async Task<ProductSearchResult> SearchAsync(ExportProductSearchCriteria criteria)
         {
-            var result = new ProductEditorialReviewSearchResult();
+            var result = new ProductSearchResult();
 
             using var catalogRepository = _catalogRepositoryFactory();
 
             // Optimize performance and CPU usage
             catalogRepository.DisableChangesTracking();
 
-            var descriptionQuery = catalogRepository.EditorialReviews;
+            var query = catalogRepository.Items;
 
-            descriptionQuery = descriptionQuery.Where(x => x.CatalogItem.CatalogId == criteria.CatalogId);
+            query = query.Where(x => x.CatalogId == criteria.CatalogId && x.ParentId == null && x.ProductType == PhysicalProductType);
+
 
             if (!criteria.CategoryIds.IsNullOrEmpty() && !criteria.ItemIds.IsNullOrEmpty())
             {
-                descriptionQuery = descriptionQuery.Where(x => criteria.CategoryIds.Contains(x.CatalogItem.CategoryId)
-                || criteria.ItemIds.Contains(x.ItemId));
+                query = query.Where(x => criteria.CategoryIds.Contains(x.CategoryId)
+                                                               || criteria.ItemIds.Contains(x.Id));
             }
             else if (!criteria.CategoryIds.IsNullOrEmpty())
             {
-                descriptionQuery = descriptionQuery.Where(x => criteria.CategoryIds.Contains(x.CatalogItem.CategoryId));
+                query = query.Where(x => criteria.CategoryIds.Contains(x.CategoryId));
             }
             else if (!criteria.ItemIds.IsNullOrEmpty())
             {
-                descriptionQuery = descriptionQuery.Where(x => criteria.ItemIds.Contains(x.ItemId));
+                query = query.Where(x => criteria.ItemIds.Contains(x.Id));
             }
 
-            result.TotalCount = await descriptionQuery.CountAsync();
+            result.TotalCount = await query.CountAsync();
 
             var sortInfos = BuildSortExpression(criteria);
 
             if (criteria.Take > 0 && result.TotalCount > 0)
             {
-                var ids = await descriptionQuery
+                var ids = await query
                     .OrderBySortInfos(sortInfos)
                     .Select(x => x.Id)
                     .Skip(criteria.Skip)
@@ -64,11 +70,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                     .AsNoTracking()
                     .ToArrayAsync();
 
-                result.Results = await _productEditorialReviewService.GetByIdsAsync(ids);
+                result.Results = await _itemService.GetByIdsAsync(ids, respGroup: ItemResponseGroup.ItemInfo.ToString());
             }
 
             return result;
         }
+
 
         protected virtual IList<SortInfo> BuildSortExpression(ExportProductSearchCriteria criteria)
         {
@@ -77,7 +84,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             {
                 sortInfos = new[]
                 {
-                    new SortInfo { SortColumn = nameof(EditorialReviewEntity.Id) }
+                    new SortInfo { SortColumn = nameof(ItemEntity.Id) }
                 };
             }
 

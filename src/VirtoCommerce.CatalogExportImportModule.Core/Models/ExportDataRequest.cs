@@ -2,6 +2,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
     public class ExportDataRequest
     {
+        public string DataType { get; set; }
         public string CatalogId { get; set; }
         public string CategoryId { get; set; }
         public string[] CategoryIds { get; set; }
@@ -9,18 +10,5 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         public string[] ItemIds { get; set; }
 
         public string Keyword { get; set; }
-
-        public ProductEditorialReviewSearchCriteria ToSearchCriteria()
-        {
-            return new ProductEditorialReviewSearchCriteria
-            {
-                CatalogId = CatalogId,
-                CategoryId = CategoryId,
-                CategoryIds = CategoryIds,
-                ItemIds = ItemIds,
-                Keyword = Keyword,
-                DeepSearch = true,
-            };
-        }
     }
 }

@@ -1,14 +1,16 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using VirtoCommerce.CatalogModule.Core.Model;
-using VirtoCommerce.CatalogModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Services;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public class ExportPagedDataSource : IExportPagedDataSource
+    public class EditorialReviewExportPagedDataSource : IExportPagedDataSource
 
     {
         private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
@@ -19,25 +21,26 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         public int PageSize { get; }
 
+        public string DataType => ModuleConstants.DataTypes.EditorialReview;
+
         public IExportable[] Items { get; private set; }
 
-        public ExportPagedDataSource(
+        public EditorialReviewExportPagedDataSource(
             IProductEditorialReviewSearchService productEditorialReviewSearchService,
             IItemService itemService,
             int pageSize,
-            ExportDataRequest exportRequest
+            ExportDataRequest request
             )
         {
             _productEditorialReviewSearchService = productEditorialReviewSearchService;
             _itemService = itemService;
-
-            _exportRequest = exportRequest;
             PageSize = pageSize;
+            _exportRequest = request;
         }
 
         public async Task<int> GetTotalCountAsync()
         {
-            var searchCriteria = _exportRequest.ToSearchCriteria();
+            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
             searchCriteria.Take = 0;
 
             var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(searchCriteria);
@@ -53,7 +56,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 return false;
             }
 
-            var searchCriteria = _exportRequest.ToSearchCriteria();
+            var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
 
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
@@ -18,25 +19,28 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
     {
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
-        private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
+        private readonly IExportDataRequestPreprocessor _requestPreprocessor;
+        private readonly IExportPagedDataSourceFactory _exportPagedDataSourceFactory;
 
-        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IProductEditorialReviewSearchService productEditorialReviewSearchService)
+        public ExportController(IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IExportDataRequestPreprocessor requestPreprocessor, IExportPagedDataSourceFactory exportPagedDataSourceFactory)
         {
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
-            _productEditorialReviewSearchService = productEditorialReviewSearchService;
+            _requestPreprocessor = requestPreprocessor;
+            _exportPagedDataSourceFactory = exportPagedDataSourceFactory;
         }
 
         [HttpPost]
         [Route("count")]
         public async Task<ActionResult<object>> GetTotalCount([FromBody] ExportDataRequest request)
         {
-            var criteria = request.ToSearchCriteria();
-            criteria.Take = 0;
+            await _requestPreprocessor.PreprocessRequestAsync(request, true);
 
-            var searchResult = await _productEditorialReviewSearchService.SearchEditorialReviewsAsync(criteria);
+            var dataSource = _exportPagedDataSourceFactory.Create(0, request);
 
-            return Ok(new ExportTotalCountResponse { TotalCount = searchResult.TotalCount });
+            var totalCount = await dataSource.GetTotalCountAsync();
+
+            return Ok(new ExportTotalCountResponse { TotalCount = totalCount });
         }
 
         [HttpPost]
@@ -45,11 +49,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         {
             var notification = new ExportPushNotification(_userNameResolver.GetCurrentUserName())
             {
-                Title = "Product descriptions export",
+                Title = request.DataType.ToPushNotificationTitle(),
                 Description = "Starting export task...",
             };
 
             await _pushNotificationManager.SendAsync(notification);
+
+            await _requestPreprocessor.PreprocessRequestAsync(request, true);
 
             notification.JobId = BackgroundJob.Enqueue<ExportJob>(exportJob => exportJob.ExportBackgroundAsync(request, notification, JobCancellationToken.Null, null));
 

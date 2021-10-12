@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
@@ -13,7 +14,7 @@ using VirtoCommerce.Platform.Core.Extensions;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public class DataExporter : IDataExporter
+    public abstract class DataExporter<TExportable> : IDataExporter where TExportable : IExportable
     {
         private readonly IExportPagedDataSourceFactory _exportPagedDataSourceFactory;
         private readonly IExportWriterFactory _exportWriterFactory;
@@ -21,7 +22,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
-        public DataExporter(
+        protected DataExporter(
             IExportPagedDataSourceFactory exportPagedDataSourceFactory,
             IExportWriterFactory exportWriterFactory,
             IOptions<PlatformOptions> platformOptions,
@@ -36,6 +37,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _blobUrlResolver = blobUrlResolver;
         }
 
+        public abstract string DataType { get; }
+
         public async Task ExportAsync(ExportDataRequest request, Action<ExportProgressInfo> progressCallback, ICancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -43,10 +46,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             var exportProgress = new ExportProgressInfo { ProcessedCount = 0, Description = "Export has started" };
 
             const string exportDescription = "{0} out of {1} have been exported.";
-            var exportedDescriptionFilePath = GetExportFilePath("Descriptions");
+            var exportFilePath = GetExportFilePath(request.DataType.ToExportFileNamePrefix());
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
-            var exportWriter = _exportWriterFactory.Create(exportedDescriptionFilePath, new ExportConfiguration());
+            var exportWriter = _exportWriterFactory.Create<TExportable>(exportFilePath, new ExportConfiguration());
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             exportProgress.Description = "Fetching...";
@@ -59,14 +62,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    var descriptions = dataSource.Items.OfType<CsvEditorialReview>().ToArray();
+                    var exportItems = dataSource.Items.OfType<TExportable>().ToArray();
 
-                    exportProgress.ProcessedCount += dataSource.Items.Length;
+                    exportProgress.ProcessedCount += exportItems.Length;
                     exportProgress.Description = string.Format(exportDescription, exportProgress.ProcessedCount,
                         exportProgress.TotalCount);
                     progressCallback(exportProgress);
 
-                    exportWriter.WriteRecords(descriptions);
+                    exportWriter.WriteRecords(exportItems);
                 }
 
                 exportProgress.Description = "Export completed";
@@ -78,15 +81,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             try
             {
-                var exportedDescriptionsFileInfo = await _blobStorageProvider.GetBlobInfoAsync(exportedDescriptionFilePath);
+                var exportedDescriptionsFileInfo = await _blobStorageProvider.GetBlobInfoAsync(exportFilePath);
 
                 if (exportedDescriptionsFileInfo.Size > 0)
                 {
-                    exportProgress.FileUrl = _blobUrlResolver.GetAbsoluteUrl(exportedDescriptionFilePath);
+                    exportProgress.FileUrl = _blobUrlResolver.GetAbsoluteUrl(exportFilePath);
                 }
                 else
                 {
-                    await _blobStorageProvider.RemoveAsync(new[] { exportedDescriptionFilePath });
+                    await _blobStorageProvider.RemoveAsync(new[] { exportFilePath });
                 }
             }
             finally
@@ -94,7 +97,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 progressCallback(exportProgress);
             }
         }
-
 
         private string GetExportFilePath(string entityName)
         {

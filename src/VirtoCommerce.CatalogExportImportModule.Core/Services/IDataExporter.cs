@@ -7,6 +7,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
 {
     public interface IDataExporter
     {
+        string DataType { get; }
+
         Task ExportAsync(ExportDataRequest request, Action<ExportProgressInfo> progressCallback, ICancellationToken cancellationToken);
     }
 }

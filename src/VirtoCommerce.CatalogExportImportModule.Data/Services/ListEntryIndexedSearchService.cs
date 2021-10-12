@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogModule.Core;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.ListEntry;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
-using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -16,7 +16,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     /// Service for indexed searching of list entries.
     /// Logic moved from
     /// https://github.com/VirtoCommerce/vc-module-catalog/blob/a82b365207d280d25b06b76e933bffd23369fe68/src/VirtoCommerce.CatalogModule.Web/Controllers/Api/CatalogModuleListEntryController.cs#L300
-    /// it should be excluded when next bug will be eliminated https://virtocommerce.atlassian.net/browse/PT-2906. 
+    /// it should be excluded when next bug will be eliminated https://virtocommerce.atlassian.net/browse/PT-4224.
     /// </summary>
     public sealed class ListEntryIndexedSearchService : IListEntryIndexedSearchService
     {
@@ -37,6 +37,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _listEntrySearchService = listEntrySearchService;
             _settingsManager = settingsManager;
         }
+
         public async Task<ListEntrySearchResult> SearchAsync(CatalogListEntrySearchCriteria criteria)
         {
             var result = new ListEntrySearchResult();
@@ -61,7 +62,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 const ItemResponseGroup itemResponseGroup = ItemResponseGroup.ItemInfo | ItemResponseGroup.Outlines;
 
-                var productIndexedSearchCriteria = AbstractTypeFactory<ProductIndexedSearchCriteria>.TryCreateInstance().FromListEntryCriteria(criteria) as ProductIndexedSearchCriteria;
+                var productIndexedSearchCriteria = (ProductIndexedSearchCriteria)AbstractTypeFactory<ProductIndexedSearchCriteria>.TryCreateInstance().FromListEntryCriteria(criteria);
                 productIndexedSearchCriteria.ResponseGroup = itemResponseGroup.ToString();
 
                 var indexedSearchResult = await _productIndexedSearchService.SearchAsync(productIndexedSearchCriteria);

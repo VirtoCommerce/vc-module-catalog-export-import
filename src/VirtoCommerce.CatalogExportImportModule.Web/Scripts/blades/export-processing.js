@@ -1,10 +1,12 @@
 angular.module('virtoCommerce.catalogExportImportModule')
-.controller('virtoCommerce.catalogExportImportModule.exportProcessingController', ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.catalogExportImportModule.export',
-    function ($scope, bladeNavigationService, settings, $q, dialogService, exportResources) {
+.controller('virtoCommerce.catalogExportImportModule.exportProcessingController', ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.settings', '$q', 'platformWebApp.dialogService', 'virtoCommerce.catalogExportImportModule.export', 'editorialReview',
+    function ($scope, bladeNavigationService, settings, $q, dialogService, exportResources, editorialReview) {
         var blade = $scope.blade;
+        const dataType = blade.dataType;
         blade.title = 'catalogExportImport.blades.export-processing.title';
         blade.headIcon = "fa fa-download";
         blade.isLoading = true;
+        $scope.editorialReview = editorialReview;
 
         const isSelectedAll = getIsSelectedAll();
 
@@ -14,19 +16,20 @@ angular.module('virtoCommerce.catalogExportImportModule')
             const getExportLimitsPromise = settings.getValues({ id: 'CatalogExportImport.Export.LimitOfLines' }).$promise;
 
             $q.all([getTotalCountPromise, getExportLimitsPromise]).then(([totalCountResponse, exportLimitResponse]) => {
-                const descriptionsTotalCount = totalCountResponse.totalCount;
+                const totalCount = totalCountResponse.totalCount;
                 const exportLimit = exportLimitResponse[0];
-                if (descriptionsTotalCount > exportLimit) {
+                if (totalCount > exportLimit) {
                     $scope.bladeClose();
-                    showWarningDialog(descriptionsTotalCount, exportLimit);
+                    showWarningDialog(totalCount, exportLimit);
                 } else {
-                    showConfirmDialog(exportDataRequest, descriptionsTotalCount);
+                    showConfirmDialog(exportDataRequest, totalCount);
                 }
             });
         }
 
         function getExportRequest() {
             return {
+                dataType,
                 catalogId:
                     blade.catalog.id,
                 categoryId: getParentCategoryId(blade),
@@ -79,6 +82,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
         function showWarningDialog(itemsQty, limitQty) {
             const dialog = {
                 id: 'exportLimitWarningDialog',
+                dataType,
                 itemsQty,
                 limitQty
             };
@@ -88,8 +92,9 @@ angular.module('virtoCommerce.catalogExportImportModule')
         function showConfirmDialog(exportDataRequest, itemsQty) {
 
             const dialog = {
-                id: 'exportDescriptionConfirmDialog',
+                id: 'exportCatalogConfirmDialog',
                 itemsQty,
+                dataType,
                 exportAll: isSelectedAll,
                 callback: function(confirm) {
                     if (confirm) {
@@ -104,7 +109,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
 
                 }
             };
-            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/dialogs/export-descriptions-confirm-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/dialogs/exportConfirm-dialog.tpl.html', 'platformWebApp.confirmDialogController');
         }
 
         function getIsSelectedAll() {

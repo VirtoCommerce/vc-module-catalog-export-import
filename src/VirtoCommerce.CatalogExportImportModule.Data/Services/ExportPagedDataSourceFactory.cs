@@ -1,26 +1,32 @@
-using VirtoCommerce.CatalogModule.Core.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public class ExportPagedDataSourceFactory : IExportPagedDataSourceFactory
     {
-        private readonly IProductEditorialReviewSearchService _productEditorialReviewSearchService;
-        private readonly IItemService _itemService;
-
-        public ExportPagedDataSourceFactory(
-            IProductEditorialReviewSearchService productEditorialReviewSearchService,
-            IItemService itemService
-            )
+        private readonly IEnumerable<Func<ExportDataRequest, int, IExportPagedDataSource>> _dataSourceFactories;
+        public ExportPagedDataSourceFactory(IEnumerable<Func<ExportDataRequest, int, IExportPagedDataSource>> dataSourceFactories)
         {
-            _productEditorialReviewSearchService = productEditorialReviewSearchService;
-            _itemService = itemService;
+            _dataSourceFactories = dataSourceFactories;
         }
 
         public IExportPagedDataSource Create(int pageSize, ExportDataRequest request)
         {
-            return new ExportPagedDataSource(_productEditorialReviewSearchService, _itemService, pageSize, request);
+            var resultFactory = _dataSourceFactories.FirstOrDefault(x => x(request, pageSize).DataType.EqualsInvariant(request.DataType));
+
+            if (resultFactory is null)
+            {
+                throw new ArgumentException(nameof(request.DataType));
+            }
+
+            var result = resultFactory(request, pageSize);
+
+            return result;
         }
     }
 }

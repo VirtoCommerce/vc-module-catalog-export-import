@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using VirtoCommerce.CatalogExportImportModule.Data.Repositories;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Validation;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.FeatureManagementModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -42,12 +44,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
 
             serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
             serviceCollection.AddSingleton<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
-            serviceCollection.AddTransient<IDataExporter, DataExporter>();
+            serviceCollection.AddTransient<IDataExporter, EditorialReviewDataExporter>();
+            serviceCollection.AddTransient<IDataExporter, PhysicalProductDataExporter>();
+            serviceCollection.AddTransient<IExportDataRequestPreprocessor, ExportDataRequestPreprocessor>();
             serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
+            serviceCollection.AddTransient<IExportProductSearchService, ExportProductSearchService>();
             serviceCollection.AddSingleton<IExportWriterFactory, ExportWriterFactory>();
             serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
             serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
+
+            serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
+                (request, pageSize) => new EditorialReviewExportPagedDataSource(serviceProvider.GetService<IProductEditorialReviewSearchService>(), serviceProvider.GetService<IItemService>(), pageSize, request));
+            serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
+                (request, pageSize) => new ProductExportPagedDataSource(serviceProvider.GetService<IExportProductSearchService>(), pageSize, request));
 
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
 
