@@ -60,6 +60,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
                 (request, pageSize) => new ProductExportPagedDataSource(serviceProvider.GetService<IExportProductSearchService>(), pageSize, request));
 
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
+            serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedPhysicalProductDataImporter>();
 
             // Workaround. Should be excluded when the catalog module's bug  will be excepted https://virtocommerce.atlassian.net/browse/PT-4224.
             serviceCollection.AddTransient<IListEntryIndexedSearchService, ListEntryIndexedSearchService>();

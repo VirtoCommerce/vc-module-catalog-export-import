@@ -148,5 +148,34 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 
             return this;
         }
+
+        public void PatchModel(CatalogProduct target)
+        {
+            target.Name = ProductName;
+            target.Code = ProductSku;
+            target.OuterId = ProductOuterId;
+            target.CategoryId = CategoryId;
+            target.ProductType = ProductType;
+            target.Priority = Priority ?? 0;
+            target.Gtin = Gtin;
+            target.IsBuyable = CanBePurchased;
+            target.IsActive = Visible;
+            target.IsBuyable = Visible;
+            target.TrackInventory = TrackInventory;
+            target.PackageType = PackageType;
+            target.MaxQuantity = MaxQuantity;
+            target.MinQuantity = MinQuantity;
+            target.ManufacturerPartNumber = ManufacturerPartNumber;
+            target.MeasureUnit = MeasureUnit;
+            target.WeightUnit = WeightUnit;
+            target.Weight = Weight;
+            target.Length = Length;
+            target.Width = Width;
+            target.TaxType = TaxType;
+            target.ShippingType = ShippingType;
+            target.Vendor = Vendor;
+            target.StartDate = FirstListed ?? DateTime.UtcNow;
+            target.EndDate = ListingExpiresOn;
+        }
     }
 }
