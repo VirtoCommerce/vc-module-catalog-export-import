@@ -17,16 +17,16 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public class CsvPagedPhysicalProductDataImporter : CsvPagedDataImporter<CsvPhysicalProduct>
     {
-        private readonly IProductSearchService _productSearchService;
+        private readonly IImportProductSearchService _importProductSearchService;
         private readonly IItemService _itemService;
 
         public CsvPagedPhysicalProductDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
-            IProductSearchService productSearchService, IItemService itemService)
+            IImportProductSearchService importProductSearchService, IItemService itemService)
             : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver)
         {
-            _productSearchService = productSearchService;
+            _importProductSearchService = importProductSearchService;
             _itemService = itemService;
         }
 
@@ -102,23 +102,23 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         private async Task<CatalogProduct[]> SearchEntityByIdAndOuterIdAsync(string[] internalIds, string[] outerIds)
         {
-            var criteriaById = new ProductSearchCriteria
+            var criteriaById = new ImportProductSearchCriteria
             {
                 ObjectIds = internalIds,
                 Skip = 0,
                 Take = ModuleConstants.Settings.PageSize
             };
 
-            var entitiesById = internalIds.IsNullOrEmpty() ? Array.Empty<CatalogProduct>() : (await _productSearchService.SearchProductsAsync(criteriaById)).Results;
+            var entitiesById = internalIds.IsNullOrEmpty() ? Array.Empty<CatalogProduct>() : (await _importProductSearchService.SearchAsync(criteriaById)).Results;
 
-            var criteriaByOuterId = new ProductSearchCriteria
+            var criteriaByOuterId = new ImportProductSearchCriteria
             {
-                //OuterIds = outerIds,
+                OuterIds = outerIds,
                 Skip = 0,
                 Take = ModuleConstants.Settings.PageSize
             };
 
-            var entitiesByOuterId = outerIds.IsNullOrEmpty() ? Array.Empty<CatalogProduct>() : (await _productSearchService.SearchProductsAsync(criteriaByOuterId)).Results;
+            var entitiesByOuterId = outerIds.IsNullOrEmpty() ? Array.Empty<CatalogProduct>() : (await _importProductSearchService.SearchAsync(criteriaByOuterId)).Results;
 
             var existingEntities = entitiesById.Union(entitiesByOuterId, AnonymousComparer.Create<CatalogProduct>((x, y) => x.Id == y.Id, x => x.Id.GetHashCode())).ToArray();
 
