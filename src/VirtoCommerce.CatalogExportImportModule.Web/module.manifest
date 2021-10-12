@@ -20,7 +20,7 @@
     <projectUrl>https://github.com/VirtoCommerce/vc-module-catalog-export-import</projectUrl>
     <iconUrl>Modules/$(VirtoCommerce.CatalogExportImport)/Content/logo.png</iconUrl>
 
-    <releaseNotes>First version.</releaseNotes>
+    <releaseNotes>First version</releaseNotes>
     <copyright>Copyright © 2021 Virto Commerce. All rights reserved</copyright>
     <tags>catalog product description export import</tags>
 
