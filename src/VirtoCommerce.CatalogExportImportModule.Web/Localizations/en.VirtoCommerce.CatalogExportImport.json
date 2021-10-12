@@ -9,8 +9,8 @@
           "errors": "Error count",
           "total": "Total count",
           "processed": "Processed count",
-          "descriptions-url": "Download Descriptions:",
-          "products-url": "Download Products:",
+          "EditorialReview-url": "Download Descriptions:",
+          "PhysicalProduct-url": "Download Products:",
           "errors-log": "Errors"
         }
       },
