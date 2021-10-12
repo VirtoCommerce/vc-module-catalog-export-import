@@ -4,8 +4,8 @@ using VirtoCommerce.CatalogModule.Core.Model.Search;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Services
 {
-    public interface IImportProductSearchService
+    public interface IImportCategorySearchService
     {
-        Task<ProductSearchResult> SearchAsync(ImportSearchCriteria criteria);
+        Task<CategorySearchResult> SearchAsync(ImportSearchCriteria criteria);
     }
 }

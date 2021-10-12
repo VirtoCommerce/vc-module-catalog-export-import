@@ -18,15 +18,18 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     public class CsvPagedPhysicalProductDataImporter : CsvPagedDataImporter<CsvPhysicalProduct>
     {
         private readonly IImportProductSearchService _importProductSearchService;
+        private readonly IImportCategorySearchService _importCategorySearchService;
         private readonly IItemService _itemService;
 
         public CsvPagedPhysicalProductDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
-            IImportProductSearchService importProductSearchService, IItemService itemService)
+            IImportProductSearchService importProductSearchService, IImportCategorySearchService importCategorySearchService,
+            IItemService itemService)
             : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver)
         {
             _importProductSearchService = importProductSearchService;
+            _importCategorySearchService = importCategorySearchService;
             _itemService = itemService;
         }
 
@@ -51,11 +54,23 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                     .Where(x => !string.IsNullOrEmpty(x))
                     .ToArray();
 
-                var existingEntities = await SearchEntityByIdAndOuterIdAsync(internalIds, outerIds);
+                var existingEntities = await SearchEntitiesByIdAndOuterIdAsync(internalIds, outerIds);
 
-                SetIdToNullForNotExisted(records, existingEntities);
+                SetIdToNullForNotExisting(records, existingEntities);
 
-                SetIdToRealForExistedOuterId(records, existingEntities);
+                SetIdToRealForExistingOuterId(records, existingEntities);
+
+                var internalCategoryIds = records.Select(x => x.Record?.CategoryId).Distinct()
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToArray();
+
+                var outerCategoryIds = records.Select(x => x.Record?.CategoryOuterId).Distinct()
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToArray();
+
+                var existingCategoryEntities = await SearchCategoriesByIdAndOuterIdAsync(internalCategoryIds, outerCategoryIds);
+
+                SetCategoryIdByCategoryOuterId(records, existingCategoryEntities);
 
                 var validationResult = await ValidateAsync(records, importReporter);
 
@@ -71,7 +86,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 var recordsToUpdate = records.Where(record => existingEntities.Any(existingEntity =>
                     existingEntity.Id.EqualsInvariant(record.Record.ProductId)
-                    || (!existingEntity.OuterId.IsNullOrEmpty() && existingEntity.OuterId.EqualsInvariant(record.Record.ProductOuterId)))
+                    || !existingEntity.OuterId.IsNullOrEmpty() && existingEntity.OuterId.EqualsInvariant(record.Record.ProductOuterId))
                 ).ToArray();
 
                 existingEntities = GetReducedExistedByWrongOuterId(recordsToUpdate, existingEntities);
@@ -100,9 +115,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private async Task<CatalogProduct[]> SearchEntityByIdAndOuterIdAsync(string[] internalIds, string[] outerIds)
+        private async Task<CatalogProduct[]> SearchEntitiesByIdAndOuterIdAsync(string[] internalIds, string[] outerIds)
         {
-            var criteriaById = new ImportProductSearchCriteria
+            var criteriaById = new ImportSearchCriteria
             {
                 ObjectIds = internalIds,
                 Skip = 0,
@@ -111,7 +126,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var entitiesById = internalIds.IsNullOrEmpty() ? Array.Empty<CatalogProduct>() : (await _importProductSearchService.SearchAsync(criteriaById)).Results;
 
-            var criteriaByOuterId = new ImportProductSearchCriteria
+            var criteriaByOuterId = new ImportSearchCriteria
             {
                 OuterIds = outerIds,
                 Skip = 0,
@@ -125,13 +140,38 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             return existingEntities;
         }
 
+        private async Task<Category[]> SearchCategoriesByIdAndOuterIdAsync(string[] internalCategoryIds, string[] outerCategoryIds)
+        {
+            var criteriaById = new ImportSearchCriteria
+            {
+                ObjectIds = internalCategoryIds,
+                Skip = 0,
+                Take = ModuleConstants.Settings.PageSize
+            };
+
+            var entitiesById = internalCategoryIds.IsNullOrEmpty() ? Array.Empty<Category>() : (await _importCategorySearchService.SearchAsync(criteriaById)).Results;
+
+            var criteriaByOuterId = new ImportSearchCriteria
+            {
+                OuterIds = outerCategoryIds,
+                Skip = 0,
+                Take = ModuleConstants.Settings.PageSize
+            };
+
+            var entitiesByOuterId = outerCategoryIds.IsNullOrEmpty() ? Array.Empty<Category>() : (await _importCategorySearchService.SearchAsync(criteriaByOuterId)).Results;
+
+            var existingEntities = entitiesById.Union(entitiesByOuterId, AnonymousComparer.Create<Category>((x, y) => x.Id == y.Id, x => x.Id.GetHashCode())).ToArray();
+
+            return existingEntities;
+        }
+
         /// <summary>
         /// Set id to null for records that's not existed in the system. It reduce count of wrong duplicates.
         /// All such records will be created if they are valid. 
         /// </summary>
         /// <param name="records"></param>
         /// <param name="existingEntities"></param>
-        private static void SetIdToNullForNotExisted(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingEntities)
+        private static void SetIdToNullForNotExisting(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingEntities)
         {
             foreach (var record in records)
             {
@@ -151,7 +191,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         /// </summary>
         /// <param name="records"></param>
         /// <param name="existingEntities"></param>
-        private static void SetIdToRealForExistedOuterId(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingEntities)
+        private static void SetIdToRealForExistingOuterId(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingEntities)
         {
             foreach (var record in records.Where(x => string.IsNullOrEmpty(x.Record.ProductId) && !string.IsNullOrEmpty(x.Record.ProductOuterId)))
             {
@@ -161,6 +201,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 if (existedEntity != null)
                 {
                     record.Record.ProductId = existedEntity.Id;
+                }
+            }
+        }
+
+        private static void SetCategoryIdByCategoryOuterId(ImportRecord<CsvPhysicalProduct>[] records, Category[] existingCategories)
+        {
+            foreach (var record in records.Where(x => string.IsNullOrEmpty(x.Record.CategoryId) && !string.IsNullOrEmpty(x.Record.CategoryOuterId)))
+            {
+                var existingCategory =
+                    existingCategories.FirstOrDefault(x => !string.IsNullOrEmpty(x.OuterId) && x.OuterId.EqualsInvariant(record.Record.CategoryOuterId));
+
+                if (existingCategory != null)
+                {
+                    record.Record.ProductId = existingCategory.Id;
                 }
             }
         }

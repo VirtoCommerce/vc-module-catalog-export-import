@@ -15,32 +15,27 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public class ImportProductSearchService : IImportProductSearchService
+    public class ImportCategorySearchService : IImportCategorySearchService
     {
-        private const string PhysicalProductType = "Physical";
-
         private readonly Func<ICatalogRepository> _catalogRepositoryFactory;
-        private readonly IItemService _itemService;
+        private readonly ICategoryService _categoryService;
 
-        public ImportProductSearchService(Func<ICatalogRepository> catalogRepositoryFactory, IItemService itemService)
+        public ImportCategorySearchService(Func<ICatalogRepository> catalogRepositoryFactory, ICategoryService categoryService)
         {
             _catalogRepositoryFactory = catalogRepositoryFactory;
-            _itemService = itemService;
+            _categoryService = categoryService;
         }
 
-        public async Task<ProductSearchResult> SearchAsync(ImportSearchCriteria criteria)
+        public async Task<CategorySearchResult> SearchAsync(ImportSearchCriteria criteria)
         {
-            var result = new ProductSearchResult();
+            var result = new CategorySearchResult();
 
             using var catalogRepository = _catalogRepositoryFactory();
 
             // Optimize performance and CPU usage
             catalogRepository.DisableChangesTracking();
 
-            var query = catalogRepository.Items;
-
-            query = query.Where(x => x.ProductType == PhysicalProductType);
-
+            var query = catalogRepository.Categories;
 
             if (!criteria.ObjectIds.IsNullOrEmpty())
             {
@@ -65,7 +60,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                     .AsNoTracking()
                     .ToArrayAsync();
 
-                result.Results = await _itemService.GetByIdsAsync(ids, ItemResponseGroup.ItemInfo.ToString());
+                result.Results = await _categoryService.GetByIdsAsync(ids, CategoryResponseGroup.Info.ToString());
             }
 
             return result;
