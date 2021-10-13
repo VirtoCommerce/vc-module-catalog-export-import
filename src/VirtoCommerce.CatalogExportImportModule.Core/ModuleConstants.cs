@@ -11,6 +11,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
             public const string PhysicalProduct = "PhysicalProduct";
         }
+        public static class ProductTypes
+        {
+            public const string Physical = "Physical";
+        }
 
         public static class PushNotificationsTitles
         {

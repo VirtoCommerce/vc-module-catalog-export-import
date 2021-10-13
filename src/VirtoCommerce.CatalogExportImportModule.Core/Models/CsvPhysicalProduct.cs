@@ -160,7 +160,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.Code = ProductSku;
             target.OuterId = ProductOuterId;
             target.CategoryId = CategoryId;
-            target.ProductType = ProductType;
+            target.ProductType = ModuleConstants.ProductTypes.Physical;
             target.Priority = Priority ?? 0;
             target.Gtin = Gtin;
             target.IsBuyable = CanBePurchased;
