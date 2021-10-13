@@ -151,7 +151,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 Take = ModuleConstants.Settings.PageSize
             };
 
-            var productsById = internalCategoryIds.IsNullOrEmpty() ? Array.Empty<Category>() : (await _importCategorySearchService.SearchAsync(criteriaById)).Results;
+            var categoriesById = internalCategoryIds.IsNullOrEmpty() ? Array.Empty<Category>() : (await _importCategorySearchService.SearchAsync(criteriaById)).Results;
 
             var criteriaByOuterId = new ImportSearchCriteria
             {
@@ -160,11 +160,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 Take = ModuleConstants.Settings.PageSize
             };
 
-            var productsByOuterId = outerCategoryIds.IsNullOrEmpty() ? Array.Empty<Category>() : (await _importCategorySearchService.SearchAsync(criteriaByOuterId)).Results;
+            var categoriesByOuterId = outerCategoryIds.IsNullOrEmpty() ? Array.Empty<Category>() : (await _importCategorySearchService.SearchAsync(criteriaByOuterId)).Results;
 
-            var existingProducts = productsById.Union(productsByOuterId, AnonymousComparer.Create<Category>((x, y) => x.Id == y.Id, x => x.Id.GetHashCode())).ToArray();
+            var existingCategories = categoriesById.Union(categoriesByOuterId, AnonymousComparer.Create<Category>((x, y) => x.Id == y.Id, x => x.Id.GetHashCode())).ToArray();
 
-            return existingProducts;
+            return existingCategories;
         }
 
         /// <summary>
