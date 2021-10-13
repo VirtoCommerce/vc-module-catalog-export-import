@@ -160,7 +160,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.Gtin = Gtin;
             target.IsBuyable = CanBePurchased;
             target.IsActive = Visible;
-            target.IsBuyable = Visible;
             target.TrackInventory = TrackInventory;
             target.PackageType = PackageType;
             target.MaxQuantity = MaxQuantity;
