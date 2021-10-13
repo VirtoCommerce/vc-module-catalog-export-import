@@ -24,14 +24,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         {
             var importRecords = context.InstanceToValidate.ToArray();
 
-            var duplicates = GetDuplicates(importRecords, context);
+            var duplicates = GetDuplicates(importRecords);
 
             context.RootContextData[Duplicates] = duplicates;
 
             return base.PreValidate(context, result);
         }
 
-        private ImportRecord<CsvPhysicalProduct>[] GetDuplicates(ImportRecord<CsvPhysicalProduct>[] importRecords, ValidationContext<ImportRecord<CsvPhysicalProduct>[]> context)
+        private ImportRecord<CsvPhysicalProduct>[] GetDuplicates(ImportRecord<CsvPhysicalProduct>[] importRecords)
         {
             var duplicatesById = importRecords.Where(importRecord => !string.IsNullOrEmpty(importRecord.Record.ProductId))
                 .GroupBy(importRecord => importRecord.Record.ProductId)
