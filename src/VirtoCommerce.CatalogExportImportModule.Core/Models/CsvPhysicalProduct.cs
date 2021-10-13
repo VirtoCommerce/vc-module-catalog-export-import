@@ -90,6 +90,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         public decimal? Weight { get; set; }
 
         [Optional]
+        [Name("Height")]
+        public decimal? Height { get; set; }
+
+        [Optional]
         [Name("Length")]
         public decimal? Length { get; set; }
 
@@ -138,6 +142,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             MeasureUnit = product.MeasureUnit;
             WeightUnit = product.WeightUnit;
             Weight = product.Weight;
+            Height = product.Height;
             Length = product.Length;
             Width = product.Width;
             TaxType = product.TaxType;
@@ -169,6 +174,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.MeasureUnit = MeasureUnit;
             target.WeightUnit = WeightUnit;
             target.Weight = Weight;
+            target.Height = Height;
             target.Length = Length;
             target.Width = Width;
             target.TaxType = TaxType;
