@@ -23,6 +23,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
                 {DataTypes.EditorialReview, "Product descriptions export"},
                 {DataTypes.PhysicalProduct, "Physical products export"},
             };
+            public static readonly IReadOnlyDictionary<string, string> Import = new Dictionary<string, string>()
+            {
+                {DataTypes.EditorialReview, "Product descriptions import"},
+                {DataTypes.PhysicalProduct, "Physical products import"},
+            };
         }
 
         public static IReadOnlyDictionary<string, string> ExportFileNamePrefixes = new Dictionary<string, string>()

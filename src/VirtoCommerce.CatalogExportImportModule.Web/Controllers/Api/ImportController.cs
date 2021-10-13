@@ -7,6 +7,7 @@ using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
@@ -59,7 +60,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         {
             var notification = new ImportPushNotification(_userNameResolver.GetCurrentUserName())
             {
-                Title = "Descriptions import",
+                Title = request.DataType.ToImportPushNotificationTitle(),
                 Description = "Starting import task..."
             };
 
