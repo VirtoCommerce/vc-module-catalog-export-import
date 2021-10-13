@@ -1,7 +1,7 @@
 # Catalog Export & Import module
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-catalog-export-import/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-catalog-export-import/actions?query=workflow%3A"Module+CI")
-[![Deployment status](https://github.com/VirtoCommerce/vc-module-catalog-export-import/workflows/Module%20deployment/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-catalog-export-import/actions?query=workflow%3A"Module+deployment")
+[![Deployment status](https://github.com/VirtoCommerce/vc-module-catalog-export-import/workflows/VC%20deployment/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-catalog-export-import/actions?query=workflow%3A"VC+deployment")
 [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-catalog-export-import&metric=alert_status)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-catalog-export-import)
 [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-catalog-export-import&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-catalog-export-import)
 [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-catalog-export-import&metric=security_rating)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-catalog-export-import)
