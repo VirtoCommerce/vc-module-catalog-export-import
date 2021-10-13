@@ -1,29 +1,27 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<module>
-    <id>VirtoCommerce.CatalogExportImport</id>
-    <version>1.0.0</version>
-    <version-tag></version-tag>
-    <platformVersion>3.57.0</platformVersion>
-    <dependencies>
-        <dependency id="VirtoCommerce.Catalog" version="3.59.0" />
-    </dependencies>
-
-    <title>Catalog export import</title>
-    <description>This module adds catalog export and import functionality.</description>
-    <authors>
-        <author>Solution team</author>
-    </authors>
-    <owners>
-      <owner></owner>
-    </owners>
-
-    <projectUrl>https://github.com/VirtoCommerce/vc-module-catalog-export-import</projectUrl>
-    <iconUrl>Modules/$(VirtoCommerce.CatalogExportImport)/Content/logo.png</iconUrl>
-
-    <releaseNotes>First version</releaseNotes>
-    <copyright>Copyright © 2021 Virto Commerce. All rights reserved</copyright>
-    <tags>catalog product description export import</tags>
-
-    <assemblyFile>VirtoCommerce.CatalogExportImportModule.Web.dll</assemblyFile>
-    <moduleType>VirtoCommerce.CatalogExportImportModule.Web.Module, VirtoCommerce.CatalogExportImportModule.Web</moduleType>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <id>VirtoCommerce.CatalogExportImport</id>
+  <version>1.1.0</version>
+  <version-tag />
+  <platformVersion>3.57.0</platformVersion>
+  <title>Catalog export import</title>
+  <description>This module adds catalog export and import functionality.</description>
+  <authors>
+    <author>Solution team</author>
+  </authors>
+  <owners>
+    <owner />
+  </owners>
+  <projectUrl>https://github.com/VirtoCommerce/vc-module-catalog-export-import</projectUrl>
+  <iconUrl>Modules/$(VirtoCommerce.CatalogExportImport)/Content/logo.png</iconUrl>
+  <requireLicenseAcceptance>false</requireLicenseAcceptance>
+  <releaseNotes>First version</releaseNotes>
+  <copyright>Copyright © 2021 Virto Commerce. All rights reserved</copyright>
+  <tags>catalog product description export import</tags>
+  <assemblyFile>VirtoCommerce.CatalogExportImportModule.Web.dll</assemblyFile>
+  <moduleType>VirtoCommerce.CatalogExportImportModule.Web.Module, VirtoCommerce.CatalogExportImportModule.Web</moduleType>
+  <dependencies>
+    <dependency id="VirtoCommerce.Catalog" version="3.59.0" />
+  </dependencies>
+  <useFullTypeNameInSwagger>false</useFullTypeNameInSwagger>
 </module>
