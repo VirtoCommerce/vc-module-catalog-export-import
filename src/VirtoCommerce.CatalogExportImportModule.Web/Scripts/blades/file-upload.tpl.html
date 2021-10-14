@@ -63,7 +63,7 @@
                             <div class="d-flex justify-content-end"  ng-if="!(csvMaxSizeError || fileTypeError)">
                                 <span class="btn btn-small btn-danger-outline" ng-class="{'mr-10': !internalCsvError}" ng-click="deleteUploadedItem()">{{ 'catalogExportImport.blades.file-upload.actions.delete' | translate }}</span>
                                 <span class="btn btn-small border-primary" ng-if="!internalCsvError && blade.dataType.value === editorialReview" ng-click="showPreview()">{{ 'catalogExportImport.blades.file-upload.actions.preview' | translate }}</span>
-                                <span class="btn btn-small border-primary" ng-if="!internalCsvError && blade.dataType.value !== editorialReview" >{{ 'catalogExportImport.blades.file-upload.actions.import' | translate }}</span>
+                                <span class="btn btn-small border-primary" ng-if="!internalCsvError && blade.dataType.value !== editorialReview" ng-click="startImport()">{{ 'catalogExportImport.blades.file-upload.actions.import' | translate }}</span>
                             </div>
                         </div>
                     </div>

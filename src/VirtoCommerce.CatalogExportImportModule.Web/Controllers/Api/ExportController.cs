@@ -49,7 +49,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         {
             var notification = new ExportPushNotification(_userNameResolver.GetCurrentUserName())
             {
-                Title = request.DataType.ToPushNotificationTitle(),
+                Title = request.DataType.ToExportPushNotificationTitle(),
                 Description = "Starting export task...",
             };
 

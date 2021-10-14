@@ -11,6 +11,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
             public const string PhysicalProduct = "PhysicalProduct";
         }
+        public static class ProductTypes
+        {
+            public const string Physical = "Physical";
+        }
 
         public static class PushNotificationsTitles
         {
@@ -18,6 +22,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             {
                 {DataTypes.EditorialReview, "Product descriptions export"},
                 {DataTypes.PhysicalProduct, "Physical products export"},
+            };
+            public static readonly IReadOnlyDictionary<string, string> Import = new Dictionary<string, string>()
+            {
+                {DataTypes.EditorialReview, "Product descriptions import"},
+                {DataTypes.PhysicalProduct, "Physical products import"},
             };
         }
 

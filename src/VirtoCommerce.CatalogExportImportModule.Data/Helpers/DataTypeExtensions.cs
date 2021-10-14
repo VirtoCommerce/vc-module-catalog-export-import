@@ -4,7 +4,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
 {
     public static class DataTypeExtensions
     {
-        public static string ToPushNotificationTitle(this string dataType)
+        public static string ToImportPushNotificationTitle(this string dataType)
+        {
+            return ModuleConstants.PushNotificationsTitles.Import[dataType];
+        }
+
+        public static string ToExportPushNotificationTitle(this string dataType)
         {
             return ModuleConstants.PushNotificationsTitles.Export[dataType];
         }

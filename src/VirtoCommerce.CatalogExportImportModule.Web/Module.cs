@@ -52,7 +52,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
             serviceCollection.AddSingleton<IExportWriterFactory, ExportWriterFactory>();
             serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
             serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
+            serviceCollection.AddTransient<IValidator<ImportRecord<CsvPhysicalProduct>[]>, ImportPhysicalProductValidator>();
             serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
+            serviceCollection.AddTransient<IImportProductSearchService, ImportProductSearchService>();
+            serviceCollection.AddTransient<IImportCategorySearchService, ImportCategorySearchService>();
 
             serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
                 (request, pageSize) => new EditorialReviewExportPagedDataSource(serviceProvider.GetService<IProductEditorialReviewSearchService>(), serviceProvider.GetService<IItemService>(), pageSize, request));
@@ -60,6 +63,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
                 (request, pageSize) => new ProductExportPagedDataSource(serviceProvider.GetService<IExportProductSearchService>(), pageSize, request));
 
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
+            serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedPhysicalProductDataImporter>();
 
             // Workaround. Should be excluded when the catalog module's bug  will be excepted https://virtocommerce.atlassian.net/browse/PT-4224.
             serviceCollection.AddTransient<IListEntryIndexedSearchService, ListEntryIndexedSearchService>();
