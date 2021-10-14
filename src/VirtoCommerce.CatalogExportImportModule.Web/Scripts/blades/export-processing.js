@@ -115,13 +115,8 @@ angular.module('virtoCommerce.catalogExportImportModule')
         function getIsSelectedAll() {
             const itemsBlade = blade.parentBlade;
 
-            console.log(itemsBlade);
-
             const selectAllState = itemsBlade.$scope.gridApi.selection.getSelectAllState();
             const result = selectAllState || (blade.selectedCategories.length === 0 && blade.selectedProducts.length === 0);
-
-            console.log(selectAllState);
-            console.log(result);
 
             return result;
         }
