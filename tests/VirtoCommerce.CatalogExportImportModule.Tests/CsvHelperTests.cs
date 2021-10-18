@@ -50,7 +50,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             var errorCount = 0;
             var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                ReadingExceptionOccurred = args => true,
+                ReadingExceptionOccurred = args => false,
                 BadDataFound = args =>
                 {
                     ++errorCount;
