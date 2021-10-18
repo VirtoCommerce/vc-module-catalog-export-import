@@ -24,8 +24,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                 },
                 Delimiter = ";",
             };
+
             var header = "Product Name;Product SKU;Product Type;";
-            var records = new[] { "Test name;test SKU;;", "Test name 2;test SKU 2;;", "Test name 3;\"test SKU 3;;" };
+            var records = new[] { "Test name;test SKU;;", "Test name 2;test SKU 2;;", "Test name 3;test SKU 3;\"Physical;" };
             var csv = TestHelper.GetCsv(records, header);
             var textReader = new StreamReader(TestHelper.GetStream(csv), leaveOpen: true);
 
@@ -46,15 +47,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
         [Fact]
         public async Task EnsureBadDataFoundWasCalledOnceCase()
         {
-            var isRecordBad = false;
             var errorCount = 0;
             var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                ReadingExceptionOccurred = args => false,
+                ReadingExceptionOccurred = args => true,
                 BadDataFound = args =>
                 {
                     ++errorCount;
-                    isRecordBad = true;
+                    throw new BadDataException(args.Context, "Exception to prevent double BadDataFount call");
                 },
                 Delimiter = ";",
             };
@@ -65,15 +65,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
             var csvReader = new CsvReader(textReader, csvConfiguration);
 
-            while (await csvReader.ReadAsync())
+            try
             {
-                if (!isRecordBad)
+                while (await csvReader.ReadAsync())
                 {
                     csvReader.GetRecord<CsvPhysicalProduct>();
                 }
-
-                isRecordBad = false;
             }
+            catch (BadDataException)
+            { }
 
             Assert.Equal(1, errorCount);
         }
