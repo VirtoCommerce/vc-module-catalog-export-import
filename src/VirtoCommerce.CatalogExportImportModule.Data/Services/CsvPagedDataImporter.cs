@@ -55,6 +55,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var importProgress = new ImportProgressInfo { Description = "Import has started" };
 
+            SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress, importReporter);
+
             using var dataSource = _dataSourceFactory.Create<TImportable>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
 
             var headerRaw = dataSource.GetHeaderRaw();
@@ -67,8 +69,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             progressCallback(importProgress);
 
             const string importDescription = "{0} out of {1} have been imported.";
-
-            SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress, importReporter);
 
             try
             {
@@ -150,6 +150,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
+
+            throw new BadDataException(context, "Exception to prevent double BadDataFount call");
         }
 
         private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
