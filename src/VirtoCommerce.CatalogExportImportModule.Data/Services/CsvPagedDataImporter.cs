@@ -142,7 +142,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         }
 
 
-        private static void HandleBadDataErrorAsync(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleBadDataError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
         {
             var importError = new ImportError { Error = "This row has invalid data. The data after field with not escaped quote was lost.", RawRow = context.Parser.RawRecord };
 
@@ -230,7 +230,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 return false;
             };
 
-            configuration.BadDataFound = args => HandleBadDataErrorAsync(progressCallback, importProgress, importReporter, args.Context, errorsContext);
+            configuration.BadDataFound = args => HandleBadDataError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
 
             configuration.MissingFieldFound = args => HandleMissedColumnError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
         }
