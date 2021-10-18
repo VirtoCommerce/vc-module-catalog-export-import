@@ -53,13 +53,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                 ReadingExceptionOccurred = args => false,
                 BadDataFound = args =>
                 {
-                    ++errorCount;
+                    // Add error to error report
                     throw new BadDataException(args.Context, "Exception to prevent double BadDataFount call");
                 },
                 Delimiter = ";",
             };
             var header = "Product Name;Product SKU;Product Type;";
-            var records = new[] { "Test name;test SKU;;", "Test name 2;test SKU 2;;", "Test name 3;\"test SKU 3;;" };
+            var records = new[] { "Test name;\"test SKU\";;", "Test name 2;\"test SKU 2;;", "Test name 3;test SKU 3;;", "Test name 4;\"test SKU 4;;", };
             var csv = TestHelper.GetCsv(records, header);
             var textReader = new StreamReader(TestHelper.GetStream(csv), leaveOpen: true);
 
@@ -73,7 +73,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                 }
             }
             catch (BadDataException)
-            { }
+            {
+                ++errorCount;
+            }
 
             Assert.Equal(1, errorCount);
         }
