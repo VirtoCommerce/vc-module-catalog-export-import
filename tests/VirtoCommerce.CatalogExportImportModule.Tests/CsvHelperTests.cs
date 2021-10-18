@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -79,7 +80,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             }
 
             Assert.Equal(1, errorCount);
-            Assert.Equal("Test name 2;\"test SKU 2;;\r\nTest name 3;test SKU 3;;\r\nTest name 4;\"test SKU 4;;", errorString.TrimEnd());
+            Assert.Equal($"Test name 2;\"test SKU 2;;{Environment.NewLine}Test name 3;test SKU 3;;{Environment.NewLine}Test name 4;\"test SKU 4;;", errorString.TrimEnd());
         }
     }
 }
