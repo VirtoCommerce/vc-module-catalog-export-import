@@ -135,7 +135,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 }
             }
             catch (BadDataException)
-            { }
+            {
+                // There is nothing to do
+            }
 
             Items = items.ToArray();
 
