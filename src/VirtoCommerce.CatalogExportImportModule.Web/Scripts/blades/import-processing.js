@@ -1,4 +1,4 @@
-angular.module("virtoCommerce.catalogExportImportModule").controller("virtoCommerce.catalogExportImportModule.importProcessingController", ["$scope", "virtoCommerce.customerExportImportModule.import", "platformWebApp.assets.api", "platformWebApp.bladeNavigationService",
+angular.module("virtoCommerce.catalogExportImportModule").controller("virtoCommerce.catalogExportImportModule.importProcessingController", ["$scope", "virtoCommerce.catalogExportImportModule.import", "platformWebApp.assets.api", "platformWebApp.bladeNavigationService",
     function ($scope, importResources, assetsApi, bladeNavigationService) {
         var blade = $scope.blade;
         blade.isLoading = false;
