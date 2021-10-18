@@ -119,18 +119,23 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var items = new List<ImportRecord<T>>();
 
-            for (var i = 0; i < PageSize && await _csvReader.ReadAsync(); i++)
+            try
             {
-                var record = _csvReader.GetRecord<T>();
-
-                if (record != null)
+                for (var i = 0; i < PageSize && await _csvReader.ReadAsync(); i++)
                 {
-                    var rawRecord = _csvReader.Context.Parser.RawRecord;
-                    var row = _csvReader.Context.Parser.Row;
+                    var record = _csvReader.GetRecord<T>();
 
-                    items.Add(new ImportRecord<T> { Row = row, RawRecord = rawRecord, Record = record });
+                    if (record != null)
+                    {
+                        var rawRecord = _csvReader.Context.Parser.RawRecord;
+                        var row = _csvReader.Context.Parser.Row;
+
+                        items.Add(new ImportRecord<T> { Row = row, RawRecord = rawRecord, Record = record });
+                    }
                 }
             }
+            catch (BadDataException)
+            { }
 
             Items = items.ToArray();
 
