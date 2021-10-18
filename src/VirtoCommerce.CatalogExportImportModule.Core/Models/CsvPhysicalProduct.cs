@@ -45,20 +45,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 
         [Optional]
         [Name("Can be purchased")]
-        [BooleanTrueValues("yes", "true")]
-        [BooleanFalseValues("no", "false")]
+        [BooleanTrueValues("true", "yes")]
+        [BooleanFalseValues("false", "no")]
         public bool? CanBePurchased { get; set; }
 
         [Optional]
         [Name("Visible")]
-        [BooleanTrueValues("yes", "true")]
-        [BooleanFalseValues("no", "false")]
+        [BooleanTrueValues("true", "yes")]
+        [BooleanFalseValues("false", "no")]
         public bool? Visible { get; set; }
 
         [Optional]
         [Name("Track Inventory")]
-        [BooleanTrueValues("yes", "true")]
-        [BooleanFalseValues("no", "false")]
+        [BooleanTrueValues("true", "yes")]
+        [BooleanFalseValues("false", "no")]
         public bool? TrackInventory { get; set; }
 
         [Optional]
