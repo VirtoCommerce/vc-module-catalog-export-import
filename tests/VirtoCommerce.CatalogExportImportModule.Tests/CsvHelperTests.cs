@@ -64,7 +64,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             var textReader = new StreamReader(TestHelper.GetStream(csv), leaveOpen: true);
 
             var csvReader = new CsvReader(textReader, csvConfiguration);
-
+            var errorString = string.Empty;
             try
             {
                 while (await csvReader.ReadAsync())
@@ -72,12 +72,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                     csvReader.GetRecord<CsvPhysicalProduct>();
                 }
             }
-            catch (BadDataException)
+            catch (BadDataException e)
             {
+                errorString = e.Context.Parser.RawRecord;
                 ++errorCount;
             }
 
             Assert.Equal(1, errorCount);
+            Assert.Equal("Test name 2;\"test SKU 2;;\r\nTest name 3;test SKU 3;;\r\nTest name 4;\"test SKU 4;;", errorString.TrimEnd());
         }
     }
 }
