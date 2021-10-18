@@ -5,6 +5,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
 {
     public interface IExportWriterFactory
     {
-        IExportWriter<TExportable> Create<TExportable>(string filepath, Configuration csvConfiguration) where TExportable : IExportable;
+        IExportWriter<TExportable> Create<TExportable>(string filepath, CsvConfiguration csvConfiguration) where TExportable : IExportable;
     }
 }

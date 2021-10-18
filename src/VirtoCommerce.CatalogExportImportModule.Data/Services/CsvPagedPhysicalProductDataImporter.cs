@@ -23,8 +23,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IImportProductSearchService importProductSearchService, IImportCategorySearchService importCategorySearchService,
-            IItemService itemService)
-            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver)
+            IItemService itemService, ImportConfigurationFactory importConfigurationFactory)
+            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
         {
             _importProductSearchService = importProductSearchService;
             _importCategorySearchService = importCategorySearchService;
@@ -76,7 +76,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                     .Select(x => (x.CustomState as ImportValidationState<CsvPhysicalProduct>)?.InvalidRecord).Distinct().ToArray();
 
                 records = records.Except(invalidRecords).ToArray();
-                
+
                 existingProducts = existingProducts.Where(existingEntity => records.Any(record =>
                         existingEntity.Id.EqualsInvariant(record.Record.ProductId)
                         || !string.IsNullOrEmpty(existingEntity.OuterId) && existingEntity.OuterId.EqualsInvariant(record.Record.ProductOuterId)))
@@ -104,7 +104,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 importProgress.CreatedCount += newProducts.Length;
                 importProgress.UpdatedCount += existingProducts.Length;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 HandleError(progressCallback, importProgress, e.Message);
             }

@@ -13,7 +13,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly StreamWriter _streamWriter;
         private readonly CsvWriter _csvWriter;
 
-        public ExportWriter(string filePath, IBlobStorageProvider blobStorageProvider, Configuration csvConfiguration)
+        public ExportWriter(string filePath, IBlobStorageProvider blobStorageProvider, CsvConfiguration csvConfiguration)
         {
             var stream = blobStorageProvider.OpenWrite(filePath);
             _streamWriter = new StreamWriter(stream);

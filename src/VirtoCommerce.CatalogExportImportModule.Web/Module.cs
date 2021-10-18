@@ -56,6 +56,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
             serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
             serviceCollection.AddTransient<IImportProductSearchService, ImportProductSearchService>();
             serviceCollection.AddTransient<IImportCategorySearchService, ImportCategorySearchService>();
+            serviceCollection.AddSingleton<ImportConfigurationFactory>();
 
             serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
                 (request, pageSize) => new EditorialReviewExportPagedDataSource(serviceProvider.GetService<IProductEditorialReviewSearchService>(), serviceProvider.GetService<IItemService>(), pageSize, request));

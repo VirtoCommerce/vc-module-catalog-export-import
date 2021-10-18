@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
+using VirtoCommerce.CatalogExportImportModule.Core.Models;
+using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CatalogModule.Core.Services;
-using VirtoCommerce.CatalogExportImportModule.Core.Models;
-using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -25,8 +25,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IProductSearchService productSearchService,
             IItemService itemService,
-            IProductEditorialReviewService editorialReviewService)
-            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver)
+            IProductEditorialReviewService editorialReviewService, ImportConfigurationFactory importConfigurationFactory)
+            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
         {
             _itemService = itemService;
             _productSearchService = productSearchService;
