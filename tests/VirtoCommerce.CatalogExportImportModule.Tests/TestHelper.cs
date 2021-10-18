@@ -27,6 +27,13 @@ namespace VirtoCommerce.CustomerExportImportModule.Tests
         {
             return new ImportPagedDataSourceFactory(blobStorageProvider);
         }
+using System.Text;
+
+namespace VirtoCommerce.CatalogExportImportModule.Tests
+{
+    public static class TestHelper
+    {
+
 
         public static Stream GetStream(string csv)
         {
@@ -40,14 +47,19 @@ namespace VirtoCommerce.CustomerExportImportModule.Tests
 
         public static string GetCsv(IEnumerable<string> records, string header = null)
         {
-            var csv = "";
+            var csv = new StringBuilder();
 
             if (header != null)
             {
-                csv += header + "\r\n";
+                csv.AppendLine(header);
             }
 
-            return records.Aggregate(csv, (current, record) => current + record + "\r\n");
+            foreach (var record in records)
+            {
+                csv.AppendLine(record);
+            }
+
+            return csv.ToString();
         }
 
         public static IEnumerable<PropertyInfo> GetProperties<T>(T obj)
