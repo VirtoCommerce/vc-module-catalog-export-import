@@ -146,8 +146,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
         {
             var mock = new Mock<IExportProductSearchService>();
             mock.Setup(service => service.SearchAsync(It.IsAny<ExportProductSearchCriteria>()))
-                .Returns<ExportProductSearchCriteria>(criteria =>
-                    Task.FromResult(new ProductSearchResult { Results = products.Skip(criteria.Skip).Take(criteria.Take).ToArray(), TotalCount = products.Length }));
+                .ReturnsAsync((ExportProductSearchCriteria criteria) => new ProductSearchResult
+                {
+                    Results = products.Skip(criteria.Skip).Take(criteria.Take).ToArray(),
+                    TotalCount = products.Length
+                });
             return mock.Object;
         }
     }
