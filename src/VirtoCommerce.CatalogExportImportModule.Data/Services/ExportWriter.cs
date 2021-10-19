@@ -13,7 +13,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly StreamWriter _streamWriter;
         private readonly CsvWriter _csvWriter;
 
-        public ExportWriter(string filePath, IBlobStorageProvider blobStorageProvider, Configuration csvConfiguration)
+        public ExportWriter(string filePath, IBlobStorageProvider blobStorageProvider, CsvConfiguration csvConfiguration)
         {
             var stream = blobStorageProvider.OpenWrite(filePath);
             _streamWriter = new StreamWriter(stream);
@@ -33,9 +33,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            _streamWriter.Flush();
-            _streamWriter.Close();
             _csvWriter.Dispose();
+            _streamWriter.Dispose();
         }
     }
 }

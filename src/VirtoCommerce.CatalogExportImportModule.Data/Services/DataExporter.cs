@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
@@ -49,7 +51,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             var exportFilePath = GetExportFilePath(request.DataType.ToExportFileNamePrefix());
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
-            var exportWriter = _exportWriterFactory.Create<TExportable>(exportFilePath, new ExportConfiguration());
+            var exportWriter = _exportWriterFactory.Create<TExportable>(exportFilePath, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             exportProgress.Description = "Fetching...";

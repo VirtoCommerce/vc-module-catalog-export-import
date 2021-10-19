@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
-using VirtoCommerce.CustomerExportImportModule.Tests;
 using Xunit;
 
 namespace VirtoCommerce.CatalogExportImportModule.Tests

@@ -17,11 +17,17 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     {
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly ISettingsManager _settingsManager;
+        private readonly ImportConfigurationFactory _importConfigurationFactory;
 
-        public CsvDataValidator(IBlobStorageProvider blobStorageProvider, ISettingsManager settingsManager)
+        public CsvDataValidator(
+            IBlobStorageProvider blobStorageProvider,
+            ISettingsManager settingsManager,
+            ImportConfigurationFactory importConfigurationFactory
+            )
         {
             _blobStorageProvider = blobStorageProvider;
             _settingsManager = settingsManager;
+            _importConfigurationFactory = importConfigurationFactory;
         }
 
         public async Task<ImportDataValidationResult> ValidateAsync(string dataType, string filePath)
@@ -58,7 +64,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             else
             {
                 var stream = _blobStorageProvider.OpenRead(filePath);
-                var csvConfiguration = new ImportConfiguration();
+                var csvConfiguration = _importConfigurationFactory.Create();
 
                 var requiredColumns = CsvImportHelper.GetImportCustomerRequiredColumns<T>();
 
@@ -76,7 +82,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             return result;
         }
 
-        private static async Task ValidateDelimiterAndDataExists(Stream stream, Configuration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
+        private static async Task ValidateDelimiterAndDataExists(Stream stream, CsvConfiguration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
         {
 
             var notCompatibleErrors = new[]
@@ -115,7 +121,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private static void ValidateRequiredColumns(Stream stream, Configuration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
+        private static void ValidateRequiredColumns(Stream stream, CsvConfiguration csvConfiguration, string[] requiredColumns, List<ImportDataValidationError> errorsList)
         {
             var notCompatibleErrors = new[]
             {
@@ -137,7 +143,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             csvReader.Read();
             csvReader.ReadHeader();
 
-            var existedColumns = csvReader.Context.HeaderRecord;
+            var existedColumns = csvReader.Context.Reader.HeaderRecord;
 
             var missedColumns = requiredColumns.Except(existedColumns, StringComparer.InvariantCulture).ToArray();
 
@@ -149,7 +155,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private void ValidateLineLimit(Stream stream, Configuration csvConfiguration, List<ImportDataValidationError> errorsList)
+        private void ValidateLineLimit(Stream stream, CsvConfiguration csvConfiguration, List<ImportDataValidationError> errorsList)
         {
             var notCompatibleErrors = new[]
             {

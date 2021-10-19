@@ -14,7 +14,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _blobStorageProvider = blobStorageProvider;
         }
 
-        public IExportWriter<TExportable> Create<TExportable>(string filepath, Configuration csvConfiguration) where TExportable : IExportable
+        public IExportWriter<TExportable> Create<TExportable>(string filepath, CsvConfiguration csvConfiguration) where TExportable : IExportable
         {
             return new ExportWriter<TExportable>(filepath, _blobStorageProvider, csvConfiguration);
         }
