@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Moq;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Assets;
-using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.CustomerExportImportModule.Tests
@@ -21,7 +19,7 @@ namespace VirtoCommerce.CustomerExportImportModule.Tests
             blobStorageProviderMock.Setup(x => x.OpenRead(It.IsAny<string>())).Returns(() => stream);
             blobStorageProviderMock.Setup(x => x.OpenWrite(It.IsAny<string>())).Returns(() => errorReporterMemoryStream);
             blobStorageProviderMock.Setup(x => x.GetBlobInfoAsync(It.IsAny<string>()))
-                .Returns(() => Task.FromResult(new BlobInfo { Size = stream.Length }));
+                .ReturnsAsync(() => new BlobInfo { Size = stream.Length });
             return blobStorageProviderMock.Object;
         }
 
