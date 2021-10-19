@@ -17,7 +17,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var stream = blobStorageProvider.OpenWrite(filePath);
             _streamWriter = new StreamWriter(stream);
-            csvConfiguration.LeaveOpen = true;
             _csvWriter = new CsvWriter(_streamWriter, csvConfiguration);
         }
 
