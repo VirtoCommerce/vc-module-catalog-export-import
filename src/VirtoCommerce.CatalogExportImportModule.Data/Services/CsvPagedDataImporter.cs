@@ -151,7 +151,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             errorsContext.ErrorsRows.Add(context.Parser.Row);
             HandleError(progressCallback, importProgress);
 
-            throw new BadDataException(context, "Exception to prevent double BadDataFount call");
+            throw new BadDataException(context, "Exception to prevent double BadDataFound call");
         }
 
         private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
