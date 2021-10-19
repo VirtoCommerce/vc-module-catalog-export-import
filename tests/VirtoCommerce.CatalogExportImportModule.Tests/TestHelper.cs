@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
+using System.Text;
 using Moq;
+using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Assets;
-using VirtoCommerce.Platform.Core.Security;
 
-namespace VirtoCommerce.CustomerExportImportModule.Tests
+namespace VirtoCommerce.CatalogExportImportModule.Tests
 {
     public static class TestHelper
     {
@@ -25,15 +24,8 @@ namespace VirtoCommerce.CustomerExportImportModule.Tests
 
         public static ImportPagedDataSourceFactory GetCustomerImportPagedDataSourceFactory(IBlobStorageProvider blobStorageProvider)
         {
-            return new ImportPagedDataSourceFactory(blobStorageProvider);
+            return new ImportPagedDataSourceFactory(blobStorageProvider, new ImportConfigurationFactory());
         }
-using System.Text;
-
-namespace VirtoCommerce.CatalogExportImportModule.Tests
-{
-    public static class TestHelper
-    {
-
 
         public static Stream GetStream(string csv)
         {
@@ -60,26 +52,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             }
 
             return csv.ToString();
-        }
-
-        public static IEnumerable<PropertyInfo> GetProperties<T>(T obj)
-        {
-            return obj.GetType()
-                .GetTypeInfo()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(p => p.Name != nameof(ApplicationUser.SecurityStamp) && p.Name != nameof(ApplicationUser.ConcurrencyStamp))
-                .OrderBy(p => p.Name)
-                .ToList();
-        }
-
-        public static string ToString<T>(T obj)
-        {
-            var propertiesAndValues = GetProperties(obj).Select(property =>
-            {
-                var value = property.GetValue(obj);
-                return $"{property.Name}: {(value is IEnumerable<object> enumerable ? $"[{string.Join(", ", enumerable.Select(x => x.ToString()))}]" : value)}";
-            });
-            return $"{{{string.Join(", ", propertiesAndValues)}}}";
         }
     }
 }
