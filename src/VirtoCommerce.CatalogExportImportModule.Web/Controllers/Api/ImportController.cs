@@ -99,7 +99,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
 
             switch (request.DataType)
             {
-                case nameof(EditorialReview):
+                case ModuleConstants.DataTypes.EditorialReview:
                     using (var csvDataSource = _importPagedDataSourceFactory.Create<CsvEditorialReview>(request.FilePath,
                         10, null))
                     {
@@ -108,6 +108,17 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
                         result.Results = csvDataSource.Items.Select(item => item.Record).ToArray();
                     }
                     break;
+
+                case ModuleConstants.DataTypes.PhysicalProduct:
+                    using (var csvDataSource = _importPagedDataSourceFactory.Create<CsvPhysicalProduct>(request.FilePath,
+                        10, null))
+                    {
+                        result.TotalCount = csvDataSource.GetTotalCount();
+                        await csvDataSource.FetchAsync();
+                        result.Results = csvDataSource.Items.Select(item => item.Record).ToArray();
+                    }
+                    break;
+
             }
 
             return Ok(result);
