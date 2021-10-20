@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
