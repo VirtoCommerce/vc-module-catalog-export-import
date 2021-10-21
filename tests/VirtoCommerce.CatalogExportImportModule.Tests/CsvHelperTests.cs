@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using CsvHelper.TypeConversion;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
-using VirtoCommerce.Platform.Core.Common;
 using Xunit;
 
 namespace VirtoCommerce.CatalogExportImportModule.Tests
@@ -155,27 +154,16 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                     memberMap.Data.IsOptional = true;
                     memberMap.Data.Index = currentColumnIndex++;
 
-                    memberMap.TypeConverter<PropertyTypeConverter>();
+                    Func<ConvertToStringArgs<TestExportClass>, string> func = xs =>
+                    {
+                        return xs.Value.Properties.First(x => x.Name == additionanColumn).Value;
+                    };
+
+                    memberMap.Data.WritingConvertExpression =
+                        (Expression<Func<ConvertToStringArgs<TestExportClass>, string>>)(ex => func(ex));
 
                     MemberMaps.Add(memberMap);
                 }
-            }
-        }
-
-        private class PropertyTypeConverter : DefaultTypeConverter
-        {
-            public override string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
-            {
-                var data = (ICollection<TestPropertyExportClass>)value;
-
-                var result = data.FirstOrDefault(x => x.Name.EqualsInvariant(memberMapData.Names.First()));
-
-                return result?.Value;
-            }
-
-            public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
-            {
-                return base.ConvertFromString(text, row, memberMapData);
             }
         }
     }
