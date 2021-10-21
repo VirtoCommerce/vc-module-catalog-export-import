@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         public abstract string DataType { get; }
 
+        protected IList<ClassMap<TExportable>> ClassMaps = new List<ClassMap<TExportable>>();
+
         public async Task ExportAsync(ExportDataRequest request, Action<ExportProgressInfo> progressCallback, ICancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -52,6 +55,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
             var exportWriter = _exportWriterFactory.Create<TExportable>(exportFilePath, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
+
+            if (!ClassMaps.IsNullOrEmpty())
+            {
+                foreach (var classMap in ClassMaps)
+                {
+                    exportWriter.RegisterClassMap(classMap);
+                }
+            }
+
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             exportProgress.Description = "Fetching...";

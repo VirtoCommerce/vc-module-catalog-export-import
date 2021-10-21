@@ -20,6 +20,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _csvWriter = new CsvWriter(_streamWriter, csvConfiguration);
         }
 
+        public void RegisterClassMap(ClassMap<TExportable> classMap)
+        {
+            _csvWriter.Context.RegisterClassMap(classMap);
+        }
+
         public void WriteRecords(TExportable[] records)
         {
             _csvWriter.WriteRecords(records);

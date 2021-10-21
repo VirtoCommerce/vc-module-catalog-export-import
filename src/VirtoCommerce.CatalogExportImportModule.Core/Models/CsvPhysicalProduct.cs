@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using CsvHelper.Configuration.Attributes;
 using Newtonsoft.Json;
 using VirtoCommerce.CatalogModule.Core.Model;
@@ -7,7 +9,7 @@ using VirtoCommerce.CatalogModule.Core.Model;
 namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Include)]
-    public sealed class CsvPhysicalProduct : IImportable, IExportable
+    public sealed class CsvPhysicalProduct : IImportable, IExportable, IHasProperties
     {
         [Required]
         [Name("Product Name")]
@@ -123,6 +125,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Name("Listing Expires On")]
         public DateTime? ListingExpiresOn { get; set; }
 
+        public IList<Property> Properties { get; set; }
+
         public CsvPhysicalProduct FromModel(CatalogProduct product)
         {
             ProductName = product.Name;
@@ -152,6 +156,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             Vendor = product.Vendor;
             FirstListed = product.StartDate;
             ListingExpiresOn = product.EndDate;
+
+            Properties = product.Properties?.Select(x => x.Clone() as Property).ToArray();
 
             return this;
         }
@@ -183,6 +189,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.Vendor = Vendor;
             target.StartDate = FirstListed ?? DateTime.UtcNow;
             target.EndDate = ListingExpiresOn;
+
+            target.Properties = Properties;
         }
+
     }
 }

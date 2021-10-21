@@ -11,6 +11,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     {
         public EditorialReviewDataExporter(IExportPagedDataSourceFactory exportPagedDataSourceFactory, IExportWriterFactory exportWriterFactory, IOptions<PlatformOptions> platformOptions, IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver) : base(exportPagedDataSourceFactory, exportWriterFactory, platformOptions, blobStorageProvider, blobUrlResolver)
         {
+
         }
 
         public override string DataType => ModuleConstants.DataTypes.EditorialReview;
