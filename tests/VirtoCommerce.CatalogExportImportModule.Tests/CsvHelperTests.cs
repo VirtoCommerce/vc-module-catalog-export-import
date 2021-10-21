@@ -126,24 +126,25 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             Assert.Equal($"Id,Property 1,Property 2{Environment.NewLine}Test id 1,Property value 1,Property value 2", result.TrimEnd());
         }
 
-        private class TestExportClass
+        public class TestExportClass
         {
             public string Id { get; set; }
 
             public ICollection<TestPropertyExportClass> Properties { get; set; }
         }
 
-        private class TestPropertyExportClass
+        public class TestPropertyExportClass
         {
             public string Value { get; set; }
             public string Name { get; set; }
         }
 
-        private class TestExportClassMap : ClassMap<TestExportClass>
+        public class TestExportClassMap : ClassMap<TestExportClass>
         {
             public TestExportClassMap(string[] additionanColumns)
             {
                 AutoMap(CultureInfo.InvariantCulture);
+
                 var propertiesInfo = ClassType.GetProperty(nameof(TestExportClass.Properties));
                 var currentColumnIndex = MemberMaps.Count;
 
@@ -154,7 +155,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                     memberMap.Data.IsOptional = true;
                     memberMap.Data.Index = currentColumnIndex++;
 
-                    memberMap.TypeConverter(new PropertyTypeConverter(additionanColumn));
+                    memberMap.TypeConverter<PropertyTypeConverter>();
 
                     MemberMaps.Add(memberMap);
                 }
@@ -163,18 +164,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
         private class PropertyTypeConverter : DefaultTypeConverter
         {
-            private readonly string _propertyName;
-
-            public PropertyTypeConverter(string propertyName)
-            {
-                _propertyName = propertyName;
-            }
-
             public override string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
             {
                 var data = (ICollection<TestPropertyExportClass>)value;
 
-                var result = data.FirstOrDefault(x => x.Name.EqualsInvariant(_propertyName));
+                var result = data.FirstOrDefault(x => x.Name.EqualsInvariant(memberMapData.Names.First()));
 
                 return result?.Value;
             }
