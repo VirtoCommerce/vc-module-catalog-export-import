@@ -31,7 +31,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Name("Category Outer Id")]
         public string CategoryOuterId { get; set; }
 
-        [Required]
+        [Optional]
         [Name("Product Type")]
         public string ProductType { get; set; }
 

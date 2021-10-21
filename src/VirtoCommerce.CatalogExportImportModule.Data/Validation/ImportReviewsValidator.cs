@@ -37,11 +37,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
             var skus = GetExistedSkus(context);
 
-            context.RootContextData[ModuleConstants.ContextDataSkus] = skus;
+            context.RootContextData[ModuleConstants.ValidationContextData.Skus] = skus;
 
             var duplicates = GetDescriptionDuplicates(context);
 
-            context.RootContextData[ModuleConstants.DuplicatedImportReview] = duplicates;
+            context.RootContextData[ModuleConstants.ValidationContextData.DuplicatedImportReview] = duplicates;
 
             return base.PreValidate(context, result);
         }
