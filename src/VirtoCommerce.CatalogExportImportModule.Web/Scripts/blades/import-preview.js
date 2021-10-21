@@ -1,6 +1,7 @@
 angular.module('virtoCommerce.catalogExportImportModule')
-    .controller('virtoCommerce.catalogExportImportModule.importPreviewController', ['$scope', 'virtoCommerce.catalogExportImportModule.import', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', function ($scope, importResources, bladeNavigationService, uiGridConstants, bladeUtils, dialogService) {
+    .controller('virtoCommerce.catalogExportImportModule.importPreviewController', ['$scope', 'virtoCommerce.catalogExportImportModule.import', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', 'editorialReview', function ($scope, importResources, bladeNavigationService, uiGridConstants, bladeUtils, dialogService, editorialReview) {
         $scope.uiGridConstants = uiGridConstants;
+        $scope.editorialReview = editorialReview;
 
         var blade = $scope.blade;
 
@@ -16,10 +17,25 @@ angular.module('virtoCommerce.catalogExportImportModule')
                 $scope.originalRecords = _.map(records, record => ({...record}));
 
                 _.each(records, record => {
-                    if (record.descriptionId) {
-                        record.descriptionId = truncateId(record.descriptionId);
+                    if (blade.dataType !== $scope.editorialReview) {
+                        if (record.productId) {
+                            record.productId = truncateId(record.productId);
+                        }
+                        if (record.productOuterId) {
+                            record.productOuterId = truncateId(record.productOuterId);
+                        }
+                        if (record.categoryId) {
+                            record.categoryId = truncateId(record.categoryId);
+                        }
+                        if (record.categoryOuterId) {
+                            record.categoryOuterId = truncateId(record.categoryOuterId);
+                        }
+                    } else {
+                        if (record.descriptionId) {
+                            record.descriptionId = truncateId(record.descriptionId);
+                        }
+                        record.descriptionContent = truncateContent(record.descriptionContent);
                     }
-                    record.descriptionContent = truncateContent(record.descriptionContent);
                 });
 
                 blade.currentEntities = records;
@@ -42,7 +58,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
                     };
                     importResources.run(importDataRequest, (data) => {
                         var newBlade = {
-                            id: "descriptionsImportProcessing",
+                            id: "importProcessing",
                             notification: data,
                             headIcon: "fa fa-download",
                             title: "catalogExportImport.blades.import-processing.title",
@@ -56,7 +72,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
                 permission: blade.importPermission
             },
             {
-                name: "priceExportImport.blades.import-preview.upload-new",
+                name: "catalogExportImport.blades.import-preview.upload-new",
                 icon: 'fas fa-plus',
                 canExecuteMethod: () => true,
                 executeMethod: () => {
@@ -77,6 +93,15 @@ angular.module('virtoCommerce.catalogExportImportModule')
                         column.cellTooltip = getCellTooltip;
                         column.headerCellClass = 'br-0 font-weight-500 fs-13';
                     });
+
+                    if (blade.dataType !== $scope.editorialReview) {
+                        const productNameColumn = _.findWhere(gridApi.grid.options.columnDefs, {name: 'productName'});
+                        const productSkuColumn = _.findWhere(gridApi.grid.options.columnDefs, {name: 'productSku'});
+                        productNameColumn.pinnedLeft = true;
+                        productNameColumn.cellClass = 'bl-0 font-weight-500'
+                        productSkuColumn.enablePinning = true;
+                        productSkuColumn.hidePinLeft = false;
+                    }
 
                     grid.api.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
                 },[uiGridConstants.dataChange.ROW])

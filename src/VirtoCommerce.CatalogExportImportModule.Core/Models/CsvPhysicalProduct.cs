@@ -1,10 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
+using Newtonsoft.Json;
 using VirtoCommerce.CatalogModule.Core.Model;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Include)]
     public sealed class CsvPhysicalProduct : IImportable, IExportable
     {
         [Required]
