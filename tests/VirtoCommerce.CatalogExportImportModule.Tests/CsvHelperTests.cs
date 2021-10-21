@@ -140,23 +140,23 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
         public class TestExportClassMap : ClassMap<TestExportClass>
         {
-            public TestExportClassMap(string[] additionanColumns)
+            public TestExportClassMap(string[] additionalColumns)
             {
                 AutoMap(CultureInfo.InvariantCulture);
 
                 var propertiesInfo = ClassType.GetProperty(nameof(TestExportClass.Properties));
                 var currentColumnIndex = MemberMaps.Count;
 
-                foreach (var additionanColumn in additionanColumns)
+                foreach (var additionalColumn in additionalColumns)
                 {
                     var memberMap = MemberMap.CreateGeneric(ClassType, propertiesInfo);
-                    memberMap.Name(additionanColumn);
+                    memberMap.Name(additionalColumn);
                     memberMap.Data.IsOptional = true;
                     memberMap.Data.Index = currentColumnIndex++;
 
                     Func<ConvertToStringArgs<TestExportClass>, string> func = xs =>
                     {
-                        return xs.Value.Properties.First(x => x.Name == additionanColumn).Value;
+                        return xs.Value.Properties.First(x => x.Name == additionalColumn).Value;
                     };
 
                     memberMap.Data.WritingConvertExpression =
