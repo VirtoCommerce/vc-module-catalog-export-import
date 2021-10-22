@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
-using FluentValidation.Results;
 using FluentValidation.Validators;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
@@ -12,7 +11,7 @@ using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 {
-    public class ImportPhysicalProductsValidator : AbstractValidator<ImportRecord<CsvPhysicalProduct>[]>
+    public sealed class ImportPhysicalProductsValidator : AbstractValidator<ImportRecord<CsvPhysicalProduct>[]>
     {
         private readonly IPackageTypesService _packageTypesService;
         private readonly ISettingsManager _settingsManager;
@@ -30,7 +29,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductValidator()));
         }
 
-        protected virtual async Task SetContextData(ImportRecord<CsvPhysicalProduct>[] records, CustomContext context, CancellationToken cancellationToken)
+        private async Task SetContextData(ImportRecord<CsvPhysicalProduct>[] records, CustomContext context, CancellationToken cancellationToken)
         {
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes] = await GetAvailablePackageTypesAsync();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
@@ -38,28 +37,28 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes] = await GetAvailableTaxTypes();
         }
 
-        protected virtual async Task<string[]> GetAvailablePackageTypesAsync()
+        private async Task<string[]> GetAvailablePackageTypesAsync()
         {
             var packagesTypes = await _packageTypesService.GetAllPackageTypesAsync();
             return packagesTypes.Select(x => x.Name).ToArray();
         }
 
-        protected virtual async Task<string[]> GetAvailableMeasureUnits()
+        private async Task<string[]> GetAvailableMeasureUnits()
         {
             var setting = await _settingsManager.GetObjectSettingAsync(CoreModule.Core.ModuleConstants.Settings.General.MeasureUnits.Name);
-            return (string[])setting.AllowedValues;
+            return setting.AllowedValues?.Cast<string>().ToArray() ?? Array.Empty<string>();
         }
 
-        protected virtual async Task<string[]> GetAvailableWeightUnits()
+        private async Task<string[]> GetAvailableWeightUnits()
         {
             var setting = await _settingsManager.GetObjectSettingAsync(CoreModule.Core.ModuleConstants.Settings.General.WeightUnits.Name);
-            return (string[])setting.AllowedValues;
+            return setting.AllowedValues?.Cast<string>().ToArray() ?? Array.Empty<string>();
         }
 
-        protected virtual async Task<string[]> GetAvailableTaxTypes()
+        private async Task<string[]> GetAvailableTaxTypes()
         {
             var setting = await _settingsManager.GetObjectSettingAsync(CoreModule.Core.ModuleConstants.Settings.General.TaxTypes.Name);
-            return (string[])setting.AllowedValues;
+            return setting.AllowedValues?.Cast<string>().ToArray() ?? Array.Empty<string>();
         }
     }
 }

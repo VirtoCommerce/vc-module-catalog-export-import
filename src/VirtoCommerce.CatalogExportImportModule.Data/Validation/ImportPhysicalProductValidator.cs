@@ -6,7 +6,7 @@ using static VirtoCommerce.CatalogExportImportModule.Data.Helpers.ValidationExte
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 {
-    public class ImportPhysicalProductValidator: AbstractValidator<ImportRecord<CsvPhysicalProduct>>
+    public sealed class ImportPhysicalProductValidator: AbstractValidator<ImportRecord<CsvPhysicalProduct>>
     {
         private static readonly char[] ProductSkuIllegalCharacters = { '$', '+', ';', '=', '%', '{', '}', '[', ']', '|', '@', '~', '!', '^', '*', '&', '(', ')', '<', '>' };
 
@@ -18,16 +18,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         private void AttachValidators()
         {
             RuleFor(record => record.Record.ProductName)
+                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .NotEmpty()
                 .WithMissingRequiredValueCodeAndMessage("Product Name")
                 .WithImportState()
-                .DependentRules(() =>
-                {
-                    RuleFor(record => record.Record.ProductName)
-                        .MaximumLength(1024)
-                        .WithExceededMaxLengthCodeAndMessage("Product Name", 1024)
-                        .WithImportState();
-                });
+                .MaximumLength(1024)
+                .WithExceededMaxLengthCodeAndMessage("Product Name", 1024)
+                .WithImportState();
 
             RuleFor(record => record.Record.ProductId)
                 .NotEmpty()
@@ -74,6 +71,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.PackageType)
+                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .MaximumLength(254)
                 .WithExceededMaxLengthCodeAndMessage("Package Type", 254)
                 .WithImportState()
@@ -92,6 +90,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.MeasureUnit)
+                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .MaximumLength(32)
                 .WithExceededMaxLengthCodeAndMessage("Measure Unit", 32)
                 .WithImportState()
@@ -105,6 +104,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.WeightUnit)
+                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .MaximumLength(32)
                 .WithExceededMaxLengthCodeAndMessage("Weight Unit", 32)
                 .WithImportState()
@@ -118,6 +118,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.TaxType)
+                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .MaximumLength(64)
                 .WithExceededMaxLengthCodeAndMessage("Tax Type", 64)
                 .WithImportState()
