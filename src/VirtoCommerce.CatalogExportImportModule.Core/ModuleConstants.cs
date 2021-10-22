@@ -16,6 +16,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string Physical = "Physical";
         }
 
+
         public static class PushNotificationsTitles
         {
             public static readonly IReadOnlyDictionary<string, string> Export = new Dictionary<string, string>()
