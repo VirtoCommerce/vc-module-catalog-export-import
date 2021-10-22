@@ -137,7 +137,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             catch (BadDataException)
             {
                 // There is nothing to do
-                // This excpetion needed to prevent double firing BadDataFound callback
+                // This exception is needed to prevent double firing BadDataFound callback
                 // Here is an issue: https://github.com/JoshClose/CsvHelper/issues/1873
             }
 

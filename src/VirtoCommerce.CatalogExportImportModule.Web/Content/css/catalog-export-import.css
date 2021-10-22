@@ -12,12 +12,20 @@
     border-bottom-width: 1px !important;
 }
 
+.catalog-export-import .ui-grid-row {
+    width: auto !important;
+}
+
 .catalog-export-import.preview-header + .blade-content {
     height: calc(100% - 44px);
 }
 
 .catalog-export-import.preview-warning-block + .blade-content {
     height: calc(100% - 84px);
+}
+
+.catalog-export-import .ui-grid-pinned-container-left .ui-grid-cell-contents {
+    text-align: unset !important;
 }
 
 .catalog-export-import .mr-auto {
@@ -34,6 +42,10 @@
 
 .catalog-export-import .bl-1 {
     border-left: 1px solid #e3e7ec;
+}
+
+.catalog-export-import .bl-0 {
+    border-left-width: 0 !important;
 }
 
 .catalog-export-import .preview-count {

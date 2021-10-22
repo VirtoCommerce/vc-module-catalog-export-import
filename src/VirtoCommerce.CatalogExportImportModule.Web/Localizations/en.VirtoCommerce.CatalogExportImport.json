@@ -46,7 +46,8 @@
         "preview-legend": "Please use horizontal scroll to see all columns from the import preview",
         "labels": {
           "preview-count": "Preview count:"
-        }
+        },
+        "upload-new": "Upload new"
       },
       "import-processing": {
         "title": "Import progress",
