@@ -91,8 +91,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
         {
             var stream = new MemoryStream();
 
-            using var streamWriter = new StreamWriter(stream);
-            streamWriter.AutoFlush = true;
+            using var streamWriter = new StreamWriter(stream)
+            {
+                AutoFlush = true
+            };
+
             using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
 
             csvWriter.Context.RegisterClassMap(new TestExportClassMap(new[] { "Property 1", "Property 2" }));
@@ -122,7 +125,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
             var result = streamReader.ReadToEnd();
 
-            Assert.Equal($"Id,Property 1,Property 2{Environment.NewLine}Test id 1,Property value 1,Property value 2", result.TrimEnd());
+
+
+            Assert.Equal($"Id,Property 1,Property 2{csvWriter.Configuration.NewLine}Test id 1,Property value 1,Property value 2", result.TrimEnd());
         }
 
         public class TestExportClass
