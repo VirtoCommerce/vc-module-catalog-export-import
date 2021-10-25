@@ -20,13 +20,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
 
             if (!properties.IsNullOrEmpty() && typeHasProperties)
             {
-                AddPropertyColumnDefinitionAndWritingMap(properties);
+                AddPropertiesWritingMap(properties);
 
-                AddPropertyReadingMap(properties, propertyDictionaryItems);
+                AddPropertiesReadingMap(properties, propertyDictionaryItems);
             }
         }
 
-        private void AddPropertyColumnDefinitionAndWritingMap(IList<Property> exportedProperties)
+        private void AddPropertiesWritingMap(IList<Property> exportedProperties)
         {
             var currentColumnIndex = MemberMaps.Count;
 
@@ -50,24 +50,16 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
 
                     if (valueProperty != null)
                     {
-                        if (valueProperty.Dictionary)
-                        {
-                            valuePropertyValues = valueProperty.Values?
-                                .Where(x => x.Value != null)
-                                .Select(x => x.Value.ToString())
-                                .Distinct()
-                                .ToArray();
-                        }
-                        else
-                        {
-                            valuePropertyValues = valueProperty.Values?
-                                .Where(x => x.Value != null)
-                                .Select(x => x.Value.ToString())
-                                .ToArray();
-                        }
+                        valuePropertyValues = valueProperty.Values?
+                            .Where(x => x.Value != null)
+                            .Select(x => x.Value.ToString())
+                            .Distinct()
+                            .ToArray();
                     }
 
-                    return string.Join(", ", valuePropertyValues);
+                    var result = string.Join(", ", valuePropertyValues);
+
+                    return result;
                 };
 
                 propertyColumnDefinitionAndWriteMap.Data.WritingConvertExpression =
@@ -78,7 +70,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
             }
         }
 
-        private void AddPropertyReadingMap(IList<Property> properties, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems)
+        private void AddPropertiesReadingMap(IList<Property> properties, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems)
         {
             var currentColumnIndex = MemberMaps.Count;
 
