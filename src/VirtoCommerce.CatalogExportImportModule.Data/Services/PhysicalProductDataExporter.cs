@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
@@ -20,30 +21,41 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
     {
         private readonly ICategoryService _categoryService;
         private readonly IItemService _itemService;
+        private readonly IPropertyService _propertyService;
 
         public PhysicalProductDataExporter(IExportPagedDataSourceFactory exportPagedDataSourceFactory, IExportWriterFactory exportWriterFactory, IOptions<PlatformOptions> platformOptions, IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver
-                                            , ICategoryService categoryService, IItemService itemService)
+                                            , ICategoryService categoryService, IItemService itemService, IPropertyService propertyService)
             : base(exportPagedDataSourceFactory, exportWriterFactory, platformOptions, blobStorageProvider, blobUrlResolver)
         {
             _categoryService = categoryService;
             _itemService = itemService;
+            _propertyService = propertyService;
         }
 
         protected override async Task<ClassMap<CsvPhysicalProduct>> GetClassMapAsync(ExportDataRequest request)
         {
             // Get categories properties by request
-            var properties = await LoadPropertiesAsync(request.ItemIds, request.CategoryIds);
+            var properties = await LoadPropertiesAsync(request.CatalogId, request.ItemIds, request.CategoryIds);
 
             var classMap = new GenericTypeWithPropertiesClassMap<CsvPhysicalProduct>(properties);
 
             return classMap;
         }
 
-        private async Task<Property[]> LoadPropertiesAsync(string[] itemIds, string[] categoryIds)
+        private async Task<Property[]> LoadPropertiesAsync(string catalogId, string[] itemIds, string[] categoryIds)
         {
             var result = Array.Empty<Property>();
 
             var comparer = AnonymousComparer.Create((Property x) => x.Id);
+
+            if (categoryIds.IsNullOrEmpty() && itemIds.IsNullOrEmpty())
+            {
+                var allCatalogProperties = await _propertyService.GetAllCatalogPropertiesAsync(catalogId);
+
+                var allProductsProperties = allCatalogProperties.Where(x => x.Type == PropertyType.Product).ToArray();
+
+                result = allProductsProperties;
+            }
 
             if (!categoryIds.IsNullOrEmpty())
             {
