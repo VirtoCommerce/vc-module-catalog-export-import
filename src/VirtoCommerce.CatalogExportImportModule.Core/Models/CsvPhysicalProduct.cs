@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using CsvHelper.Configuration.Attributes;
 using Newtonsoft.Json;
 using VirtoCommerce.CatalogModule.Core.Model;
