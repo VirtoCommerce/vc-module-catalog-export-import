@@ -213,19 +213,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.EndDate = ListingExpiresOn;
         }
 
-        public void PatchDescriptions(CatalogProduct target, int existingReviewIndex)
-        {
-            target.Reviews[existingReviewIndex].Content = Description;
-            target.Reviews[existingReviewIndex].LanguageCode = DescriptionLanguage;
-            target.Reviews[existingReviewIndex].ReviewType = DescriptionType;
-        }
-
-        public void PatchDescriptions(CatalogProduct target, EditorialReview review)
+        public void PatchDescription(EditorialReview review)
         {
             review.Content = Description;
             review.LanguageCode = DescriptionLanguage;
             review.ReviewType = DescriptionType;
-            target.Reviews = new List<EditorialReview> { review };
         }
     }
 }
