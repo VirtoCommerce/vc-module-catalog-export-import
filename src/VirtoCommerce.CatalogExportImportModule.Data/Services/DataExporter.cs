@@ -65,7 +65,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 exportWriter.RegisterClassMap(classMap);
             }
 
-
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             exportProgress.Description = "Fetching...";
 
