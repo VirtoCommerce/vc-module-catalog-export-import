@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
 using Newtonsoft.Json;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
@@ -66,6 +67,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Optional]
         [Name("Package Type")]
         public string PackageType { get; set; }
+
+        [Optional]
+        [Name("Description Id")]
+        public string DescriptionId { get; set; }
+
+        [Optional]
+        [Name("Description Type")]
+        public string DescriptionType { get; set; }
+
+        [Optional]
+        [Name("Description Language")]
+        public string DescriptionLanguage { get; set; }
+
+        [Optional]
+        [Name("Description")]
+        public string Description { get; set; }
 
         [Optional]
         [Name("Max Quantity")]
@@ -152,6 +169,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             Vendor = product.Vendor;
             FirstListed = product.StartDate;
             ListingExpiresOn = product.EndDate;
+
+            if (!product.Reviews.IsNullOrEmpty())
+            {
+                var description = product.Reviews[0];
+                DescriptionId = description.Id;
+                Description = description.Content;
+                DescriptionLanguage = description.LanguageCode;
+                DescriptionType = description.ReviewType;
+            }
 
             return this;
         }
