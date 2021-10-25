@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using CsvHelper.Configuration.Attributes;
 using Newtonsoft.Json;
 using VirtoCommerce.CatalogModule.Core.Model;
@@ -209,6 +211,21 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.Vendor = Vendor;
             target.StartDate = FirstListed ?? DateTime.UtcNow;
             target.EndDate = ListingExpiresOn;
+        }
+
+        public void PatchDescriptions(CatalogProduct target, int existingReviewIndex)
+        {
+            target.Reviews[existingReviewIndex].Content = Description;
+            target.Reviews[existingReviewIndex].LanguageCode = DescriptionLanguage;
+            target.Reviews[existingReviewIndex].ReviewType = DescriptionType;
+        }
+
+        public void PatchDescriptions(CatalogProduct target, EditorialReview review)
+        {
+            review.Content = Description;
+            review.LanguageCode = DescriptionLanguage;
+            review.ReviewType = DescriptionType;
+            target.Reviews = new List<EditorialReview> { review };
         }
     }
 }

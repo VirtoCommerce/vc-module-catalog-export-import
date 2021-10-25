@@ -252,6 +252,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 record.Record.PatchModel(entity);
 
+                var reviewEntity = AbstractTypeFactory<EditorialReview>.TryCreateInstance();
+                record.Record.PatchDescriptions(entity, reviewEntity);
+
                 return entity;
             }).ToArray();
 
@@ -266,6 +269,18 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                                                         || !existingEntity.OuterId.IsNullOrEmpty() && existingEntity.OuterId.EqualsInvariant(x.Record.ProductOuterId));
 
                 record?.Record.PatchModel(existingEntity);
+
+                if (!existingEntity.Reviews.IsNullOrEmpty())
+                {
+                    var existedReview = existingEntity.Reviews.FirstOrDefault(x => x.Id == record.Record.DescriptionId);
+                    var existedReviewIndex = existingEntity.Reviews.IndexOf(existedReview);
+                    record.Record.PatchDescriptions(existingEntity, existedReviewIndex);
+                } else
+                {
+                    var entity = AbstractTypeFactory<EditorialReview>.TryCreateInstance();
+                    record.Record.PatchDescriptions(existingEntity, entity);
+                }
+
             }
         }
 
