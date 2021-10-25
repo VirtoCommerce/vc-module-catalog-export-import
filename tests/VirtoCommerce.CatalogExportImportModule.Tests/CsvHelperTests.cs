@@ -16,8 +16,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
     {
 
         [Fact]
-        public async Task TestDoubleBadDataFoundCase()
+        public async Task CsvReader_ReadAsync_DoubleBadData_ErrorsFound()
         {
+            // Arrange
             var errorCount = 0;
             var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -36,6 +37,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
             var csvReader = new CsvReader(textReader, csvConfiguration);
 
+            // Act
             await csvReader.ReadAsync();
             csvReader.ReadHeader();
 
@@ -45,12 +47,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
             }
 
+            // Assert
             Assert.Equal(2, errorCount);
         }
 
         [Fact]
-        public async Task EnsureBadDataFoundWasCalledOnceCase()
+        public async Task CsvReader_ReadAsync_EnsureBadDataFoundWasCalledOnceCase()
         {
+            // Arrange
             var errorCount = 0;
             var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -67,6 +71,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             var csv = TestHelper.GetCsv(records, header);
             var textReader = new StreamReader(TestHelper.GetStream(csv), leaveOpen: true);
 
+            // Act
             var csvReader = new CsvReader(textReader, csvConfiguration);
             var errorString = string.Empty;
             try
@@ -82,13 +87,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                 ++errorCount;
             }
 
+            // Assert
             Assert.Equal(1, errorCount);
             Assert.Equal($"Test name 2;\"test SKU 2;;{Environment.NewLine}Test name 3;test SKU 3;;{Environment.NewLine}Test name 4;\"test SKU 4;;", errorString.TrimEnd());
         }
 
         [Fact]
-        public void ClassExportMapTest()
+        public void CsvWriter_WriteRecordsWithProps_PropsReaded()
         {
+            // Arrange
             var stream = new MemoryStream();
 
             using var streamWriter = new StreamWriter(stream)
@@ -118,6 +125,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
                 }
             };
 
+            // Act
             csvWriter.WriteRecords(new[] { data });
             stream.Position = 0;
 
@@ -125,8 +133,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
             var result = streamReader.ReadToEnd();
 
-
-
+            // Assert
             Assert.Equal($"Id,Property 1,Property 2{csvWriter.Configuration.NewLine}Test id 1,Property value 1,Property value 2", result.TrimEnd());
         }
 
