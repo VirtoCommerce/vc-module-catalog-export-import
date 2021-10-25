@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper.Configuration;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
@@ -46,7 +45,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var result = Array.Empty<Property>();
 
-            var comparer = AnonymousComparer.Create((Property x) => x.Id);
+            var comparer = AnonymousComparer.Create((Property x) => x.Name);
 
             if (categoryIds.IsNullOrEmpty() && itemIds.IsNullOrEmpty())
             {
