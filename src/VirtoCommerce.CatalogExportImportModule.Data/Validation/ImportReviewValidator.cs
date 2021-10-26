@@ -68,7 +68,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 RuleFor(x => x.Record.ProductSku)
                     .Must((_, sku, context) =>
                     {
-                        var skus = (string[])context.ParentContext.RootContextData[ModuleConstants.ContextDataSkus];
+                        var skus = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.Skus];
 
                         return skus.Contains(sku);
                     })
