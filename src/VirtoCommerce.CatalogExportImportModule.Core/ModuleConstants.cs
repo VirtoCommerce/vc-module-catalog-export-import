@@ -56,6 +56,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string AvailableWeightUnits = nameof(AvailableWeightUnits);
 
             public const string AvailableTaxTypes = nameof(AvailableTaxTypes);
+
+            public const string AvaibaleLanguages = nameof(AvaibaleLanguages);
+
+            public const string AvaibaleReviewTypes = nameof(AvaibaleReviewTypes);
         }
 
         public static class ValidationErrors

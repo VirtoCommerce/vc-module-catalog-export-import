@@ -27,6 +27,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         {
             RuleFor(importRecords => importRecords).SetValidator(new ImportProductsAreNotDuplicatesValidator());
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductValidator()));
+            RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductDescriptionValidator()));
         }
 
         private async Task SetContextData(ImportRecord<CsvPhysicalProduct>[] records, CustomContext context, CancellationToken cancellationToken)
@@ -35,6 +36,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits] = await GetAvailableWeightUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes] = await GetAvailableTaxTypes();
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleLanguages] = await GetAvailableLanguages();
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleReviewTypes] = await GetAvailableReviewTypes();
         }
 
         private async Task<string[]> GetAvailablePackageTypesAsync()
@@ -59,6 +62,18 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         {
             var setting = await _settingsManager.GetObjectSettingAsync(CoreModule.Core.ModuleConstants.Settings.General.TaxTypes.Name);
             return setting.AllowedValues?.Cast<string>().ToArray() ?? Array.Empty<string>();
+        }
+
+        private async Task<string[]> GetAvailableLanguages()
+        {
+            var setting = await _settingsManager.GetObjectSettingAsync(CoreModule.Core.ModuleConstants.Settings.General.Languages.Name);
+            return setting.AllowedValues.OfType<string>().ToArray() ?? Array.Empty<string>();
+        }
+
+        private async Task<string[]> GetAvailableReviewTypes()
+        {
+            var setting = await _settingsManager.GetObjectSettingAsync(CatalogModule.Core.ModuleConstants.Settings.General.EditorialReviewTypes.Name);
+            return setting.AllowedValues.OfType<string>().ToArray() ?? Array.Empty<string>();
         }
     }
 }
