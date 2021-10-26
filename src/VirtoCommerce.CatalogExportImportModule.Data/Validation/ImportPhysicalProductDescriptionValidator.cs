@@ -22,7 +22,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             }.Any(field => !string.IsNullOrEmpty(field)), () =>
             {
                 RuleFor(x => x.Record.Description)
-                    .NotEmpty().WithMissingRequiredValueCodeAndMessage("Description")
+                    .NotEmpty()
+                    .WithMissingRequiredValueCodeAndMessage("Description")
                     .WithImportState();
 
                 RuleFor(x => x.Record.DescriptionLanguage)
