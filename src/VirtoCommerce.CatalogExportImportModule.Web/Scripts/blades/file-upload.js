@@ -190,6 +190,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
         $scope.showPreview = () => {
             var newBlade = {
                 id: "descriptionsImportPreview",
+                catalogId: blade.catalog.id,
                 csvFilePath: blade.csvFilePath,
                 dataType: blade.dataType.value,
                 headIcon: "fas fa-file-csv",
