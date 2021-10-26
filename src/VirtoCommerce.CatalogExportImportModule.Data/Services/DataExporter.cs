@@ -41,6 +41,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
         public abstract string DataType { get; }
 
+        protected virtual async Task<ClassMap<TExportable>> GetClassMapAsync(ExportDataRequest request)
+        {
+            return await Task.FromResult<ClassMap<TExportable>>(null);
+        }
+
         public async Task ExportAsync(ExportDataRequest request, Action<ExportProgressInfo> progressCallback, ICancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -52,6 +57,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var dataSource = _exportPagedDataSourceFactory.Create(ModuleConstants.Settings.PageSize, request);
             var exportWriter = _exportWriterFactory.Create<TExportable>(exportFilePath, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
+
+            var classMap = await GetClassMapAsync(request);
+
+            if (classMap != null)
+            {
+                exportWriter.RegisterClassMap(classMap);
+            }
 
             exportProgress.TotalCount = await dataSource.GetTotalCountAsync();
             exportProgress.Description = "Fetching...";
