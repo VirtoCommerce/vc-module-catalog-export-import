@@ -60,6 +60,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string AvaibaleLanguages = nameof(AvaibaleLanguages);
 
             public const string AvaibaleReviewTypes = nameof(AvaibaleReviewTypes);
+
+            public const string ExistedReviews = nameof(ExistedReviews);
         }
 
         public static class ValidationErrors
@@ -87,6 +89,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string InvalidValue = "invalid-value";
 
             public const string NotUniqueValue = "not-unique-value";
+
+            public const string ReviewExistsInSystem = "review-exists-in-system";
         }
 
         public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>

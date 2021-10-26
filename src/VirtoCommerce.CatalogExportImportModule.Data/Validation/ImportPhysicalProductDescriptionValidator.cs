@@ -16,6 +16,27 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
         private void AttachValidators()
         {
+            When(x => !string.IsNullOrEmpty(x.Record.DescriptionId),
+                () =>
+                RuleFor(x => x.Record.DescriptionId)
+                    .Must((record, id, context) =>
+                {
+                    var existedReviews = (ExtendedEditorialReview[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews];
+                    var existedReview = existedReviews.FirstOrDefault(x => x.Id == id);
+
+                    if (existedReview == null)
+                    {
+                        return true;
+                    }
+
+                    var result = existedReview.ItemId == record.Record.ProductId;
+                    return result;
+                })
+                    .WithErrorCode(ModuleConstants.ValidationErrors.ReviewExistsInSystem)
+                    .WithMessage("Description exists in the system related to other product")
+                    .WithImportState()
+                   );
+
             When(x => new[]
             {
                 x.Record.Description, x.Record.DescriptionLanguage, x.Record.DescriptionType
