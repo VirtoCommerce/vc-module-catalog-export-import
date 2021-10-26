@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper.Configuration;
 using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogExportImportModule.Data.ExportImport;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Model.Search;
+using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
@@ -18,20 +22,47 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly IImportProductSearchService _importProductSearchService;
         private readonly IImportCategorySearchService _importCategorySearchService;
         private readonly IItemService _itemService;
+        private readonly IPropertyLoader _propertyLoader;
+        private readonly IPropertyDictionaryItemSearchService _propertyDictionaryItemSearchService;
 
         public CsvPagedPhysicalProductDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IImportProductSearchService importProductSearchService, IImportCategorySearchService importCategorySearchService,
-            IItemService itemService, ImportConfigurationFactory importConfigurationFactory)
+            IItemService itemService, ImportConfigurationFactory importConfigurationFactory,
+            IPropertyLoader propertyLoader, IPropertyDictionaryItemSearchService propertyDictionaryItemSearchService)
             : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
         {
             _importProductSearchService = importProductSearchService;
             _importCategorySearchService = importCategorySearchService;
             _itemService = itemService;
+            _propertyLoader = propertyLoader;
+            _propertyDictionaryItemSearchService = propertyDictionaryItemSearchService;
         }
 
         public override string DataType { get; } = ModuleConstants.DataTypes.PhysicalProduct;
+
+        protected override async Task<ClassMap<CsvPhysicalProduct>> GetClassMapAsync(ImportDataRequest request)
+        {
+
+            var properties = await
+                _propertyLoader.LoadPropertiesAsync(new LoadPropertiesCriteria() { CatalogId = request.CatalogId });
+
+
+            var propertyDyctionaryItems = new Dictionary<string, IList<PropertyDictionaryItem>>();
+
+            var dictionaryPropsIds = properties.Where(x => x.Dictionary).Select(x => x.Id).ToArray();
+
+            var dictionaryItemsSearchResult =
+                    await _propertyDictionaryItemSearchService.SearchAsync(
+                        new PropertyDictionaryItemSearchCriteria() { PropertyIds = dictionaryPropsIds, Take = int.MaxValue });
+
+            var propertyDictionaryItems = dictionaryItemsSearchResult.Results.GroupBy(x => x.PropertyId).ToDictionary(x => x.Key, x => x.ToList());
+
+            var classMap = new GenericTypeWithPropertiesClassMap<CsvPhysicalProduct>(properties, propertyDictionaryItems);
+
+            return classMap;
+        }
 
         protected override async Task ProcessChunkAsync(ImportDataRequest request,
             Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<CsvPhysicalProduct> dataSource,
@@ -97,7 +128,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 var productsToSave = newProducts.Union(existingProducts).ToArray();
 
-                SetCatalogId(productsToSave, existingCategories);
+                SetCatalogId(productsToSave, request.CatalogId);
 
                 await _itemService.SaveChangesAsync(productsToSave);
 
@@ -285,11 +316,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private void SetCatalogId(CatalogProduct[] productsToSave, Category[] existingCategories)
+        private void SetCatalogId(CatalogProduct[] productsToSave, string catalogId)
         {
             foreach (var product in productsToSave)
             {
-                product.CatalogId = existingCategories.FirstOrDefault(category => product.CategoryId == category.Id)?.CatalogId;
+                product.CatalogId = catalogId;
             }
         }
     }

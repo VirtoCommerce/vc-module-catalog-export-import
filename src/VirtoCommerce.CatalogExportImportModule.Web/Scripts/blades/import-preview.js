@@ -61,6 +61,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
                     const importDataRequest = {
                         filePath: blade.csvFilePath,
                         dataType: blade.dataType,
+                        catalogId: blade.catalogId,
                     };
                     importResources.run(importDataRequest, (data) => {
                         var newBlade = {
