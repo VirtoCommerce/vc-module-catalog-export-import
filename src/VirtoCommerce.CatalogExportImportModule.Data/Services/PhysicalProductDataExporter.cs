@@ -51,7 +51,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             {
                 var allCatalogProperties = await _propertyService.GetAllCatalogPropertiesAsync(catalogId);
 
-                var allProductsProperties = allCatalogProperties.Where(x => x.Type == PropertyType.Product).ToArray();
+                var allProductsProperties = allCatalogProperties.Where(x => x.Type == PropertyType.Product && x.IsManageable).ToArray();
 
                 result = allProductsProperties;
             }
@@ -65,7 +65,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 if (!categories.IsNullOrEmpty())
                 {
                     var categoriesProperties = categories.SelectMany(x => x.Properties)
-                        .Where(x => x.Type == PropertyType.Product)
+                        .Where(x => x.Type == PropertyType.Product && x.IsManageable)
                         .Distinct(comparer).ToArray();
 
                     result = categoriesProperties;
@@ -81,7 +81,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 if (!products.IsNullOrEmpty())
                 {
                     var productsProperties = products.SelectMany(x => x.Properties)
-                        .Where(x => x.Type == PropertyType.Product)
+                        .Where(x => x.Type == PropertyType.Product && x.IsManageable)
                         .Distinct(comparer).ToArray();
 
                     result = result.Union(productsProperties, comparer).ToArray();
