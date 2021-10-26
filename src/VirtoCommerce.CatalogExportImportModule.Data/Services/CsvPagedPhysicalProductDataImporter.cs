@@ -49,15 +49,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 _propertyLoader.LoadPropertiesAsync(new LoadPropertiesCriteria() { CatalogId = request.CatalogId });
 
 
-            var propertyDyctionaryItems = new Dictionary<string, IList<PropertyDictionaryItem>>();
-
             var dictionaryPropsIds = properties.Where(x => x.Dictionary).Select(x => x.Id).ToArray();
 
             var dictionaryItemsSearchResult =
                     await _propertyDictionaryItemSearchService.SearchAsync(
                         new PropertyDictionaryItemSearchCriteria() { PropertyIds = dictionaryPropsIds, Take = int.MaxValue });
 
-            var propertyDictionaryItems = dictionaryItemsSearchResult.Results.GroupBy(x => x.PropertyId).ToDictionary(x => x.Key, x => x.ToList());
+            var propertyDictionaryItems = dictionaryItemsSearchResult.Results.GroupBy(x => x.PropertyId).ToDictionary(x => x.Key, x => x.ToArray());
 
             var classMap = new GenericTypeWithPropertiesClassMap<CsvPhysicalProduct>(properties, propertyDictionaryItems);
 
