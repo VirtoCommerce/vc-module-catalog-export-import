@@ -25,36 +25,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                 AddPropertiesWritingMap(properties);
 
                 AddPropertiesReadingMap(properties, propertyDictionaryItems);
-
-                //CsvHelper.ConvertFromString<IList<Property>> func = args =>
-                //{
-                //    var row = args.Row;
-
-                //    var propertiesFromFile = properties.Where(x => row.HeaderRecord.Contains(x.Name)).ToArray();
-
-                //    var result = propertiesFromFile
-                //        .Select(property =>
-                //            !string.IsNullOrEmpty(row.GetField<string>(property.Name))
-                //                ? new Property()
-                //                {
-                //                    Id = property.Id,
-                //                    Name = property.Name,
-                //                    DisplayNames = property.DisplayNames,
-                //                    Multivalue = property.Multivalue,
-                //                    Dictionary = property.Dictionary,
-                //                    Multilanguage = property.Multilanguage,
-                //                    Required = property.Required,
-                //                    ValueType = property.ValueType,
-                //                    Values = ToPropertyValues(property, propertyDictionaryItems, row.GetField<string>(property.Name))
-                //                }
-                //                : null)
-                //        .Where(x => x != null)
-                //        .ToList();
-
-                //    return result;
-                //};
-
-                //Map(x => x.Properties).Convert(row => func(row));
             }
         }
 
@@ -145,7 +115,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
             propertyReadingMap.Ignore(true);
             propertyReadingMap.Data.IsOptional = true;
             propertyReadingMap.Data.Index = currentColumnIndex + 1;
-
 
             MemberMaps.Add(propertyReadingMap);
         }
