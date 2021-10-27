@@ -14,6 +14,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
     {
         public GenericTypeWithPropertiesClassMap(Property[] properties, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems = null)
         {
+
+
             AutoMap(new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 
             var typeHasProperties = ClassType.GetInterfaces().Contains(typeof(IHasProperties));
@@ -23,6 +25,36 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                 AddPropertiesWritingMap(properties);
 
                 AddPropertiesReadingMap(properties, propertyDictionaryItems);
+
+                //CsvHelper.ConvertFromString<IList<Property>> func = args =>
+                //{
+                //    var row = args.Row;
+
+                //    var propertiesFromFile = properties.Where(x => row.HeaderRecord.Contains(x.Name)).ToArray();
+
+                //    var result = propertiesFromFile
+                //        .Select(property =>
+                //            !string.IsNullOrEmpty(row.GetField<string>(property.Name))
+                //                ? new Property()
+                //                {
+                //                    Id = property.Id,
+                //                    Name = property.Name,
+                //                    DisplayNames = property.DisplayNames,
+                //                    Multivalue = property.Multivalue,
+                //                    Dictionary = property.Dictionary,
+                //                    Multilanguage = property.Multilanguage,
+                //                    Required = property.Required,
+                //                    ValueType = property.ValueType,
+                //                    Values = ToPropertyValues(property, propertyDictionaryItems, row.GetField<string>(property.Name))
+                //                }
+                //                : null)
+                //        .Where(x => x != null)
+                //        .ToList();
+
+                //    return result;
+                //};
+
+                //Map(x => x.Properties).Convert(row => func(row));
             }
         }
 
@@ -43,9 +75,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                 propertyColumnDefinitionAndWriteMap.Data.Index = currentColumnIndex++;
 
                 // create custom converter instance which will get the required record from the collection
-                Func<ConvertToStringArgs<T>, string> func = xs =>
+                ConvertToString<T> func = args =>
                 {
-                    var valueProperty = xs.Value.Properties.FirstOrDefault(x => x.Name == exportedProperty.Name && x.Values.Any());
+
+                    var valueProperty = args.Value.Properties.FirstOrDefault(x => x.Name == exportedProperty.Name && x.Values.Any());
                     var valuePropertyValues = Array.Empty<string>();
 
                     if (valueProperty != null)
@@ -63,7 +96,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                 };
 
                 propertyColumnDefinitionAndWriteMap.Data.WritingConvertExpression =
-                    (Expression<Func<ConvertToStringArgs<T>, string>>)(ex => func(ex));
+                    (Expression<ConvertToString<T>>)(args => func(args));
 
 
                 MemberMaps.Add(propertyColumnDefinitionAndWriteMap);
@@ -78,9 +111,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
 
             var propertyReadingMap = MemberMap.CreateGeneric(ClassType, propertiesPropertyInfo);
 
-            Func<IReaderRow, object> func = row =>
+            ConvertFromString<IList<Property>> func = args =>
             {
-                var result = properties
+                var row = args.Row;
+
+                var propertiesFromFile = properties.Where(x => row.HeaderRecord.Contains(x.Name)).ToArray();
+
+                var result = propertiesFromFile
                     .Select(property =>
                         !string.IsNullOrEmpty(row.GetField<string>(property.Name))
                             ? new Property()
@@ -103,11 +140,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
             };
 
             propertyReadingMap.Data.ReadingConvertExpression =
-                (Expression<Func<IReaderRow, object>>)(row => func(row));
+                (Expression<ConvertFromString<IList<Property>>>)(args => func(args));
 
             propertyReadingMap.Ignore(true);
             propertyReadingMap.Data.IsOptional = true;
             propertyReadingMap.Data.Index = currentColumnIndex + 1;
+
 
             MemberMaps.Add(propertyReadingMap);
         }
