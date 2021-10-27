@@ -5,5 +5,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         public string Error { get; set; }
 
         public string RawRow { get; set; }
+
+        public int Row { get; set; }
     }
 }

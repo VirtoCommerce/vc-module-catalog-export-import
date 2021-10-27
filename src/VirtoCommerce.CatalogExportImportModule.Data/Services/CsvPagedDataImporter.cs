@@ -55,7 +55,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var importProgress = new ImportProgressInfo { Description = "Import has started" };
 
-            SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress, importReporter);
+            SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress);
 
             using var dataSource = _dataSourceFactory.Create<TImportable>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
 
@@ -78,6 +78,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 while (await dataSource.FetchAsync())
                 {
                     await ProcessChunkAsync(request, progressCallback, dataSource, errorsContext, importProgress, importReporter);
+
+                    foreach (var error in errorsContext.Errors.OrderBy(error => error.Row))
+                    {
+                        await importReporter.WriteAsync(error);
+                    }
 
                     if (importProgress.ProcessedCount != importProgress.TotalCount)
                     {
@@ -108,24 +113,29 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         protected abstract Task ProcessChunkAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<TImportable> dataSource,
             ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter);
 
-        protected async Task<ValidationResult> ValidateAsync(ImportRecord<TImportable>[] importRecords, ICsvImportReporter importReporter)
+        protected async Task<ValidationResult> ValidateAsync(ImportRecord<TImportable>[] importRecords, ImportErrorsContext errorsContext)
         {
             var validationResult = await _importRecordsValidator.ValidateAsync(importRecords);
 
             var errorsInfos = validationResult.Errors.Select(x => new { Message = x.ErrorMessage, (x.CustomState as ImportValidationState<TImportable>)?.InvalidRecord }).ToArray();
 
             // We need to order by row number because otherwise records will be written to report in random order
-            var errorsGroups = errorsInfos.OrderBy(x => x.InvalidRecord.Row).GroupBy(x => x.InvalidRecord);
+            var errorsGroups = errorsInfos.GroupBy(x => x.InvalidRecord);
 
             foreach (var group in errorsGroups)
             {
-                var importPrice = group.Key;
+                var record = group.Key;
 
                 var errorMessages = string.Join(" ", group.Select(x => x.Message).ToArray());
 
-                var importError = new ImportError { Error = errorMessages, RawRow = importPrice.RawRecord };
+                var importError = new ImportError
+                {
+                    Error = errorMessages,
+                    RawRow = record.RawRecord,
+                    Row = record.Row
+                };
 
-                await importReporter.WriteAsync(importError);
+                errorsContext.Errors.Add(importError);
             }
 
             return validationResult;
@@ -142,30 +152,36 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         }
 
 
-        private static void HandleBadDataError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleBadDataError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, CsvContext context, ImportErrorsContext errorsContext)
         {
-            var importError = new ImportError { Error = "This row has invalid data. The data after field with not escaped quote was lost.", RawRow = context.Parser.RawRecord };
+            var importError = new ImportError
+            {
+                Error = "This row has invalid data. The data after field with not escaped quote was lost.",
+                RawRow = context.Parser.RawRecord,
+                Row = context.Parser.Row
+            };
 
-            reporter.Write(importError);
-
-            errorsContext.ErrorsRows.Add(context.Parser.Row);
+            errorsContext.Errors.Add(importError);
             HandleError(progressCallback, importProgress);
 
             throw new BadDataException(context, "Exception to prevent double BadDataFound call");
         }
 
-        private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleWrongValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, CsvContext context, ImportErrorsContext errorsContext)
         {
             var invalidFieldName = context.Reader.HeaderRecord[context.Reader.CurrentIndex];
-            var importError = new ImportError { Error = string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], invalidFieldName), RawRow = context.Parser.RawRecord };
+            var importError = new ImportError
+            {
+                Error = string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], invalidFieldName),
+                RawRow = context.Parser.RawRecord,
+                Row = context.Parser.Row
+            };
 
-            reporter.Write(importError);
-
-            errorsContext.ErrorsRows.Add(context.Parser.Row);
+            errorsContext.Errors.Add(importError);
             HandleError(progressCallback, importProgress);
         }
 
-        private static void HandleRequiredValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleRequiredValueError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, CsvContext context, ImportErrorsContext errorsContext)
         {
             var fieldName = context.Reader.HeaderRecord[context.Reader.CurrentIndex];
             var requiredFields = CsvImportHelper.GetImportCustomerRequiredColumns<TImportable>();
@@ -179,60 +195,66 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 }
             }
 
-            var importError = new ImportError { Error = $"The required value in column {fieldName} is missing.", RawRow = context.Parser.RawRecord };
+            var importError = new ImportError
+            {
+                Error = $"The required value in column {fieldName} is missing.",
+                RawRow = context.Parser.RawRecord,
+                Row = context.Parser.Row
+            };
 
             if (missedValueColumns.Count > 1)
             {
                 importError.Error = $"The required values in columns: {string.Join(", ", missedValueColumns)} - are missing.";
             }
 
-            reporter.Write(importError);
-
-            errorsContext.ErrorsRows.Add(context.Parser.Row);
+            errorsContext.Errors.Add(importError);
             HandleError(progressCallback, importProgress);
         }
 
-        private static void HandleMissedColumnError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, ICsvImportReporter reporter, CsvContext context, ImportErrorsContext errorsContext)
+        private static void HandleMissedColumnError(Action<ImportProgressInfo> progressCallback, ImportProgressInfo importProgress, CsvContext context, ImportErrorsContext errorsContext)
         {
             var headerColumns = context.Reader.HeaderRecord;
             var recordFields = context.Parser.Record;
             var missedColumns = headerColumns.Skip(recordFields.Length).ToArray();
             var error = $"This row has unclosed quote or missed columns: {string.Join(", ", missedColumns)}.";
-            var importError = new ImportError { Error = error, RawRow = context.Parser.RawRecord };
+            var importError = new ImportError
+            {
+                Error = error,
+                RawRow = context.Parser.RawRecord,
+                Row = context.Parser.Row
+            };
 
-            reporter.Write(importError);
-
-            errorsContext.ErrorsRows.Add(context.Parser.Row);
+            errorsContext.Errors.Add(importError);
             HandleError(progressCallback, importProgress);
         }
 
         private static void SetupErrorHandlers(Action<ImportProgressInfo> progressCallback, CsvConfiguration configuration,
-            ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter)
+            ImportErrorsContext errorsContext, ImportProgressInfo importProgress)
         {
             configuration.ReadingExceptionOccurred = args =>
             {
                 var context = args.Exception.Context;
 
-                if (!errorsContext.ErrorsRows.Contains(context.Parser.Row))
+                if (!errorsContext.Errors.Select(error => error.Row).Contains(context.Parser.Row))
                 {
                     var fieldSourceValue = context.Reader[context.Reader.CurrentIndex];
 
                     if (fieldSourceValue == string.Empty)
                     {
-                        HandleRequiredValueError(progressCallback, importProgress, importReporter, context, errorsContext);
+                        HandleRequiredValueError(progressCallback, importProgress, context, errorsContext);
                     }
                     else
                     {
-                        HandleWrongValueError(progressCallback, importProgress, importReporter, context, errorsContext);
+                        HandleWrongValueError(progressCallback, importProgress, context, errorsContext);
                     }
                 }
 
                 return false;
             };
 
-            configuration.BadDataFound = args => HandleBadDataError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
+            configuration.BadDataFound = args => HandleBadDataError(progressCallback, importProgress, args.Context, errorsContext);
 
-            configuration.MissingFieldFound = args => HandleMissedColumnError(progressCallback, importProgress, importReporter, args.Context, errorsContext);
+            configuration.MissingFieldFound = args => HandleMissedColumnError(progressCallback, importProgress, args.Context, errorsContext);
         }
 
         protected static string GetReportFilePath(string filePath)
