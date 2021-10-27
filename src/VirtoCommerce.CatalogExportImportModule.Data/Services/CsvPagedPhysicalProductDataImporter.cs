@@ -39,7 +39,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var records = dataSource.Items
                 // expect records that was parsed with errors
-                .Where(importContact => !errorsContext.ErrorsRows.Contains(importContact.Row))
+                .Where(importContact => !errorsContext.Errors.Select(error => error.Row).Contains(importContact.Row))
                 .ToArray();
 
             try
@@ -70,7 +70,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetCategoryIdByCategoryOuterId(records, existingCategories);
 
-                var validationResult = await ValidateAsync(records, importReporter);
+                var validationResult = await ValidateAsync(records, errorsContext);
 
                 var invalidRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvPhysicalProduct>)?.InvalidRecord).Distinct().ToArray();

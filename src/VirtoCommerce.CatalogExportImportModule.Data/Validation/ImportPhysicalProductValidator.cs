@@ -25,12 +25,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .MaximumLength(1024)
                 .WithExceededMaxLengthCodeAndMessage("Product Name", 1024)
                 .WithImportState();
-
-            RuleFor(record => record.Record.ProductId)
-                .NotEmpty()
-                .When(record => string.IsNullOrEmpty(record.Record.ProductOuterId))
-                .WithMissingRequiredValueCodeAndMessage("Product Id")
-                .WithImportState();
             
             RuleFor(record => record.Record.ProductSku)
                 .NotEmpty()
@@ -46,12 +40,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         .WithInvalidValueCodeAndMessage("Product Sku")
                         .WithImportState();
                 });
-
-            RuleFor(record => record.Record.ProductOuterId)
-                .NotEmpty()
-                .When(record => string.IsNullOrEmpty(record.Record.ProductId))
-                .WithMissingRequiredValueCodeAndMessage("Product Outer Id")
-                .WithImportState();
             
             RuleFor(record => record.Record.CategoryId)
                 .NotEmpty()
