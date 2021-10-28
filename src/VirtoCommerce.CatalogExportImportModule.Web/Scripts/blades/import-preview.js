@@ -11,7 +11,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
             blade.isLoading = true;
             $scope.showUnparsedRowsWarning = false;
 
-            importResources.preview({ filePath: blade.csvFilePath, dataType: blade.dataType }, (response) => {
+            importResources.preview({ catalogId: blade.catalogId, filePath: blade.csvFilePath, dataType: blade.dataType }, (response) => {
                 const records = response.results;
 
                 $scope.originalRecords = _.map(records, record => ({...record}));

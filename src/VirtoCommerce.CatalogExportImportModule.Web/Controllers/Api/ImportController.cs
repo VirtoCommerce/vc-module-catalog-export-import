@@ -25,17 +25,21 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IImportPagedDataSourceFactory _importPagedDataSourceFactory;
+        private readonly IImportProductsClassMapFactory _importProductsClassMapFactory;
 
         public ImportController(ICsvDataValidator csvDataValidator,
             IUserNameResolver userNameResolver, IPushNotificationManager pushNotificationManager,
             IBlobStorageProvider blobStorageProvider,
-            IImportPagedDataSourceFactory importPagedDataSourceFactory)
+            IImportPagedDataSourceFactory importPagedDataSourceFactory,
+            IImportProductsClassMapFactory importProductsClassMapFactory)
         {
             _csvDataValidator = csvDataValidator;
             _userNameResolver = userNameResolver;
             _pushNotificationManager = pushNotificationManager;
             _blobStorageProvider = blobStorageProvider;
             _importPagedDataSourceFactory = importPagedDataSourceFactory;
+            _importProductsClassMapFactory = importProductsClassMapFactory;
+
         }
 
         [HttpPost]
@@ -82,6 +86,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
         [Route("preview")]
         public async Task<ActionResult<ImportDataPreview>> GetImportPreview([FromBody] ImportDataPreviewRequest request)
         {
+            if (request.CatalogId.IsNullOrEmpty())
+            {
+                return BadRequest($"{nameof(request.CatalogId)} can not be null");
+            }
+
             if (request.FilePath.IsNullOrEmpty())
             {
                 return BadRequest($"{nameof(request.FilePath)} can not be null");
@@ -112,6 +121,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
                     using (var csvDataSource = _importPagedDataSourceFactory.Create<CsvPhysicalProduct>(request.FilePath,
                         10, null))
                     {
+                        var importProductsClassMap =
+                            await _importProductsClassMapFactory.CreateClassMapAsync(request.CatalogId);
+
+                        csvDataSource.RegisterClassMap(importProductsClassMap);
+
                         result.TotalCount = csvDataSource.GetTotalCount();
                         await csvDataSource.FetchAsync();
                         result.Results = csvDataSource.Items.Select(item => item.Record).ToArray();

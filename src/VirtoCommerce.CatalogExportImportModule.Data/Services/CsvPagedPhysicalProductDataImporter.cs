@@ -7,10 +7,7 @@ using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
-using VirtoCommerce.CatalogExportImportModule.Data.ExportImport;
 using VirtoCommerce.CatalogModule.Core.Model;
-using VirtoCommerce.CatalogModule.Core.Model.Search;
-using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
@@ -22,42 +19,28 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly IImportProductSearchService _importProductSearchService;
         private readonly IImportCategorySearchService _importCategorySearchService;
         private readonly IItemService _itemService;
-        private readonly IPropertyLoader _propertyLoader;
-        private readonly IPropertyDictionaryItemSearchService _propertyDictionaryItemSearchService;
+        private readonly IImportProductsClassMapFactory _classMapFactory;
 
         public CsvPagedPhysicalProductDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IImportProductSearchService importProductSearchService, IImportCategorySearchService importCategorySearchService,
             IItemService itemService, ImportConfigurationFactory importConfigurationFactory,
-            IPropertyLoader propertyLoader, IPropertyDictionaryItemSearchService propertyDictionaryItemSearchService)
+            IImportProductsClassMapFactory classMapFactory)
             : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
         {
             _importProductSearchService = importProductSearchService;
             _importCategorySearchService = importCategorySearchService;
             _itemService = itemService;
-            _propertyLoader = propertyLoader;
-            _propertyDictionaryItemSearchService = propertyDictionaryItemSearchService;
+            _classMapFactory = classMapFactory;
+
         }
 
         public override string DataType { get; } = ModuleConstants.DataTypes.PhysicalProduct;
 
         protected override async Task<ClassMap<CsvPhysicalProduct>> GetClassMapAsync(ImportDataRequest request)
         {
-
-            var properties = await
-                _propertyLoader.LoadPropertiesAsync(new LoadPropertiesCriteria() { CatalogId = request.CatalogId });
-
-
-            var dictionaryPropsIds = properties.Where(x => x.Dictionary).Select(x => x.Id).ToArray();
-
-            var dictionaryItemsSearchResult =
-                    await _propertyDictionaryItemSearchService.SearchAsync(
-                        new PropertyDictionaryItemSearchCriteria() { PropertyIds = dictionaryPropsIds, Take = int.MaxValue });
-
-            var propertyDictionaryItems = dictionaryItemsSearchResult.Results.GroupBy(x => x.PropertyId).ToDictionary(x => x.Key, x => x.ToArray());
-
-            var classMap = new GenericTypeWithPropertiesClassMap<CsvPhysicalProduct>(properties, propertyDictionaryItems);
+            var classMap = await _classMapFactory.CreateClassMapAsync(request.CatalogId);
 
             return classMap;
         }
