@@ -33,7 +33,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _importCategorySearchService = importCategorySearchService;
             _itemService = itemService;
             _classMapFactory = classMapFactory;
-
         }
 
         public override string DataType { get; } = ModuleConstants.DataTypes.PhysicalProduct;
