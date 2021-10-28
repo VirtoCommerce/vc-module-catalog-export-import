@@ -39,6 +39,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .Distinct()
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToArray();
+
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes] = await GetAvailablePackageTypesAsync();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits] = await GetAvailableWeightUnits();

@@ -62,6 +62,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string AvaibaleReviewTypes = nameof(AvaibaleReviewTypes);
 
             public const string ExistedReviews = nameof(ExistedReviews);
+
         }
 
         public static class ValidationErrors
