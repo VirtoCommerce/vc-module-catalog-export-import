@@ -12,8 +12,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
         public ImportPhysicalProductValidator()
         {
-            _propertyDictionaryItemSearchService = propertyDictionaryItemSearchService;
-
             AttachValidators();
         }
 
@@ -120,34 +118,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .When(record => !string.IsNullOrEmpty(record.Record.TaxType))
                 .WithInvalidValueCodeAndMessage("Tax Type")
                 .WithImportState();
-        }
-
-        protected override bool PreValidate(ValidationContext<ImportRecord<CsvPhysicalProduct>[]> context, ValidationResult result)
-        {
-            var importRecords = context.InstanceToValidate.Select(x => x.Record).ToArray();
-
-            var propertyIds = importRecords.SelectMany(x => x.Properties)
-                .Where(x => x.Dictionary).Select(x => x.Id).Distinct().ToArray();
-
-            LoadDynamicPropertyDictionaryItems(propertyIds, context).GetAwaiter().GetResult();
-
-            return base.PreValidate(context, result);
-        }
-
-        private async Task LoadDynamicPropertyDictionaryItems(string[] propertyIds, ValidationContext<ImportRecord<CsvPhysicalProduct>[]> context)
-        {
-            var propertyDictionaryItems = new List<PropertyDictionaryItem>();
-
-            if (!propertyIds.IsNullOrEmpty())
-            {
-
-                var dynamicPropertyDictionaryItemsSearchResult =
-                    await _propertyDictionaryItemSearchService.SearchAsync(new PropertyDictionaryItemSearchCriteria { PropertyIds = propertyIds });
-                propertyDictionaryItems.AddRange(dynamicPropertyDictionaryItemsSearchResult.Results);
-
-            }
-
-            context.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] = propertyDictionaryItems;
         }
     }
 }
