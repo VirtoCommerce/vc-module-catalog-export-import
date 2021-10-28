@@ -42,7 +42,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var importReviewRecords = dataSource.Items
                 // expect records that was parsed with errors
-                .Where(importContact => !errorsContext.ErrorsRows.Contains(importContact.Row))
+                .Where(importContact => !errorsContext.Errors.Select(error => error.Row).Contains(importContact.Row))
                 .ToArray();
 
             try
@@ -55,7 +55,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetIdAndSkuToNullByExistence(importReviewRecords, existedReviews);
 
-                var validationResult = await ValidateAsync(importReviewRecords, importReporter);
+                var validationResult = await ValidateAsync(importReviewRecords, errorsContext);
 
                 var invalidImportRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvEditorialReview>)?.InvalidRecord).Distinct().ToArray();

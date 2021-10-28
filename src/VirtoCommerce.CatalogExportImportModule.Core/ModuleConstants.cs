@@ -42,9 +42,21 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
         public const int MByte = 1024 * KByte;
 
-        public const string ContextDataSkus = "skus";
+        public static class ValidationContextData
+        {
 
-        public const string DuplicatedImportReview = nameof(DuplicatedImportReview);
+            public const string Skus = nameof(Skus);
+
+            public const string DuplicatedImportReview = nameof(DuplicatedImportReview);
+
+            public const string AvailablePackageTypes = nameof(AvailablePackageTypes);
+
+            public const string AvailableMeasureUnits = nameof(AvailableMeasureUnits);
+
+            public const string AvailableWeightUnits = nameof(AvailableWeightUnits);
+
+            public const string AvailableTaxTypes = nameof(AvailableTaxTypes);
+        }
 
         public static class ValidationErrors
         {
