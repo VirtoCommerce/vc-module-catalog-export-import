@@ -70,7 +70,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                     .AsNoTracking()
                     .ToArrayAsync();
 
-                result.Results = await _itemService.GetByIdsAsync(ids, respGroup: (ItemResponseGroup.ItemInfo | ItemResponseGroup.ItemProperties).ToString());
+                result.Results = await _itemService.GetByIdsAsync(ids, respGroup: (ItemResponseGroup.ItemInfo | ItemResponseGroup.ItemEditorialReviews | ItemResponseGroup.ItemProperties).ToString());
+
             }
 
             return result;

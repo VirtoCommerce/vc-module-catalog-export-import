@@ -30,6 +30,12 @@ angular.module('virtoCommerce.catalogExportImportModule')
                         if (record.categoryOuterId) {
                             record.categoryOuterId = truncateId(record.categoryOuterId);
                         }
+                        if (record.descriptionId) {
+                            record.descriptionId = truncateId(record.descriptionId);
+                        }
+                        if (record.description) {
+                            record.description = truncateContent(record.description);
+                        }
                     } else {
                         if (record.descriptionId) {
                             record.descriptionId = truncateId(record.descriptionId);
