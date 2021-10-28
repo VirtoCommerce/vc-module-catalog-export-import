@@ -5,6 +5,7 @@ using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 {
@@ -96,6 +97,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                     childRules.RuleFor(propertyValue => propertyValue.Value)
                                         .Must(value => DateTime.TryParse(value as string, out _))
                                         .When(propertyValue => propertyValue.ValueType == PropertyValueType.DateTime)
+                                        .WithInvalidValueCodeAndMessage()
+                                        .WithImportState(_importRecord);
+                                    childRules.RuleFor(propertyValue => propertyValue.Value.ToString())
+                                        .Matches(GeoPoint.Regexp)
+                                        .When(propertyValue => propertyValue.ValueType == PropertyValueType.GeoPoint)
                                         .WithInvalidValueCodeAndMessage()
                                         .WithImportState(_importRecord);
                                 });
