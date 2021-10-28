@@ -6,7 +6,7 @@ using static VirtoCommerce.CatalogExportImportModule.Data.Helpers.ValidationExte
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 {
-    public sealed class ImportPhysicalProductValidator: AbstractValidator<ImportRecord<CsvPhysicalProduct>>
+    public sealed class ImportPhysicalProductValidator : AbstractValidator<ImportRecord<CsvPhysicalProduct>>
     {
         private static readonly char[] ProductSkuIllegalCharacters = { '$', '+', ';', '=', '%', '{', '}', '[', ']', '|', '@', '~', '!', '^', '*', '&', '(', ')', '<', '>' };
 
@@ -25,7 +25,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .MaximumLength(1024)
                 .WithExceededMaxLengthCodeAndMessage("Product Name", 1024)
                 .WithImportState();
-            
+
             RuleFor(record => record.Record.ProductSku)
                 .NotEmpty()
                 .WithMissingRequiredValueCodeAndMessage("Product Sku")
@@ -40,7 +40,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         .WithInvalidValueCodeAndMessage("Product Sku")
                         .WithImportState();
                 });
-            
+
             RuleFor(record => record.Record.CategoryId)
                 .NotEmpty()
                 .When(record => string.IsNullOrEmpty(record.Record.CategoryOuterId))
@@ -118,6 +118,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .When(record => !string.IsNullOrEmpty(record.Record.TaxType))
                 .WithInvalidValueCodeAndMessage("Tax Type")
                 .WithImportState();
+
+            // properties
+            RuleFor(record => record.Record.Properties)
+                .SetValidator(record => new ImportProductsPropertiesValidator(record));
+
         }
     }
 }
