@@ -14,8 +14,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
     {
         public GenericTypeWithPropertiesClassMap(Property[] properties, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems = null)
         {
-
-
             AutoMap(new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 
             var typeHasProperties = ClassType.GetInterfaces().Contains(typeof(IHasProperties));
