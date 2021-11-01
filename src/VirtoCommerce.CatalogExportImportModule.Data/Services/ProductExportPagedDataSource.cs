@@ -31,6 +31,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var searchCriteria = _exportRequest.ToExportProductSearchCriteria();
             searchCriteria.Take = 0;
+            searchCriteria.SearchInVariations = true;
 
             var searchResult = await _productSearchService.SearchAsync(searchCriteria);
 
@@ -49,6 +50,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             searchCriteria.Skip = CurrentPageNumber * PageSize;
             searchCriteria.Take = PageSize;
+            searchCriteria.SearchInVariations = true;
 
             var searchResult = await _productSearchService.SearchAsync(searchCriteria);
 

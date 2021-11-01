@@ -56,6 +56,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 query = query.Where(x => criteria.ItemIds.Contains(x.Id));
             }
 
+            if (criteria.SearchInVariations && !criteria.ItemIds.IsNullOrEmpty())
+            {
+                // Search variations with additional nested query
+                query = query.Union(catalogRepository.Items.Where(x => criteria.ItemIds.Contains(x.ParentId)));
+            }
+
             result.TotalCount = await query.CountAsync();
 
             var sortInfos = BuildSortExpression(criteria);
