@@ -55,6 +55,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                 });
                             });
 
+                            //validate not unique multi value
+                            RuleForEach(property => property.Values)
+                                .Must<Property, PropertyValue>((property, propertyValue) =>
+                                {
+                                    var values = property.Values.Select(x => x.Value.ToString()).ToArray();
+                                    var value = propertyValue.Value.ToString();
+                                    var count = values.Count(x => x == value);
+                                    return count == 1;
+                                })
+                                .When(property => property.Multivalue)
+                                .WithInvalidValueCodeAndMessage()
+                                .WithImportState(_importRecord);
+
+                            //validate values
                             RuleForEach(property => property.Values).ChildRules(childRules =>
                             {
                                 childRules.When(propertyValue => !string.IsNullOrEmpty(propertyValue.Value as string), () =>
