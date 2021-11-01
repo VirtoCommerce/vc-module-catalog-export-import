@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using CsvHelper;
 using CsvHelper.Configuration;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -141,10 +142,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
 
         private IList<PropertyValue> ToPropertyMultiValue(Property property, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems, string values)
         {
-            var parsedValues = values.Split(',').Select(value => value.Trim()).ToList();
+            IList<string> parsedValues;
+
+            if (property.ValueType == PropertyValueType.GeoPoint)
+            {
+                parsedValues = CsvImportHelper.SplitGeoPointMultivalueString(values);
+            }
+            else
+            {
+                parsedValues = values.Split(',').Select(value => value.Trim()).ToList();
+            }
+
             var convertedValues = parsedValues.Select(value => ToPropertyValue(property, propertyDictionaryItems, value));
             return convertedValues.ToList();
         }
+
+
     }
 }
 
