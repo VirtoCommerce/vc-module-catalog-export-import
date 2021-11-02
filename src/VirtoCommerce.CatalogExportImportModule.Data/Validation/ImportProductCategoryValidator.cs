@@ -47,7 +47,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                     return result;
                 })
-                .WithMessage("Category does not belong to this catalog")
+                .WithMessage("Category does not belong to the catalog of the import request.")
                 .WithImportState();
         }
     }
