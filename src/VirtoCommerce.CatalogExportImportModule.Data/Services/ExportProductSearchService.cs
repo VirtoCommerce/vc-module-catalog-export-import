@@ -39,7 +39,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var query = catalogRepository.Items;
 
-            query = query.Where(x => x.CatalogId == criteria.CatalogId && x.ParentId == null && x.ProductType == PhysicalProductType);
+            query = query.Where(x => x.CatalogId == criteria.CatalogId && (criteria.SearchInVariations || x.ParentId == null) && x.ProductType == PhysicalProductType);
 
 
             if (!criteria.CategoryIds.IsNullOrEmpty() && !criteria.ItemIds.IsNullOrEmpty())
