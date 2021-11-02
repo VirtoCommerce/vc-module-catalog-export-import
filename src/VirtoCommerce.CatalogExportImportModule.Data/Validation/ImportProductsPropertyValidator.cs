@@ -65,7 +65,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                     return count == 1;
                                 })
                                 .When(property => property.Multivalue)
-                                .WithInvalidValueCodeAndMessage()
+                                .WithNotUniqueMultiValueCodeAndMessage()
                                 .WithImportState(_importRecord);
 
                             //validate values
