@@ -70,7 +70,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
         {
             return rule
                 .WithErrorCode(ModuleConstants.ValidationErrors.NotUniqueValue)
-                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueValue], property.Name));
+                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueMultiValue], property.Name));
         }
     }
 }

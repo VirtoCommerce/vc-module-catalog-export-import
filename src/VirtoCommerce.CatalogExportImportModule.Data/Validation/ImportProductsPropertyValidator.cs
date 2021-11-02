@@ -56,13 +56,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                             });
 
                             //validate not unique multi value
-                            RuleForEach(property => property.Values)
-                                .Must<Property, PropertyValue>((property, propertyValue) =>
+                            RuleFor(property => property)
+                                .Must((property) =>
                                 {
                                     var values = property.Values.Select(x => x.Value.ToString()).ToArray();
-                                    var value = propertyValue.Value.ToString();
-                                    var count = values.Count(x => x == value);
-                                    return count == 1;
+                                    var result = values.All(value => values.Count(x => x == value) == 1);
+                                    return result;
                                 })
                                 .When(property => property.Multivalue)
                                 .WithNotUniqueMultiValueCodeAndMessage()
