@@ -81,7 +81,18 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetCategoryIdByCategoryOuterId(records, existingCategories);
 
-                var validationResult = await ValidateAsync(records, errorsContext);
+                var validationContext = new ValidationContext<ImportRecord<CsvPhysicalProduct>[]>(records)
+                {
+                    RootContextData =
+                    {
+                        [ModuleConstants.ValidationContextData.CatalogId] = request.CatalogId,
+                        [ModuleConstants.ValidationContextData.ExistedCategories] = existingCategories,
+                        [ModuleConstants.ValidationContextData.ExistedProducts] = existingProducts
+                    }
+
+                };
+
+                var validationResult = await ValidateAsync(validationContext, errorsContext);
 
                 var invalidRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvPhysicalProduct>)?.InvalidRecord).Distinct().ToArray();
@@ -287,7 +298,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 if (existedReview != null)
                 {
                     record.Record.PatchDescription(existedReview);
-                } else
+                }
+                else
                 {
                     var review = AbstractTypeFactory<EditorialReview>.TryCreateInstance();
                     record.Record.PatchDescription(review);

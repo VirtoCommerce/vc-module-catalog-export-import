@@ -35,9 +35,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             AttachValidators();
         }
 
+
+
         private void AttachValidators()
         {
             RuleFor(importRecords => importRecords).SetValidator(new ImportProductsAreNotDuplicatesValidator());
+            RuleForEach(importRecords => importRecords).SetValidator(new ImportProductCategoryValidator());
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductValidator()));
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductDescriptionValidator()));
         }
