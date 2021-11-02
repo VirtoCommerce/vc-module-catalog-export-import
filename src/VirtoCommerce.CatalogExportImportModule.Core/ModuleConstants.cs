@@ -44,6 +44,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
         public static class ValidationContextData
         {
+            public const string CatalogId = nameof(CatalogId);
+
+            public const string ExistedCategories = nameof(ExistedCategories);
+
+            public const string ExistedProducts = nameof(ExistedProducts);
 
             public const string Skus = nameof(Skus);
 

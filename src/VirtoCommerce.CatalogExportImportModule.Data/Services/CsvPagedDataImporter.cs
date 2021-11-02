@@ -125,9 +125,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         protected abstract Task ProcessChunkAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<TImportable> dataSource,
             ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter);
 
-        protected async Task<ValidationResult> ValidateAsync(ImportRecord<TImportable>[] importRecords, ImportErrorsContext errorsContext)
+        protected async Task<ValidationResult> ValidateAsync(ValidationContext<ImportRecord<TImportable>[]> validationContext, ImportErrorsContext errorsContext)
         {
-            var validationResult = await _importRecordsValidator.ValidateAsync(importRecords);
+            var validationResult = await _importRecordsValidator.ValidateAsync(validationContext);
 
             var errorsInfos = validationResult.Errors.Select(x => new { Message = x.ErrorMessage, (x.CustomState as ImportValidationState<TImportable>)?.InvalidRecord }).ToArray();
 
