@@ -46,7 +46,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
             var reviewSearchService = new Mock<IProductEditorialReviewSearchService>().Object;
             var itemService = new Mock<IItemService>().Object;
 
-            IExportPagedDataSource ProductDataSourceCreatorFunc(ExportDataRequest request, int pageSize) => new ProductExportPagedDataSource(productSearchService, pageSize, request);
+            IExportPagedDataSource ProductDataSourceCreatorFunc(ExportDataRequest request, int pageSize) => new ProductExportPagedDataSource(productSearchService, pageSize, request, itemService);
 
             IExportPagedDataSource ReviewDataSourceCreatorFunc(ExportDataRequest request, int pageSize) => new EditorialReviewExportPagedDataSource(reviewSearchService, itemService, pageSize, request);
 
