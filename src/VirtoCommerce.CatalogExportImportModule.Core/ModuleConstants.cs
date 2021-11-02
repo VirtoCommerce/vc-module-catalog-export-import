@@ -62,12 +62,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
             public const string AvailableTaxTypes = nameof(AvailableTaxTypes);
 
-            public const string AvaibaleLanguages = nameof(AvaibaleLanguages);
+            public const string AvailableLanguages = nameof(AvailableLanguages);
 
-            public const string AvaibaleReviewTypes = nameof(AvaibaleReviewTypes);
+            public const string AvailableReviewTypes = nameof(AvailableReviewTypes);
 
             public const string ExistedReviews = nameof(ExistedReviews);
-
         }
 
         public static class ValidationErrors

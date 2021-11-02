@@ -59,8 +59,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits] = await GetAvailableWeightUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes] = await GetAvailableTaxTypes();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleLanguages] = await GetAvailableLanguages();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleReviewTypes] = await GetAvailableReviewTypes();
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages] = await GetAvailableLanguages();
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes] = await GetAvailableReviewTypes();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
             context.ParentContext.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
                 await GetPropertyDictionaryItems(propertyIds);

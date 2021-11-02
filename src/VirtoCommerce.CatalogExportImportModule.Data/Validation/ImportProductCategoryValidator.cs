@@ -24,7 +24,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     var existedCategories =
                         (Category[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedCategories];
 
-                    // do not check by outer category id because category id was set before validation if outer id exists
+                    // do not check by outer id because id was set before validation if outer id exists
                     var result = existedCategories.Any(c =>
                         record.Record.CategoryId.EqualsInvariant(c.Id));
 
@@ -47,7 +47,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                     return result;
                 })
-                .WithMessage("Category does not belong to the catalog of the import request.")
+                .WithMessage("The category does not belong to the catalog specified in the request..")
                 .WithImportState();
         }
     }

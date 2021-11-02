@@ -19,6 +19,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
         private void AttachValidators()
         {
+            // validate that id and outer id are matching
             RuleFor(record => record)
                 .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .Must((record, _, context) =>
@@ -43,6 +44,34 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .When(record => !string.IsNullOrEmpty(record.Record.ProductId) &&
                                 !string.IsNullOrEmpty(record.Record.ProductOuterId))
                 .WithMessage("Another product with the same Outer Id exists in the system.")
+                .WithImportState();
+
+            // validate catalog of product matching to request
+            RuleFor(record => record)
+                .Must((record, _, context) =>
+                {
+                    var result = true;
+
+                    var catalogId =
+                        context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
+
+                    var existedProducts =
+                        (CatalogProduct[])context.ParentContext.RootContextData[
+                            ModuleConstants.ValidationContextData.ExistedProducts];
+
+                    // do not check by outer id because id was set before validation if outer id exists
+                    var productById = existedProducts.FirstOrDefault(p =>
+                        record.Record.ProductId.EqualsInvariant(p.Id));
+
+                    if (productById != null)
+                    {
+                        result = productById.CatalogId.EqualsInvariant(catalogId);
+                    }
+
+                    return result;
+                })
+                .When((record) => !string.IsNullOrEmpty(record.Record.ProductId))
+                .WithMessage("The product does not belong to the catalog specified in the request.")
                 .WithImportState();
 
             RuleFor(record => record.Record.ProductName)
