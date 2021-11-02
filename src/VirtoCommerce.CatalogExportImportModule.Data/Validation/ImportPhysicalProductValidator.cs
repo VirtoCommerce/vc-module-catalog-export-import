@@ -2,6 +2,8 @@ using System.Linq;
 using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.Platform.Core.Common;
 using static VirtoCommerce.CatalogExportImportModule.Data.Helpers.ValidationExtensions;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
@@ -17,6 +19,32 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
         private void AttachValidators()
         {
+            RuleFor(record => record)
+                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Must((record, _, context) =>
+                {
+                    var existedProducts =
+                        (CatalogProduct[])context.ParentContext.RootContextData[
+                            ModuleConstants.ValidationContextData.ExistedProducts];
+
+                    var productById = existedProducts.FirstOrDefault(p =>
+                        record.Record.ProductId.EqualsInvariant(p.Id));
+
+                    var productByOuterId = existedProducts.FirstOrDefault(p =>
+                        record.Record.ProductId.EqualsInvariant(p.OuterId));
+
+                    if (productById == null && productByOuterId == null)
+                    {
+                        return true;
+                    }
+
+                    return productById == productByOuterId;
+                })
+                .When(record => !string.IsNullOrEmpty(record.Record.ProductId) &&
+                                !string.IsNullOrEmpty(record.Record.ProductOuterId))
+                .WithMessage("Another product with the same Outer Id exists in the system.")
+                .WithImportState();
+
             RuleFor(record => record.Record.ProductName)
                 .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
                 .NotEmpty()
