@@ -92,6 +92,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string NotUniqueValue = "not-unique-value";
 
             public const string ReviewExistsInSystem = "review-exists-in-system";
+
+            public const string NotUniqueMultiValue = "not-unique-multi-value";
         }
 
         public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
@@ -101,6 +103,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.ArrayValuesExceedingMaxLength, "Every value in column '{0}' may have maximum {1} characters. The number of values is unlimited." },
             { ValidationErrors.InvalidValue, "This row has invalid value in the column '{0}'." },
             { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
+            { ValidationErrors.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
         };
 
         public static class Features
