@@ -20,6 +20,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Name("Product Id")]
         public string ProductId { get; set; }
 
+        [Optional]
+        [Name("Main Product Id")]
+        public string MainProductId { get; set; }
+
         [Required]
         [Name("Product SKU")]
         public string ProductSku { get; set; }
@@ -149,6 +153,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         {
             ProductName = product.Name;
             ProductId = product.Id;
+            MainProductId = product.MainProductId;
             ProductSku = product.Code;
             ProductOuterId = product.OuterId;
             CategoryId = product.CategoryId;
@@ -175,7 +180,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             FirstListed = product.StartDate;
             ListingExpiresOn = product.EndDate;
             Properties = product.Properties?.Select(x => x.Clone() as Property).ToArray();
-            
+
             if (!product.Reviews.IsNullOrEmpty())
             {
                 var description = product.Reviews[0];
