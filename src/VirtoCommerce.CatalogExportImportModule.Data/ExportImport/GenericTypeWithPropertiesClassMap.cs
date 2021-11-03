@@ -54,7 +54,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                     {
                         valuePropertyValues = valueProperty.Values?
                             .Where(x => x.Value != null)
-                            .Select(x => x.Value.ToString())
+                            .Select(x => string.Format(CultureInfo.InvariantCulture, "{0}", x.Value))
                             .Distinct()
                             .ToArray();
                     }

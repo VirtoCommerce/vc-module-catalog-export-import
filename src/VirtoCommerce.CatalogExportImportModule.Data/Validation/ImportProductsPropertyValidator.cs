@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
@@ -93,7 +94,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                         .WithInvalidValueCodeAndMessage()
                                         .WithImportState(_importRecord);
                                     childRules.RuleFor(propertyValue => propertyValue.Value)
-                                        .Must(value => decimal.TryParse(value as string, out _))
+                                        .Must(value => decimal.TryParse(value as string, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
                                         .When(propertyValue => propertyValue.ValueType == PropertyValueType.Number)
                                         .WithInvalidValueCodeAndMessage()
                                         .WithImportState(_importRecord);
@@ -108,7 +109,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                         .WithInvalidValueCodeAndMessage()
                                         .WithImportState(_importRecord);
                                     childRules.RuleFor(propertyValue => propertyValue.Value)
-                                        .Must(value => DateTime.TryParse(value as string, out _))
+                                        .Must(value => DateTime.TryParse(value as string, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
                                         .When(propertyValue => propertyValue.ValueType == PropertyValueType.DateTime)
                                         .WithInvalidValueCodeAndMessage()
                                         .WithImportState(_importRecord);
