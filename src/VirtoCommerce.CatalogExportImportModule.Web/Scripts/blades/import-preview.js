@@ -11,37 +11,28 @@ angular.module('virtoCommerce.catalogExportImportModule')
             blade.isLoading = true;
             $scope.showUnparsedRowsWarning = false;
 
-            importResources.preview({ filePath: blade.csvFilePath, dataType: blade.dataType }, (response) => {
+            importResources.preview({ catalogId: blade.catalogId, filePath: blade.csvFilePath, dataType: blade.dataType }, (response) => {
                 const records = response.results;
+
+                const columnNames = _.keys(records[0]);
+                const idColumnNames = _.filter(columnNames, key => key.includes('Id'));
 
                 $scope.originalRecords = _.map(records, record => ({...record}));
 
                 _.each(records, record => {
                     if (blade.dataType !== $scope.editorialReview) {
-                        if (record.productId) {
-                            record.productId = truncateId(record.productId);
-                        }
-                        if (record.productOuterId) {
-                            record.productOuterId = truncateId(record.productOuterId);
-                        }
-                        if (record.categoryId) {
-                            record.categoryId = truncateId(record.categoryId);
-                        }
-                        if (record.categoryOuterId) {
-                            record.categoryOuterId = truncateId(record.categoryOuterId);
-                        }
-                        if (record.descriptionId) {
-                            record.descriptionId = truncateId(record.descriptionId);
-                        }
-                        if (record.description) {
-                            record.description = truncateContent(record.description);
-                        }
+                        _.each(record.properties, prop => {
+                            _.extend(record, { [prop.name]: prop.values.map(value => value.value).join(', ') });
+                        });
+                        _.omit(record, 'properties');
                     } else {
-                        if (record.descriptionId) {
-                            record.descriptionId = truncateId(record.descriptionId);
-                        }
                         record.descriptionContent = truncateContent(record.descriptionContent);
                     }
+
+                    _.each(idColumnNames, columnName => {
+                        record[columnName] = truncateId(record[columnName]);
+                    });
+
                 });
 
                 blade.currentEntities = records;
@@ -61,6 +52,7 @@ angular.module('virtoCommerce.catalogExportImportModule')
                     const importDataRequest = {
                         filePath: blade.csvFilePath,
                         dataType: blade.dataType,
+                        catalogId: blade.catalogId,
                     };
                     importResources.run(importDataRequest, (data) => {
                         var newBlade = {

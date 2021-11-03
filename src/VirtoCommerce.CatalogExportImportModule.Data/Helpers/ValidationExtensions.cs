@@ -1,7 +1,7 @@
 using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
-using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.CatalogModule.Core.Model;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
 {
@@ -31,7 +31,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
                 .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ExceedingMaxLength], columnName, maxLength));
         }
 
-        public static IRuleBuilderOptions<DynamicPropertyObjectValue, TProperty> WithExceededMaxLengthCodeAndMessage<TProperty>(this IRuleBuilderOptions<DynamicPropertyObjectValue, TProperty> rule, int maxLength)
+        public static IRuleBuilderOptions<PropertyValue, TProperty> WithExceededMaxLengthCodeAndMessage<TProperty>(this IRuleBuilderOptions<PropertyValue, TProperty> rule, int maxLength)
         {
             return rule
                 .WithErrorCode(ModuleConstants.ValidationErrors.ExceedingMaxLength)
@@ -45,18 +45,18 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
                 .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], columnName));
         }
 
-        public static IRuleBuilderOptions<DynamicObjectProperty, TProperty> WithInvalidValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<DynamicObjectProperty, TProperty> rule)
+        public static IRuleBuilderOptions<Property, TProperty> WithInvalidValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<Property, TProperty> rule)
         {
             return rule
                 .WithErrorCode(ModuleConstants.ValidationErrors.InvalidValue)
-                .WithMessage(dynamicPropertyValue => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], dynamicPropertyValue.Name));
+                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], property.Name));
         }
 
-        public static IRuleBuilderOptions<DynamicPropertyObjectValue, TProperty> WithInvalidValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<DynamicPropertyObjectValue, TProperty> rule)
+        public static IRuleBuilderOptions<PropertyValue, TProperty> WithInvalidValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<PropertyValue, TProperty> rule)
         {
             return rule
                 .WithErrorCode(ModuleConstants.ValidationErrors.InvalidValue)
-                .WithMessage(dynamicPropertyValue => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], dynamicPropertyValue.PropertyName));
+                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], property.PropertyName));
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithNotUniqueValueCodeAndMessage<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule, string columnName)
@@ -64,6 +64,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
             return rule
                 .WithErrorCode(ModuleConstants.ValidationErrors.NotUniqueValue)
                 .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueValue], columnName));
+        }
+
+        public static IRuleBuilderOptions<Property, TProperty> WithNotUniqueMultiValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<Property, TProperty> rule)
+        {
+            return rule
+                .WithErrorCode(ModuleConstants.ValidationErrors.NotUniqueValue)
+                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueMultiValue], property.Name));
         }
     }
 }
