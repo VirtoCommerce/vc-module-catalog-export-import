@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using CsvHelper.Configuration;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Services
@@ -18,7 +17,5 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
         Task<bool> FetchAsync();
 
         ImportRecord<T>[] Items { get; }
-
-        void RegisterClassMap(ClassMap<T> classMap);
     }
 }

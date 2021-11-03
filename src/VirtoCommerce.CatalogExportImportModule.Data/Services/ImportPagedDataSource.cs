@@ -32,11 +32,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             PageSize = pageSize;
         }
 
-        public void RegisterClassMap(ClassMap<T> classMap)
-        {
-            _csvReader.Context.RegisterClassMap(classMap);
-        }
-
         public int CurrentPageNumber { get; private set; }
 
         public int PageSize { get; }

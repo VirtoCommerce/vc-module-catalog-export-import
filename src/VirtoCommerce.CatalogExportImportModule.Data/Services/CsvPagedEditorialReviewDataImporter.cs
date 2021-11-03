@@ -55,9 +55,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetIdAndSkuToNullByExistence(importReviewRecords, existedReviews);
 
-                var validationContext = new ValidationContext<ImportRecord<CsvEditorialReview>[]>(importReviewRecords);
-
-                var validationResult = await ValidateAsync(validationContext, errorsContext);
+                var validationResult = await ValidateAsync(importReviewRecords, errorsContext);
 
                 var invalidImportRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvEditorialReview>)?.InvalidRecord).Distinct().ToArray();

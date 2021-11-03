@@ -40,11 +40,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _importConfigurationFactory = importConfigurationFactory;
         }
 
-        protected virtual async Task<ClassMap<TImportable>> GetClassMapAsync(ImportDataRequest request)
-        {
-            return await Task.FromResult<ClassMap<TImportable>>(null);
-        }
-
         public virtual async Task ImportAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback, ICancellationToken cancellationToken)
         {
             ValidateParameters(request, progressCallback, cancellationToken);
@@ -63,13 +58,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             SetupErrorHandlers(progressCallback, configuration, errorsContext, importProgress);
 
             using var dataSource = _dataSourceFactory.Create<TImportable>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
-
-            var classMap = await GetClassMapAsync(request);
-
-            if (classMap != null)
-            {
-                dataSource.RegisterClassMap(classMap);
-            }
 
             var headerRaw = dataSource.GetHeaderRaw();
             if (!headerRaw.IsNullOrEmpty())
@@ -125,9 +113,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         protected abstract Task ProcessChunkAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<TImportable> dataSource,
             ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter);
 
-        protected async Task<ValidationResult> ValidateAsync(ValidationContext<ImportRecord<TImportable>[]> validationContext, ImportErrorsContext errorsContext)
+        protected async Task<ValidationResult> ValidateAsync(ImportRecord<TImportable>[] importRecords, ImportErrorsContext errorsContext)
         {
-            var validationResult = await _importRecordsValidator.ValidateAsync(validationContext);
+            var validationResult = await _importRecordsValidator.ValidateAsync(importRecords);
 
             var errorsInfos = validationResult.Errors.Select(x => new { Message = x.ErrorMessage, (x.CustomState as ImportValidationState<TImportable>)?.InvalidRecord }).ToArray();
 

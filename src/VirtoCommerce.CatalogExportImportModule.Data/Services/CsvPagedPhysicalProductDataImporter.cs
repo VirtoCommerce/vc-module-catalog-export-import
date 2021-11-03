@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CsvHelper.Configuration;
 using FluentValidation;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
@@ -19,30 +18,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         private readonly IImportProductSearchService _importProductSearchService;
         private readonly IImportCategorySearchService _importCategorySearchService;
         private readonly IItemService _itemService;
-        private readonly IImportProductsClassMapFactory _classMapFactory;
 
         public CsvPagedPhysicalProductDataImporter(
             IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
             ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
             IImportProductSearchService importProductSearchService, IImportCategorySearchService importCategorySearchService,
-            IItemService itemService, ImportConfigurationFactory importConfigurationFactory,
-            IImportProductsClassMapFactory classMapFactory)
+            IItemService itemService, ImportConfigurationFactory importConfigurationFactory)
             : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
         {
             _importProductSearchService = importProductSearchService;
             _importCategorySearchService = importCategorySearchService;
             _itemService = itemService;
-            _classMapFactory = classMapFactory;
         }
 
         public override string DataType { get; } = ModuleConstants.DataTypes.PhysicalProduct;
-
-        protected override async Task<ClassMap<CsvPhysicalProduct>> GetClassMapAsync(ImportDataRequest request)
-        {
-            var classMap = await _classMapFactory.CreateClassMapAsync(request.CatalogId);
-
-            return classMap;
-        }
 
         protected override async Task ProcessChunkAsync(ImportDataRequest request,
             Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<CsvPhysicalProduct> dataSource,
@@ -81,18 +70,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetCategoryIdByCategoryOuterId(records, existingCategories);
 
-                var validationContext = new ValidationContext<ImportRecord<CsvPhysicalProduct>[]>(records)
-                {
-                    RootContextData =
-                    {
-                        [ModuleConstants.ValidationContextData.CatalogId] = request.CatalogId,
-                        [ModuleConstants.ValidationContextData.ExistedCategories] = existingCategories,
-                        [ModuleConstants.ValidationContextData.ExistedProducts] = existingProducts
-                    }
-
-                };
-
-                var validationResult = await ValidateAsync(validationContext, errorsContext);
+                var validationResult = await ValidateAsync(records, errorsContext);
 
                 var invalidRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvPhysicalProduct>)?.InvalidRecord).Distinct().ToArray();
@@ -119,7 +97,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 var productsToSave = newProducts.Union(existingProducts).ToArray();
 
-                SetCatalogId(productsToSave, request.CatalogId);
+                SetCatalogId(productsToSave, existingCategories);
 
                 await _itemService.SaveChangesAsync(productsToSave);
 
@@ -298,8 +276,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 if (existedReview != null)
                 {
                     record.Record.PatchDescription(existedReview);
-                }
-                else
+                } else
                 {
                     var review = AbstractTypeFactory<EditorialReview>.TryCreateInstance();
                     record.Record.PatchDescription(review);
@@ -308,11 +285,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private void SetCatalogId(CatalogProduct[] productsToSave, string catalogId)
+        private void SetCatalogId(CatalogProduct[] productsToSave, Category[] existingCategories)
         {
             foreach (var product in productsToSave)
             {
-                product.CatalogId = catalogId;
+                product.CatalogId = existingCategories.FirstOrDefault(category => product.CategoryId == category.Id)?.CatalogId;
             }
         }
     }
