@@ -67,11 +67,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.BackgroundJobs
                 throw new ArgumentNullException(nameof(pushNotification));
             }
 
-            if (string.IsNullOrEmpty(request.CatalogId))
-            {
-                throw new ArgumentException($"The field {nameof(request.CatalogId)} of request can't be empty.", nameof(request));
-            }
-
             var importer = _dataImporters.FirstOrDefault(x => x.DataType == request.DataType);
 
             if (importer == null)

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
-using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using Xunit;
 
 namespace VirtoCommerce.CatalogExportImportModule.Tests
 {
     public class CsvHelperTests
     {
+
         [Fact]
         public async Task CsvReader_ReadAsync_DoubleBadData_ErrorsFound()
         {
@@ -135,24 +135,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
 
             // Assert
             Assert.Equal($"Id,Property 1,Property 2{csvWriter.Configuration.NewLine}Test id 1,Property value 1,Property value 2", result.TrimEnd());
-        }
-
-        [Theory]
-        [InlineData("", 0)]
-        [InlineData("55.4561, 25.5454", 1)]
-        [InlineData("55.4561, 25.5454, 55.4561, 25.5454", 2)]
-        [InlineData("55.4561,25.5454,55.4561,25.5454", 2)]
-        public void CsvHelper_SplitGeoPointMultivalueString_Success(string valuesString, int expectedCount)
-        {
-            // Arrange
-
-            // Act
-            var result = CsvImportHelper.SplitGeoPointMultivalueString(valuesString);
-
-            var resultCount = result.Count();
-
-            // Assert
-            Assert.Equal(expectedCount, resultCount);
         }
 
         public class TestExportClass
