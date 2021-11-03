@@ -11,6 +11,7 @@ using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.CoreModule.Core.Package;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
@@ -23,14 +24,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         private readonly ISettingsManager _settingsManager;
         private readonly IProductEditorialReviewService _editorialReviewService;
         private readonly IPropertyDictionaryItemSearchService _propertyDictionaryItemSearchService;
+        private readonly IItemService _itemService;
 
-        public ImportPhysicalProductsValidator(IPackageTypesService packageTypesService, ISettingsManager settingsManager, IProductEditorialReviewService editorialReviewService,
-            IPropertyDictionaryItemSearchService propertyDictionaryItemSearchService)
+        public ImportPhysicalProductsValidator(
+        IPackageTypesService packageTypesService,
+        ISettingsManager settingsManager,
+        IProductEditorialReviewService editorialReviewService,
+        IPropertyDictionaryItemSearchService propertyDictionaryItemSearchService,
+        IItemService itemService)
         {
             _packageTypesService = packageTypesService;
             _settingsManager = settingsManager;
             _editorialReviewService = editorialReviewService;
             _propertyDictionaryItemSearchService = propertyDictionaryItemSearchService;
+            _itemService = itemService;
 
             AttachValidators();
         }
@@ -64,6 +71,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
             context.ParentContext.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
                 await GetPropertyDictionaryItems(propertyIds);
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedMainProductsIds] = await GetExistedMainProductsAsync(records);
         }
 
         private async Task<PropertyDictionaryItem[]> GetPropertyDictionaryItems(string[] propertyIds)
@@ -115,6 +123,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         {
             var setting = await _settingsManager.GetObjectSettingAsync(CatalogModule.Core.ModuleConstants.Settings.General.EditorialReviewTypes.Name);
             return setting.AllowedValues.OfType<string>().ToArray() ?? Array.Empty<string>();
+        }
+
+        private async Task<string[]> GetExistedMainProductsAsync(ImportRecord<CsvPhysicalProduct>[] records)
+        {
+            var productIds = records.Select(x => x.Record?.MainProductId).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToArray();
+
+            var products = await _itemService.GetByIdsAsync(productIds, ItemResponseGroup.ItemInfo.ToString());
+
+            return products.Select(x => x.Id).ToArray();
         }
     }
 }

@@ -176,6 +176,21 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithInvalidValueCodeAndMessage("Tax Type")
                 .WithImportState();
 
+            RuleFor(record => record.Record.MainProductId)
+                .Must((_, mainProductId, context) =>
+                {
+                    var existedMainProductIds =
+                        (string[])context.ParentContext.RootContextData[
+                            ModuleConstants.ValidationContextData.ExistedMainProductsIds];
+
+                    var result = existedMainProductIds.Any(x => x.EqualsInvariant(mainProductId));
+
+                    return result;
+                })
+                .When(record => !string.IsNullOrEmpty(record.Record.MainProductId))
+                .WithNotExistedMainProduct()
+                .WithImportState();
+
             // properties
             RuleFor(record => record.Record.Properties)
                 .SetValidator(record => new ImportProductsPropertiesValidator(record));

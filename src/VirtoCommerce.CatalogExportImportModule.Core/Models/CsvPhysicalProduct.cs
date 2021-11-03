@@ -202,6 +202,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.Name = ProductName;
             target.Code = ProductSku;
             target.OuterId = ProductOuterId;
+            target.MainProductId = MainProductId == string.Empty ? null : MainProductId;
             target.CategoryId = CategoryId;
             target.ProductType = ModuleConstants.ProductTypes.Physical;
             target.Priority = Priority ?? 0;
