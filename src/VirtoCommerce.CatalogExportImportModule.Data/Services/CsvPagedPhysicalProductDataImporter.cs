@@ -336,8 +336,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 {
                     // If fails, then try to find by MainProductOuterId
                     var mainProductOuterId = record.Record?.MainProductOuterId;
-                    existedMainProduct =
-                        existedMainProducts.FirstOrDefault(x => x.OuterId.EqualsInvariant(mainProductOuterId));
+
+                    if (!string.IsNullOrEmpty(mainProductOuterId))
+                    {
+                        existedMainProduct = existedMainProducts.FirstOrDefault(x => x.OuterId.EqualsInvariant(mainProductOuterId));
+                    }
 
                     // If find by outer id, then replace MainProductId value
                     record.Record.MainProductId = existedMainProduct?.Id ?? record.Record.MainProductId;
