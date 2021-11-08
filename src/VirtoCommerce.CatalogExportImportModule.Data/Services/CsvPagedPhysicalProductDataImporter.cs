@@ -98,7 +98,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetMainProductIdFromTheOuterIfMainValueIsBad(records, existedMainProducts);
 
-
                 var validationResult = await ValidateAsync(validationContext, errorsContext);
 
                 var invalidRecords = validationResult.Errors
