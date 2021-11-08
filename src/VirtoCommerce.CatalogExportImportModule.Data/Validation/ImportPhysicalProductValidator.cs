@@ -32,7 +32,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         record.Record.ProductId.EqualsInvariant(p.Id));
 
                     var productByOuterId = existedProducts.FirstOrDefault(p =>
-                        record.Record.ProductId.EqualsInvariant(p.OuterId));
+                        record.Record.ProductOuterId.EqualsInvariant(p.OuterId));
 
                     if (productById == null && productByOuterId == null)
                     {
@@ -176,6 +176,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithInvalidValueCodeAndMessage("Tax Type")
                 .WithImportState();
 
+            // Variations
             RuleFor(record => record.Record.MainProductId)
                 .Must((_, mainProductId, context) =>
                 {
@@ -189,6 +190,17 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.MainProductId))
                 .WithNotExistedMainProduct()
+                .WithImportState();
+
+            RuleFor(record => record.Record.MainProductId)
+                .Must((record, mainProductId, _) =>
+                {
+                    var result = !mainProductId.EqualsInvariant(record.Record.ProductId);
+
+                    return result;
+                })
+                .When(record => !string.IsNullOrEmpty(record.Record.MainProductId))
+                .WithSelfCycleReference()
                 .WithImportState();
 
             // properties

@@ -103,6 +103,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string NotUniqueMultiValue = "not-unique-multi-value";
 
             public const string MainProductIsNotExists = "main-product-is-not-exists";
+
+            public const string CycleSelfReference = "cycle-self-reference";
         }
 
         public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
@@ -113,7 +115,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.InvalidValue, "This row has invalid value in the column '{0}'." },
             { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
             { ValidationErrors.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
-            {ValidationErrors.MainProductIsNotExists, "The main product is not exists."},
+            { ValidationErrors.MainProductIsNotExists, "The main product is not exists." },
+            { ValidationErrors.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." }
         };
 
         public static class Features
