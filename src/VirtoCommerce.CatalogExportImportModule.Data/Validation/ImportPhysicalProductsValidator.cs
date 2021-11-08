@@ -70,7 +70,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
             context.ParentContext.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
                 await GetPropertyDictionaryItems(propertyIds);
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedMainProductsIds] = await GetExistedMainProductsAsync(records);
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedMainProducts] = await GetExistedMainProductsAsync(records);
         }
 
         private async Task<PropertyDictionaryItem[]> GetPropertyDictionaryItems(string[] propertyIds)
@@ -124,13 +124,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             return setting.AllowedValues.OfType<string>().ToArray() ?? Array.Empty<string>();
         }
 
-        private async Task<string[]> GetExistedMainProductsAsync(ImportRecord<CsvPhysicalProduct>[] records)
+        private async Task<CatalogProduct[]> GetExistedMainProductsAsync(ImportRecord<CsvPhysicalProduct>[] records)
         {
             var productIds = records.Select(x => x.Record?.MainProductId).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToArray();
 
             var products = await _itemService.GetByIdsAsync(productIds, ItemResponseGroup.ItemInfo.ToString());
 
-            return products.Select(x => x.Id).ToArray();
+            return products;
         }
     }
 }

@@ -68,7 +68,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
             public const string ExistedReviews = nameof(ExistedReviews);
 
-            public const string ExistedMainProductsIds = nameof(ExistedMainProductsIds);
+            public const string ExistedMainProducts = nameof(ExistedMainProducts);
 
         }
 
@@ -105,6 +105,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string MainProductIsNotExists = "main-product-is-not-exists";
 
             public const string CycleSelfReference = "cycle-self-reference";
+
+            public const string MainProductIsVariation = "main-product-is-variation";
         }
 
         public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
@@ -116,7 +118,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
             { ValidationErrors.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
             { ValidationErrors.MainProductIsNotExists, "The main product is not exists." },
-            { ValidationErrors.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." }
+            { ValidationErrors.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." },
+            { ValidationErrors.MainProductIsVariation, "The main product is variation. You should not import variations for variations." },
         };
 
         public static class Features

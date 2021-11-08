@@ -80,12 +80,18 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
                 .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MainProductIsNotExists]);
         }
 
-        public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithSelfCycleReference<T, TProperty>(
-            this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
+        public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithSelfCycleReference<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
         {
             return rule
                 .WithErrorCode(ModuleConstants.ValidationErrors.CycleSelfReference)
                 .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CycleSelfReference]);
+        }
+
+        public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithMainProductIsVariation<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
+        {
+            return rule
+                .WithErrorCode(ModuleConstants.ValidationErrors.MainProductIsVariation)
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MainProductIsVariation]);
         }
     }
 }
