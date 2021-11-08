@@ -44,6 +44,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
         public static class ValidationContextData
         {
+            public const string CatalogId = nameof(CatalogId);
+
+            public const string ExistedCategories = nameof(ExistedCategories);
+
+            public const string ExistedProducts = nameof(ExistedProducts);
 
             public const string Skus = nameof(Skus);
 
@@ -57,12 +62,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
             public const string AvailableTaxTypes = nameof(AvailableTaxTypes);
 
-            public const string AvaibaleLanguages = nameof(AvaibaleLanguages);
+            public const string AvailableLanguages = nameof(AvailableLanguages);
 
-            public const string AvaibaleReviewTypes = nameof(AvaibaleReviewTypes);
+            public const string AvailableReviewTypes = nameof(AvailableReviewTypes);
 
             public const string ExistedReviews = nameof(ExistedReviews);
-
         }
 
         public static class ValidationErrors
@@ -92,6 +96,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string NotUniqueValue = "not-unique-value";
 
             public const string ReviewExistsInSystem = "review-exists-in-system";
+
+            public const string NotUniqueMultiValue = "not-unique-multi-value";
         }
 
         public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
@@ -101,6 +107,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.ArrayValuesExceedingMaxLength, "Every value in column '{0}' may have maximum {1} characters. The number of values is unlimited." },
             { ValidationErrors.InvalidValue, "This row has invalid value in the column '{0}'." },
             { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
+            { ValidationErrors.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
         };
 
         public static class Features

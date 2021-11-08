@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CsvHelper.Configuration.Attributes;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
@@ -16,6 +18,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
                     p.Name).ToArray();
 
             return requiredColumns;
+        }
+
+        public static IList<string> SplitGeoPointMultivalueString(string values)
+        {
+            const string splitBySecondCommaPattern = @"([^,]*,[^,]*),";
+            var parsedValues = Regex.Split(values, splitBySecondCommaPattern).Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim()).ToList();
+            return parsedValues;
         }
     }
 }

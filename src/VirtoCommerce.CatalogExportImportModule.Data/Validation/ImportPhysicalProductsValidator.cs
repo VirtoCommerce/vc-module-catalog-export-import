@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +8,11 @@ using FluentValidation.Validators;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Model.Search;
+using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CoreModule.Core.Package;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
@@ -17,18 +22,25 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         private readonly IPackageTypesService _packageTypesService;
         private readonly ISettingsManager _settingsManager;
         private readonly IProductEditorialReviewService _editorialReviewService;
+        private readonly IPropertyDictionaryItemSearchService _propertyDictionaryItemSearchService;
 
-        public ImportPhysicalProductsValidator(IPackageTypesService packageTypesService, ISettingsManager settingsManager, IProductEditorialReviewService editorialReviewService)
+        public ImportPhysicalProductsValidator(IPackageTypesService packageTypesService, ISettingsManager settingsManager, IProductEditorialReviewService editorialReviewService,
+            IPropertyDictionaryItemSearchService propertyDictionaryItemSearchService)
         {
             _packageTypesService = packageTypesService;
             _settingsManager = settingsManager;
             _editorialReviewService = editorialReviewService;
+            _propertyDictionaryItemSearchService = propertyDictionaryItemSearchService;
+
             AttachValidators();
         }
+
+
 
         private void AttachValidators()
         {
             RuleFor(importRecords => importRecords).SetValidator(new ImportProductsAreNotDuplicatesValidator());
+            RuleForEach(importRecords => importRecords).SetValidator(new ImportProductCategoryValidator());
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductValidator()));
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductDescriptionValidator()));
         }
@@ -40,14 +52,34 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToArray();
 
+            var propertyIds = records.SelectMany(x => x.Record.Properties)
+                .Where(x => x.Dictionary).Select(x => x.Id).Distinct().ToArray();
+
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes] = await GetAvailablePackageTypesAsync();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits] = await GetAvailableWeightUnits();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes] = await GetAvailableTaxTypes();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleLanguages] = await GetAvailableLanguages();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleReviewTypes] = await GetAvailableReviewTypes();
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages] = await GetAvailableLanguages();
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes] = await GetAvailableReviewTypes();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
+            context.ParentContext.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
+                await GetPropertyDictionaryItems(propertyIds);
         }
+
+        private async Task<PropertyDictionaryItem[]> GetPropertyDictionaryItems(string[] propertyIds)
+        {
+            if (propertyIds.IsNullOrEmpty())
+            {
+                return Array.Empty<PropertyDictionaryItem>();
+
+            }
+
+            var dynamicPropertyDictionaryItemsSearchResult =
+                    await _propertyDictionaryItemSearchService.SearchAsync(new PropertyDictionaryItemSearchCriteria { PropertyIds = propertyIds });
+
+            return dynamicPropertyDictionaryItemsSearchResult.Results.ToArray();
+        }
+
 
         private async Task<string[]> GetAvailablePackageTypesAsync()
         {

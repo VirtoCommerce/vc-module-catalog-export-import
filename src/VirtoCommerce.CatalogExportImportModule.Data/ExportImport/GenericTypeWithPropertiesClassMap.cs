@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using CsvHelper;
 using CsvHelper.Configuration;
+using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -12,7 +13,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
 {
     public sealed class GenericTypeWithPropertiesClassMap<T> : ClassMap<T> where T : IHasProperties
     {
-        public GenericTypeWithPropertiesClassMap(IList<Property> properties, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems = null)
+        public GenericTypeWithPropertiesClassMap(Property[] properties, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems = null)
         {
             AutoMap(new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
 
@@ -26,7 +27,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
             }
         }
 
-        private void AddPropertiesWritingMap(IList<Property> exportedProperties)
+        private void AddPropertiesWritingMap(Property[] exportedProperties)
         {
             var currentColumnIndex = MemberMaps.Count;
 
@@ -43,16 +44,17 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                 propertyColumnDefinitionAndWriteMap.Data.Index = currentColumnIndex++;
 
                 // create custom converter instance which will get the required record from the collection
-                Func<ConvertToStringArgs<T>, string> func = xs =>
+                ConvertToString<T> func = args =>
                 {
-                    var valueProperty = xs.Value.Properties.FirstOrDefault(x => x.Name == exportedProperty.Name && x.Values.Any());
+
+                    var valueProperty = args.Value.Properties.FirstOrDefault(x => x.Name == exportedProperty.Name && x.Values.Any());
                     var valuePropertyValues = Array.Empty<string>();
 
                     if (valueProperty != null)
                     {
                         valuePropertyValues = valueProperty.Values?
                             .Where(x => x.Value != null)
-                            .Select(x => x.Value.ToString())
+                            .Select(x => string.Format(CultureInfo.InvariantCulture, "{0}", x.Value))
                             .Distinct()
                             .ToArray();
                     }
@@ -63,39 +65,51 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
                 };
 
                 propertyColumnDefinitionAndWriteMap.Data.WritingConvertExpression =
-                    (Expression<Func<ConvertToStringArgs<T>, string>>)(ex => func(ex));
+                    (Expression<ConvertToString<T>>)(args => func(args));
 
 
                 MemberMaps.Add(propertyColumnDefinitionAndWriteMap);
             }
         }
 
-        private void AddPropertiesReadingMap(IList<Property> properties, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems)
+        private void AddPropertiesReadingMap(Property[] properties, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems)
         {
             var currentColumnIndex = MemberMaps.Count;
 
             var propertiesPropertyInfo = ClassType.GetProperty(nameof(IHasProperties.Properties));
 
             var propertyReadingMap = MemberMap.CreateGeneric(ClassType, propertiesPropertyInfo);
+
+            ConvertFromString<IList<Property>> func = args =>
+            {
+                var row = args.Row;
+
+                var propertiesFromFile = properties.Where(x => row.HeaderRecord.Contains(x.Name)).ToArray();
+
+                var result = propertiesFromFile
+                    .Select(property =>
+                        !string.IsNullOrEmpty(row.GetField<string>(property.Name))
+                            ? new Property()
+                            {
+                                Id = property.Id,
+                                Name = property.Name,
+                                DisplayNames = property.DisplayNames,
+                                Multivalue = property.Multivalue,
+                                Dictionary = property.Dictionary,
+                                Multilanguage = property.Multilanguage,
+                                Required = property.Required,
+                                ValueType = property.ValueType,
+                                Values = ToPropertyValues(property, propertyDictionaryItems, row.GetField<string>(property.Name))
+                            }
+                            : null)
+                    .Where(x => x != null)
+                    .ToList();
+
+                return result;
+            };
+
             propertyReadingMap.Data.ReadingConvertExpression =
-                (Expression<Func<IReaderRow, object>>)(row => properties
-                   .Select(property =>
-                       !string.IsNullOrEmpty(row.GetField<string>(property.Name))
-                           ? new Property()
-                           {
-                               Id = property.Id,
-                               Name = property.Name,
-                               DisplayNames = property.DisplayNames,
-                               Multivalue = property.Multivalue,
-                               Dictionary = property.Dictionary,
-                               Multilanguage = property.Multilanguage,
-                               Required = property.Required,
-                               ValueType = property.ValueType,
-                               Values = ToPropertyValues(property, propertyDictionaryItems, row.GetField<string>(property.Name))
-                           }
-                           : null)
-                   .Where(x => x != null)
-                   .ToList());
+                (Expression<ConvertFromString<IList<Property>>>)(args => func(args));
 
             propertyReadingMap.Ignore(true);
             propertyReadingMap.Data.IsOptional = true;
@@ -104,14 +118,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
             MemberMaps.Add(propertyReadingMap);
         }
 
-        private IList<PropertyValue> ToPropertyValues(Property property, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems, string values)
+        private IList<PropertyValue> ToPropertyValues(Property property, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems, string values)
         {
             return property.Multivalue
                 ? ToPropertyMultiValue(property, propertyDictionaryItems, values)
                 : new List<PropertyValue> { ToPropertyValue(property, propertyDictionaryItems, values) };
         }
 
-        private PropertyValue ToPropertyValue(Property property, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems, string value)
+        private PropertyValue ToPropertyValue(Property property, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems, string value)
         {
             return new PropertyValue
             {
@@ -126,12 +140,24 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.ExportImport
             };
         }
 
-        private IList<PropertyValue> ToPropertyMultiValue(Property property, Dictionary<string, IList<PropertyDictionaryItem>> propertyDictionaryItems, string values)
+        private IList<PropertyValue> ToPropertyMultiValue(Property property, Dictionary<string, PropertyDictionaryItem[]> propertyDictionaryItems, string values)
         {
-            var parsedValues = values.Split(',').Select(value => value.Trim()).ToList();
+            IList<string> parsedValues;
+
+            if (property.ValueType == PropertyValueType.GeoPoint)
+            {
+                parsedValues = CsvImportHelper.SplitGeoPointMultivalueString(values);
+            }
+            else
+            {
+                parsedValues = values.Split(',').Select(value => value.Trim()).ToList();
+            }
+
             var convertedValues = parsedValues.Select(value => ToPropertyValue(property, propertyDictionaryItems, value));
             return convertedValues.ToList();
         }
+
+
     }
 }
 

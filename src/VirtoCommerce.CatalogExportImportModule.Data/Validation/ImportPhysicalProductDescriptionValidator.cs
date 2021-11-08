@@ -60,7 +60,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         RuleFor(x => x.Record.DescriptionLanguage)
                             .Must((_, language, context) =>
                             {
-                                var languages = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleLanguages];
+                                var languages = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages];
                                 return languages.Contains(language, StringComparer.InvariantCultureIgnoreCase);
                             })
                             .WithInvalidValueCodeAndMessage("Description Language")
@@ -80,7 +80,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         RuleFor(x => x.Record.DescriptionType)
                             .Must((_, reviewType, context) =>
                             {
-                                var reviewTypes = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvaibaleReviewTypes];
+                                var reviewTypes = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes];
                                 return reviewTypes.Contains(reviewType, StringComparer.InvariantCultureIgnoreCase);
                             })
                             .WithInvalidValueCodeAndMessage("Description Type")
