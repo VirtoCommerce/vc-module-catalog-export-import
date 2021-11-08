@@ -43,7 +43,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         }
 
 
-
         private void AttachValidators()
         {
             RuleFor(importRecords => importRecords).SetValidator(new ImportProductsAreNotDuplicatesValidator());
