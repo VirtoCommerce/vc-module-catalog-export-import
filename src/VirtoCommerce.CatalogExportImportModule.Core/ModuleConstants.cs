@@ -117,7 +117,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.InvalidValue, "This row has invalid value in the column '{0}'." },
             { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
             { ValidationErrors.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
-            { ValidationErrors.MainProductIsNotExists, "The main product is not exists." },
+            { ValidationErrors.MainProductIsNotExists, "The main product does not exists." },
             { ValidationErrors.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." },
             { ValidationErrors.MainProductIsVariation, "The main product is variation. You should not import variations for variations." },
         };
