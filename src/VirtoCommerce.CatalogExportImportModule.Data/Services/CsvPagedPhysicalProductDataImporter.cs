@@ -94,9 +94,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 var mainProductIds = records.Select(x => x.Record?.MainProductId).Distinct().Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 var mainProductOuterIds = records.Select(x => x.Record?.MainProductOuterId).Distinct().Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                var existedMainProducts = await SearchProductsByIdAndOuterIdAsync(mainProductIds, mainProductOuterIds);
+                var existingMainProducts = await SearchProductsByIdAndOuterIdAsync(mainProductIds, mainProductOuterIds);
 
-                SetMainProductIdFromTheOuterIfMainValueIsBad(records, existedMainProducts);
+                SetMainProductIdFromTheOuterIfMainValueIsBad(records, existingMainProducts);
 
                 var validationResult = await ValidateAsync(validationContext, errorsContext);
 
@@ -322,27 +322,27 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private void SetMainProductIdFromTheOuterIfMainValueIsBad(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existedMainProducts)
+        private void SetMainProductIdFromTheOuterIfMainValueIsBad(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingMainProducts)
         {
             foreach (var record in records.Where(x => !string.IsNullOrEmpty(x.Record.MainProductId) || !string.IsNullOrEmpty(x.Record.MainProductOuterId)))
             {
                 // Try to find by MainProductId
                 var mainProductId = record.Record?.MainProductId;
-                var existedMainProduct =
-                    existedMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));
+                var existingMainProduct =
+                    existingMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));
 
-                if (existedMainProduct is null)
+                if (existingMainProduct is null)
                 {
                     // If fails, then try to find by MainProductOuterId
                     var mainProductOuterId = record.Record?.MainProductOuterId;
 
                     if (!string.IsNullOrEmpty(mainProductOuterId))
                     {
-                        existedMainProduct = existedMainProducts.FirstOrDefault(x => x.OuterId.EqualsInvariant(mainProductOuterId));
+                        existingMainProduct = existingMainProducts.FirstOrDefault(x => x.OuterId.EqualsInvariant(mainProductOuterId));
                     }
 
                     // If find by outer id, then replace MainProductId value
-                    record.Record.MainProductId = existedMainProduct?.Id ?? record.Record.MainProductId;
+                    record.Record.MainProductId = existingMainProduct?.Id ?? record.Record.MainProductId;
 
                     // If product can't be found at all
                     // Then the line is invalid, and would be skipped while validating

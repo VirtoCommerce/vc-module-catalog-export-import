@@ -180,11 +180,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             RuleFor(record => record.Record.MainProductId)
                 .Must((_, mainProductId, context) =>
                 {
-                    var existedMainProducts =
+                    var existingMainProducts =
                         (CatalogProduct[])context.ParentContext.RootContextData[
-                            ModuleConstants.ValidationContextData.ExistedMainProducts];
+                            ModuleConstants.ValidationContextData.ExistingMainProducts];
 
-                    var result = existedMainProducts.Any(x => x.Id.EqualsInvariant(mainProductId));
+                    var result = existingMainProducts.Any(x => x.Id.EqualsInvariant(mainProductId));
 
                     return result;
                 })
@@ -200,11 +200,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState()
                 .Must((_, mainProductId, context) =>
                 {
-                    var existedMainProducts =
+                    var existingMainProducts =
                         (CatalogProduct[])context.ParentContext.RootContextData[
-                            ModuleConstants.ValidationContextData.ExistedMainProducts];
+                            ModuleConstants.ValidationContextData.ExistingMainProducts];
 
-                    var mainProduct = existedMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));
+                    var mainProduct = existingMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));
 
                     var mainProductIsNotVariation = string.IsNullOrEmpty(mainProduct?.MainProductId);
 
