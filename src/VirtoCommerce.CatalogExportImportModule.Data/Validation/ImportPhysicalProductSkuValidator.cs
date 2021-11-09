@@ -45,7 +45,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     return true;
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.ProductSku))
-                .WithMessage("Product with the same SKU already exists in the current catalog in product with different Id.")
+                .WithMessage("Product with the same SKU and with different Id already exists in the current catalog.")
                 .WithImportState();
         }
     }
