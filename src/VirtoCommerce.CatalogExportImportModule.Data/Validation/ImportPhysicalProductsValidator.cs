@@ -25,19 +25,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         private readonly IProductEditorialReviewService _editorialReviewService;
         private readonly IPropertyDictionaryItemSearchService _propertyDictionaryItemSearchService;
         private readonly IItemService _itemService;
+        private readonly IProductSearchService _productSearchService;
 
         public ImportPhysicalProductsValidator(
         IPackageTypesService packageTypesService,
         ISettingsManager settingsManager,
         IProductEditorialReviewService editorialReviewService,
         IPropertyDictionaryItemSearchService propertyDictionaryItemSearchService,
-        IItemService itemService)
+        IItemService itemService,
+        IProductSearchService productSearchService)
         {
             _packageTypesService = packageTypesService;
             _settingsManager = settingsManager;
             _editorialReviewService = editorialReviewService;
             _propertyDictionaryItemSearchService = propertyDictionaryItemSearchService;
             _itemService = itemService;
+            _productSearchService = productSearchService;
 
             AttachValidators();
         }
@@ -48,11 +51,15 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             RuleFor(importRecords => importRecords).SetValidator(new ImportProductsAreNotDuplicatesValidator());
             RuleForEach(importRecords => importRecords).SetValidator(new ImportProductCategoryValidator());
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductValidator()));
+            RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductSkuValidator()));
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductDescriptionValidator()));
         }
 
         private async Task SetContextData(ImportRecord<CsvPhysicalProduct>[] records, CustomContext context, CancellationToken cancellationToken)
         {
+            var catalogId =
+                context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
+
             var importedReviewIds = records.Select(x => x.Record.DescriptionId)
                 .Distinct()
                 .Where(x => !string.IsNullOrEmpty(x))
@@ -60,6 +67,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
             var propertyIds = records.SelectMany(x => x.Record.Properties)
                 .Where(x => x.Dictionary).Select(x => x.Id).Distinct().ToArray();
+
+            var skus = records.Select(x => x.Record.ProductSku).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes] = await GetAvailablePackageTypesAsync();
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
@@ -70,7 +79,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
             context.ParentContext.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
                 await GetPropertyDictionaryItems(propertyIds);
+                
             context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistingMainProducts] = await GetExistingMainProductsAsync(records);
+            
+            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedProductsWithSameSku] =
+                (await _productSearchService.SearchProductsAsync(new ProductSearchCriteria() { CatalogId = catalogId, Skus = skus, Take = ModuleConstants.Settings.PageSize })).Results.ToArray();
         }
 
         private async Task<PropertyDictionaryItem[]> GetPropertyDictionaryItems(string[] propertyIds)

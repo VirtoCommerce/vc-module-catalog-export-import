@@ -69,7 +69,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string ExistedReviews = nameof(ExistedReviews);
 
             public const string ExistingMainProducts = nameof(ExistingMainProducts);
-
+            
+            public const string ExistedProductsWithSameSku = nameof(ExistedProductsWithSameSku);
         }
 
         public static class ValidationErrors
