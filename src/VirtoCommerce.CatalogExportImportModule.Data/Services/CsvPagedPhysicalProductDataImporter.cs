@@ -341,11 +341,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                         existingMainProduct = existingMainProducts.FirstOrDefault(x => x.OuterId.EqualsInvariant(mainProductOuterId));
                     }
 
+                    // TODO: Remove guid generating and introduce CatalogProduct explicitly
                     // If find by outer id, then replace MainProductId value
-                    record.Record.MainProductId = existingMainProduct?.Id ?? record.Record.MainProductId;
+                    record.Record.MainProductId = existingMainProduct?.Id ?? Guid.NewGuid().ToString();
 
                     // If product can't be found at all
                     // Then the line is invalid, and would be skipped while validating
+                    // To be sure that line is invalid, introduce random guid
                 }
 
                 // If main product exists, then nothing to do
