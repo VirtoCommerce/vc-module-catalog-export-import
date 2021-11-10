@@ -6,7 +6,7 @@ using VirtoCommerce.CatalogExportImportModule.Data.Helpers;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 {
-    public sealed class ImportProductIsNotDuplicateValidator: AbstractValidator<ImportRecord<CsvPhysicalProduct>>
+    public sealed class ImportProductIsNotDuplicateValidator : AbstractValidator<ImportRecord<CsvPhysicalProduct>>
     {
         public ImportProductIsNotDuplicateValidator()
         {
