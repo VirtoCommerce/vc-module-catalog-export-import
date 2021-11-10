@@ -34,7 +34,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     var productByOuterId = existedProducts.FirstOrDefault(p =>
                         record.Record.ProductOuterId.EqualsInvariant(p.OuterId));
 
-                    if (productById == null && productByOuterId == null)
+                    if (productById == null || productByOuterId == null)
                     {
                         return true;
                     }
