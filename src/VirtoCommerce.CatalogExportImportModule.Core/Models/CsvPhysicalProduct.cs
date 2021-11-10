@@ -21,20 +21,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         public string ProductId { get; set; }
 
         [Optional]
-        [Name("Main Product Id")]
-        public string MainProductId { get; set; }
-
-        [Optional]
-        [Name("Main Product Outer Id")]
-        public string MainProductOuterId { get; set; }
+        [Name("Product Outer Id")]
+        public string ProductOuterId { get; set; }
 
         [Required]
         [Name("Product SKU")]
         public string ProductSku { get; set; }
 
         [Optional]
-        [Name("Product Outer Id")]
-        public string ProductOuterId { get; set; }
+        [Name("Main Product Id")]
+        public string MainProductId { get; set; }
+
+        [Optional]
+        [Name("Main Product Outer Id")]
+        public string MainProductOuterId { get; set; }
 
         [Optional]
         [Name("Category Id")]
