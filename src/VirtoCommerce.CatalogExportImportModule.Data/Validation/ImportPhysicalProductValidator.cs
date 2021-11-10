@@ -32,7 +32,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         record.Record.ProductId.EqualsInvariant(p.Id));
 
                     var productByOuterId = existedProducts.FirstOrDefault(p =>
-                        record.Record.ProductId.EqualsInvariant(p.OuterId));
+                        record.Record.ProductOuterId.EqualsInvariant(p.OuterId));
 
                     if (productById == null && productByOuterId == null)
                     {
@@ -175,6 +175,44 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .When(record => !string.IsNullOrEmpty(record.Record.TaxType))
                 .WithInvalidValueCodeAndMessage("Tax Type")
                 .WithImportState();
+
+            // Variations
+            RuleFor(record => record.Record.MainProductId)
+                .Must((_, mainProductId, context) =>
+                {
+                    var existingMainProducts =
+                        (CatalogProduct[])context.ParentContext.RootContextData[
+                            ModuleConstants.ValidationContextData.ExistingMainProducts];
+
+                    var result = existingMainProducts.Any(x => x.Id.EqualsInvariant(mainProductId));
+
+                    return result;
+                })
+                .WithNotExistedMainProduct()
+                .WithImportState()
+                .Must((record, mainProductId, _) =>
+                {
+                    var result = !mainProductId.EqualsInvariant(record.Record.ProductId);
+
+                    return result;
+                })
+                .WithSelfCycleReference()
+                .WithImportState()
+                .Must((_, mainProductId, context) =>
+                {
+                    var existingMainProducts =
+                        (CatalogProduct[])context.ParentContext.RootContextData[
+                            ModuleConstants.ValidationContextData.ExistingMainProducts];
+
+                    var mainProduct = existingMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));
+
+                    var mainProductIsNotVariation = string.IsNullOrEmpty(mainProduct?.MainProductId);
+
+                    return mainProductIsNotVariation;
+                })
+                .WithMainProductIsVariation()
+                .WithImportState()
+                .When(record => !string.IsNullOrEmpty(record.Record.MainProductId));
 
             // properties
             RuleFor(record => record.Record.Properties)

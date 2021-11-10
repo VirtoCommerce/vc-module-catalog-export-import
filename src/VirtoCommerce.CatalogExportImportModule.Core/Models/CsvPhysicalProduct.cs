@@ -20,13 +20,21 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         [Name("Product Id")]
         public string ProductId { get; set; }
 
+        [Optional]
+        [Name("Product Outer Id")]
+        public string ProductOuterId { get; set; }
+
         [Required]
         [Name("Product SKU")]
         public string ProductSku { get; set; }
 
         [Optional]
-        [Name("Product Outer Id")]
-        public string ProductOuterId { get; set; }
+        [Name("Main Product Id")]
+        public string MainProductId { get; set; }
+
+        [Optional]
+        [Name("Main Product Outer Id")]
+        public string MainProductOuterId { get; set; }
 
         [Optional]
         [Name("Category Id")]
@@ -149,6 +157,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         {
             ProductName = product.Name;
             ProductId = product.Id;
+            MainProductId = product.MainProductId;
             ProductSku = product.Code;
             ProductOuterId = product.OuterId;
             CategoryId = product.CategoryId;
@@ -175,7 +184,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             FirstListed = product.StartDate;
             ListingExpiresOn = product.EndDate;
             Properties = product.Properties?.Select(x => x.Clone() as Property).ToArray();
-            
+
             if (!product.Reviews.IsNullOrEmpty())
             {
                 var description = product.Reviews[0];
@@ -193,6 +202,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
             target.Name = ProductName;
             target.Code = ProductSku;
             target.OuterId = ProductOuterId;
+            target.MainProductId = string.IsNullOrEmpty(MainProductId) ? null : MainProductId;
             target.CategoryId = CategoryId;
             target.ProductType = ModuleConstants.ProductTypes.Physical;
             target.Priority = Priority ?? 0;

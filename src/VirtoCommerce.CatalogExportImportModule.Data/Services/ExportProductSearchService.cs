@@ -39,7 +39,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var query = catalogRepository.Items;
 
-            query = query.Where(x => x.CatalogId == criteria.CatalogId && x.ParentId == null && x.ProductType == PhysicalProductType);
+            query = query.Where(x => x.CatalogId == criteria.CatalogId && (criteria.SearchInVariations || x.ParentId == null) && x.ProductType == PhysicalProductType);
 
 
             if (!criteria.CategoryIds.IsNullOrEmpty() && !criteria.ItemIds.IsNullOrEmpty())
@@ -54,6 +54,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             else if (!criteria.ItemIds.IsNullOrEmpty())
             {
                 query = query.Where(x => criteria.ItemIds.Contains(x.Id));
+            }
+
+            if (criteria.SearchInVariations && !criteria.ItemIds.IsNullOrEmpty())
+            {
+                // Search variations with additional nested query
+                query = query.Union(catalogRepository.Items.Where(x => criteria.ItemIds.Contains(x.ParentId)));
             }
 
             result.TotalCount = await query.CountAsync();

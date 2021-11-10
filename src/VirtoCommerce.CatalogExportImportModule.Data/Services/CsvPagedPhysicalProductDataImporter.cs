@@ -92,6 +92,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 };
 
+                var mainProductIds = records.Select(x => x.Record?.MainProductId).Distinct().Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                var mainProductOuterIds = records.Select(x => x.Record?.MainProductOuterId).Distinct().Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                var existingMainProducts = await SearchProductsByIdAndOuterIdAsync(mainProductIds, mainProductOuterIds);
+
+                SetMainProductIdFromTheOuterIfMainValueIsBad(records, existingMainProducts);
+
                 var validationResult = await ValidateAsync(validationContext, errorsContext);
 
                 var invalidRecords = validationResult.Errors
@@ -313,6 +319,38 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             foreach (var product in productsToSave)
             {
                 product.CatalogId = catalogId;
+            }
+        }
+
+        private void SetMainProductIdFromTheOuterIfMainValueIsBad(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingMainProducts)
+        {
+            foreach (var record in records.Where(x => !string.IsNullOrEmpty(x.Record.MainProductId) || !string.IsNullOrEmpty(x.Record.MainProductOuterId)))
+            {
+                // Try to find by MainProductId
+                var mainProductId = record.Record?.MainProductId;
+                var existingMainProduct =
+                    existingMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));
+
+                if (existingMainProduct is null)
+                {
+                    // If fails, then try to find by MainProductOuterId
+                    var mainProductOuterId = record.Record?.MainProductOuterId;
+
+                    if (!string.IsNullOrEmpty(mainProductOuterId))
+                    {
+                        existingMainProduct = existingMainProducts.FirstOrDefault(x => x.OuterId.EqualsInvariant(mainProductOuterId));
+                    }
+
+
+                    // If found by outer id, then replace MainProductId value
+                    // If product can't be found at all
+                    // Then the line is invalid, and would be skipped while validating
+                    // To be sure that line is invalid, introduce random guid
+                    // TODO: Remove guid generating and introduce CatalogProduct explicitly
+                    record.Record.MainProductId = existingMainProduct?.Id ?? Guid.NewGuid().ToString();
+                }
+
+                // If main product exists, then nothing to do
             }
         }
     }

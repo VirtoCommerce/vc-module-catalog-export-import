@@ -72,5 +72,26 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
                 .WithErrorCode(ModuleConstants.ValidationErrors.NotUniqueValue)
                 .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueMultiValue], property.Name));
         }
+
+        public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithNotExistedMainProduct<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
+        {
+            return rule
+                .WithErrorCode(ModuleConstants.ValidationErrors.MainProductIsNotExists)
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MainProductIsNotExists]);
+        }
+
+        public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithSelfCycleReference<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
+        {
+            return rule
+                .WithErrorCode(ModuleConstants.ValidationErrors.CycleSelfReference)
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CycleSelfReference]);
+        }
+
+        public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithMainProductIsVariation<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
+        {
+            return rule
+                .WithErrorCode(ModuleConstants.ValidationErrors.MainProductIsVariation)
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MainProductIsVariation]);
+        }
     }
 }

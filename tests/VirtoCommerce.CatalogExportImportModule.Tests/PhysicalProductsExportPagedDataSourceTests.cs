@@ -9,6 +9,7 @@ using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.Services;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
+using VirtoCommerce.CatalogModule.Core.Services;
 using Xunit;
 
 namespace VirtoCommerce.CatalogExportImportModule.Tests
@@ -133,7 +134,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Tests
         {
             var productSearchService = GetExportProductSearchService(products);
 
-            IExportPagedDataSource DataSourceCreatorFunc(ExportDataRequest request, int pageSize) => new ProductExportPagedDataSource(productSearchService, pageSize, request);
+            IExportPagedDataSource DataSourceCreatorFunc(ExportDataRequest request, int pageSize) => new ProductExportPagedDataSource(productSearchService, pageSize, request, new Mock<IItemService>().Object);
 
             return new ExportPagedDataSourceFactory(new[]
             {
