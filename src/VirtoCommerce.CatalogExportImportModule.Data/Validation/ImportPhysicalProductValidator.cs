@@ -10,7 +10,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 {
     public sealed class ImportPhysicalProductValidator : AbstractValidator<ImportRecord<CsvPhysicalProduct>>
     {
-        private static readonly char[] ProductSkuIllegalCharacters = { '$', '+', ';', '=', '%', '{', '}', '[', ']', '|', '@', '~', '!', '^', '*', '&', '(', ')', '<', '>' };
+
 
         public ImportPhysicalProductValidator()
         {
@@ -34,7 +34,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     var productByOuterId = existedProducts.FirstOrDefault(p =>
                         record.Record.ProductOuterId.EqualsInvariant(p.OuterId));
 
-                    if (productById == null && productByOuterId == null)
+                    if (productById == null || productByOuterId == null)
                     {
                         return true;
                     }
@@ -43,7 +43,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.ProductId) &&
                                 !string.IsNullOrEmpty(record.Record.ProductOuterId))
-                .WithMessage("Another product with the same Outer Id exists in the system.")
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductWithSameOuterIdExists])
                 .WithImportState();
 
             // validate catalog of product matching to request
@@ -71,7 +71,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     return result;
                 })
                 .When((record) => !string.IsNullOrEmpty(record.Record.ProductId))
-                .WithMessage("The product does not belong to the catalog specified in the request.")
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductDoesNotBelongToCatalog])
                 .WithImportState();
 
             RuleFor(record => record.Record.ProductName)
@@ -82,21 +82,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .MaximumLength(1024)
                 .WithExceededMaxLengthCodeAndMessage("Product Name", 1024)
                 .WithImportState();
-
-            RuleFor(record => record.Record.ProductSku)
-                .NotEmpty()
-                .WithMissingRequiredValueCodeAndMessage("Product Sku")
-                .WithImportState()
-                .DependentRules(() =>
-                {
-                    RuleFor(record => record.Record.ProductSku)
-                        .MaximumLength(64)
-                        .WithExceededMaxLengthCodeAndMessage("Product Sku", 64)
-                        .WithImportState()
-                        .Must(sku => sku.IndexOfAny(ProductSkuIllegalCharacters) < 0)
-                        .WithInvalidValueCodeAndMessage("Product Sku")
-                        .WithImportState();
-                });
 
             RuleFor(record => record.Record.CategoryId)
                 .NotEmpty()

@@ -151,7 +151,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
         public DateTime? ListingExpiresOn { get; set; }
 
         [Ignore]
-        public IList<Property> Properties { get; set; }
+        public IList<Property> Properties { get; set; } = new List<Property>();
 
         public CsvPhysicalProduct FromModel(CatalogProduct product)
         {

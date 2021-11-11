@@ -70,6 +70,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
             public const string ExistingMainProducts = nameof(ExistingMainProducts);
 
+            public const string ExistedProductsWithSameSku = nameof(ExistedProductsWithSameSku);
         }
 
         public static class ValidationErrors
@@ -107,6 +108,16 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string CycleSelfReference = "cycle-self-reference";
 
             public const string MainProductIsVariation = "main-product-is-variation";
+
+            public const string ProductWithSameOuterIdExists = "product-with-same-outer-id-exists";
+
+            public const string ProductDoesNotBelongToCatalog = "product-does-not-belong-to-catalog";
+
+            public const string CategoryDoesNotExist = "category-does-not-exist";
+
+            public const string CategoryDoesNotBelongToCatalog = "category-does-not-belong-to-catalog";
+
+            public const string ProductWithSameSkuExists = "product-with-same-sku-exists";
         }
 
         public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
@@ -120,6 +131,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             { ValidationErrors.MainProductIsNotExists, "The main product does not exist." },
             { ValidationErrors.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." },
             { ValidationErrors.MainProductIsVariation, "The main product is variation. You should not import variations for variations." },
+            { ValidationErrors.ProductWithSameOuterIdExists, "Another product with the same Outer Id exists in the system." },
+            { ValidationErrors.ProductDoesNotBelongToCatalog, "The product does not belong to the catalog specified in the request." },
+            { ValidationErrors.CategoryDoesNotExist, "Such category does not exist in the system." },
+            { ValidationErrors.CategoryDoesNotBelongToCatalog, "The category does not belong to the catalog specified in the request." },
+            { ValidationErrors.ProductWithSameSkuExists, "Product with the same SKU and with different Id already exists in the current catalog." }
         };
 
         public static class Features

@@ -31,7 +31,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     return result;
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.CategoryId) || !string.IsNullOrEmpty(record.Record.CategoryOuterId))
-                .WithMessage("Such Category does not exist in the system.")
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CategoryDoesNotExist])
                 .WithImportState()
                 .Must((record, _, context) =>
                 {
@@ -47,7 +47,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                     return result;
                 })
-                .WithMessage("The category does not belong to the catalog specified in the request.")
+                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CategoryDoesNotBelongToCatalog])
                 .WithImportState();
         }
     }
