@@ -26,4 +26,8 @@
       <Folder Include="Scripts\blades\" />
       <Folder Include="Scripts\resources\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="VirtoCommerce.AssetsModule.Core" Version="1.3.0" />
+    </ItemGroup>
 </Project>

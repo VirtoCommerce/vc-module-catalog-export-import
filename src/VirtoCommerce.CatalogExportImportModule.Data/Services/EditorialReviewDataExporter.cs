@@ -3,7 +3,7 @@ using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.Platform.Core;
-using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.AssetsModule.Core.Assets;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {

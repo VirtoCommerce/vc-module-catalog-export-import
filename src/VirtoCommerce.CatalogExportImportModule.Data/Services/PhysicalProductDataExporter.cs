@@ -6,7 +6,7 @@ using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
 using VirtoCommerce.CatalogExportImportModule.Data.ExportImport;
 using VirtoCommerce.Platform.Core;
-using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.AssetsModule.Core.Assets;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
