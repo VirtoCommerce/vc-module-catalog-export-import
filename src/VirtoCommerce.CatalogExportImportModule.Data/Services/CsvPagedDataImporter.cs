@@ -51,8 +51,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             var importProgress = new ImportProgressInfo { Description = "Import has started" };
             progressCallback(importProgress);
 
-            // Setup configuration, data source & class maps
+            // Setup configuration
+            // Be careful: configuration is copied inside csv reader,
+            // so changes made after passing it to data source will has no effect
             var configuration = _importConfigurationFactory.Create();
+
+            // Setup error reporter
+            var reportFilePath = GetReportFilePath(request.FilePath);
+            await using var importErrorReporter = await _importReporterFactory.CreateAsync(reportFilePath, configuration.Delimiter);
+
+            // Setup parsing error handling
+            var parsingErrorHandler = _parsingErrorHandlerFactory.Create(importErrorReporter);
+            parsingErrorHandler.HandleErrors(configuration);
+
+            // Setup data source & class maps
             using var dataSource = _dataSourceFactory.Create<TImportable>(request.FilePath, ModuleConstants.Settings.PageSize, configuration);
             var classMap = await GetClassMapAsync(request);
             if (classMap != null)
@@ -60,14 +72,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 dataSource.RegisterClassMap(classMap);
             }
 
-            // Setup error reporter
-            var headerRaw = dataSource.GetHeaderRaw();
-            var reportFilePath = GetReportFilePath(request.FilePath);
-            await using var importErrorReporter = await _importReporterFactory.CreateAsync(reportFilePath, headerRaw, configuration.Delimiter);
-
-            // Setup parsing error handling
-            var parsingErrorHandler = _parsingErrorHandlerFactory.Create(importErrorReporter);
-            parsingErrorHandler.HandleErrors(configuration);
+            // Writer header to error report
+            var header = dataSource.GetHeaderRaw();
+            importErrorReporter.WriteHeader(header);
 
             // Send message about total count
             importProgress.TotalCount = dataSource.GetTotalCount();
@@ -85,6 +92,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 {
                     // Validate & process chunk
                     await ProcessChunkAsync(request, progressCallback, dataSource, importErrorReporter, importProgress);
+
+                    // Write error messages
+                    await importErrorReporter.FlushAsync();
 
                     // Send message about processed count
                     if (importProgress.ProcessedCount != importProgress.TotalCount)

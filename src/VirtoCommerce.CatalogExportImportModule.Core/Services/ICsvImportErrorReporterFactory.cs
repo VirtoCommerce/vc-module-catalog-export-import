@@ -4,6 +4,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Services
 {
     public interface ICsvImportErrorReporterFactory
     {
-        Task<ICsvImportErrorReporter> CreateAsync(string reportFilePath, string header, string delimiter);
+        Task<ICsvImportErrorReporter> CreateAsync(string reportFilePath,string delimiter);
     }
 }

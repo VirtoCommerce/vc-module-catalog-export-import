@@ -12,7 +12,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             _blobStorageProvider = blobStorageProvider;
         }
 
-        public async Task<ICsvImportErrorReporter> CreateAsync(string reportFilePath, string header, string delimiter)
+        public async Task<ICsvImportErrorReporter> CreateAsync(string reportFilePath, string delimiter)
         {
             var reportBlob = await _blobStorageProvider.GetBlobInfoAsync(reportFilePath);
 
@@ -21,7 +21,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 await _blobStorageProvider.RemoveAsync(new[] { reportFilePath });
             }
 
-            return new CsvImportErrorReporter(_blobStorageProvider, reportFilePath, header, delimiter);
+            return new CsvImportErrorReporter(_blobStorageProvider, reportFilePath, delimiter);
         }
     }
 }
