@@ -120,7 +120,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         protected abstract Task ProcessChunkAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback,
             IImportPagedDataSource<TImportable> dataSource, ICsvImportErrorReporter importErrorReporter, ImportProgressInfo importProgress);
         
-
         protected static string GetReportFilePath(string filePath)
         {
             var fileName = Path.GetFileName(filePath);
