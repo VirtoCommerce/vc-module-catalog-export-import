@@ -20,14 +20,14 @@ namespace VirtoCommerce.CatalogExportImportModule.Web.Controllers.Api
     [ApiController]
     public class ImportController : ControllerBase
     {
-        private readonly ICsvDataValidator _csvDataValidator;
+        private readonly ICsvFileValidator _csvDataValidator;
         private readonly IUserNameResolver _userNameResolver;
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IImportPagedDataSourceFactory _importPagedDataSourceFactory;
         private readonly IImportProductsClassMapFactory _importProductsClassMapFactory;
 
-        public ImportController(ICsvDataValidator csvDataValidator,
+        public ImportController(ICsvFileValidator csvDataValidator,
             IUserNameResolver userNameResolver, IPushNotificationManager pushNotificationManager,
             IBlobStorageProvider blobStorageProvider,
             IImportPagedDataSourceFactory importPagedDataSourceFactory,

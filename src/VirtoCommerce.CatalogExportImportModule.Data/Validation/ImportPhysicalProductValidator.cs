@@ -43,7 +43,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.ProductId) &&
                                 !string.IsNullOrEmpty(record.Record.ProductOuterId))
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductWithSameOuterIdExists])
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ProductWithSameOuterIdExists])
                 .WithImportState();
 
             // validate catalog of product matching to request
@@ -71,7 +71,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     return result;
                 })
                 .When((record) => !string.IsNullOrEmpty(record.Record.ProductId))
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductDoesNotBelongToCatalog])
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ProductDoesNotBelongToCatalog])
                 .WithImportState();
 
             RuleFor(record => record.Record.ProductName)

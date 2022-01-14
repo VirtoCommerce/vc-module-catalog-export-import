@@ -22,7 +22,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                     return !duplicates.Contains(importRecord.Record);
                 })
-                .WithErrorCode(ModuleConstants.ValidationErrors.DuplicateError)
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.DuplicateError)
                 .WithMessage("This description is a duplicate.")
                 .WithImportState();
         }

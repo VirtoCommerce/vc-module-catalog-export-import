@@ -31,47 +31,64 @@ namespace VirtoCommerce.CatalogExportImportModule.Web
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            // initialize DB
+            // Initialize DB
             serviceCollection.AddDbContext<VirtoCommerceCatalogExportImportDbContext>((provider, options) =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
                 options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
             });
+
+            // Initialize settings
             serviceCollection.AddOptions<ImportOptions>().Bind(Configuration.GetSection("CatalogExportImport:Import")).ValidateDataAnnotations();
             serviceCollection.AddOptions<ExportOptions>().Bind(Configuration.GetSection("CatalogExportImport:Export")).ValidateDataAnnotations();
 
-            serviceCollection.AddTransient<ICsvDataValidator, CsvDataValidator>();
-
-            serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
-            serviceCollection.AddSingleton<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
-            serviceCollection.AddTransient<IDataExporter, EditorialReviewDataExporter>();
-            serviceCollection.AddTransient<IDataExporter, PhysicalProductDataExporter>();
-            serviceCollection.AddTransient<IExportDataRequestPreprocessor, ExportDataRequestPreprocessor>();
+            // Initialize editorial review services
+            // Workaround. Should be replaced with regular catalog module services after their improvement
             serviceCollection.AddTransient<IProductEditorialReviewService, ProductEditorialReviewService>();
-            serviceCollection.AddTransient<IExportProductSearchService, ExportProductSearchService>();
-            serviceCollection.AddSingleton<IExportWriterFactory, ExportWriterFactory>();
-            serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
-            serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
-            serviceCollection.AddTransient<IValidator<ImportRecord<CsvPhysicalProduct>[]>, ImportPhysicalProductsValidator>();
-            serviceCollection.AddSingleton<ICsvImportReporterFactory, CsvImportReporterFactory>();
-            serviceCollection.AddTransient<IImportProductSearchService, ImportProductSearchService>();
-            serviceCollection.AddTransient<IImportCategorySearchService, ImportCategorySearchService>();
-            serviceCollection.AddSingleton<ImportConfigurationFactory>();
+            serviceCollection.AddTransient<IProductEditorialReviewSearchService, ProductEditorialReviewSearchService>();
 
+            // Initialize catalog module services overrides, extensions & replacements for export
+            // Workaround. Should be replaced with regular catalog module services after their improvement
+            serviceCollection.AddTransient<IExportProductSearchService, ExportProductSearchService>();
+            serviceCollection.AddTransient<IPropertyLoader, PropertyLoader>();
+
+            // Initialize export services
+            // Data request
+            serviceCollection.AddTransient<IExportDataRequestPreprocessor, ExportDataRequestPreprocessor>();
+            // Data source
+            serviceCollection.AddSingleton<IExportPagedDataSourceFactory, ExportPagedDataSourceFactory>();
             serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
                 (request, pageSize) => new EditorialReviewExportPagedDataSource(serviceProvider.GetService<IProductEditorialReviewSearchService>(), serviceProvider.GetService<IItemService>(), pageSize, request));
             serviceCollection.AddTransient<Func<ExportDataRequest, int, IExportPagedDataSource>>(serviceProvider =>
                 (request, pageSize) => new ProductExportPagedDataSource(serviceProvider.GetService<IExportProductSearchService>(), pageSize, request, serviceProvider.GetService<IItemService>()));
+            // Exporters
+            serviceCollection.AddTransient<IDataExporter, EditorialReviewDataExporter>();
+            serviceCollection.AddTransient<IDataExporter, PhysicalProductDataExporter>();
+            // Writer
+            serviceCollection.AddSingleton<IExportWriterFactory, ExportWriterFactory>();
 
+            // Initialize catalog module services overrides, extensions & replacements for import
+            // Workaround. Should be replaced with regular catalog module services after their improvement
+            serviceCollection.AddTransient<IImportProductSearchService, ImportProductSearchService>();
+            serviceCollection.AddTransient<IImportCategorySearchService, ImportCategorySearchService>();
+            serviceCollection.AddTransient<IListEntryIndexedSearchService, ListEntryIndexedSearchService>();
+
+            // Initialize import services
+            // Configuration & class maps
+            serviceCollection.AddSingleton<IImportConfigurationFactory, ImportConfigurationFactory>();
+            serviceCollection.AddTransient<IImportProductsClassMapFactory, ImportProductsClassMapFactory>();
+            // Data source
+            serviceCollection.AddSingleton<IImportPagedDataSourceFactory, ImportPagedDataSourceFactory>();
+            // Error handling
+            serviceCollection.AddTransient<ICsvFileValidator, CsvFileValidator>();
+            serviceCollection.AddTransient<IValidator<ImportRecord<CsvEditorialReview>[]>, ImportReviewsValidator>();
+            serviceCollection.AddTransient<IValidator<ImportRecord<CsvPhysicalProduct>[]>, ImportPhysicalProductsValidator>();
+            serviceCollection.AddSingleton<ICsvParsingErrorHandlerFactory, CsvParsingErrorHandlerFactory>();
+            serviceCollection.AddSingleton<ICsvValidatorFactory, CsvValidatorFactory>();
+            serviceCollection.AddSingleton<ICsvImportErrorReporterFactory, CsvImportErrorReporterFactory>();
+            // Importers
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedEditorialReviewDataImporter>();
             serviceCollection.AddTransient<ICsvPagedDataImporter, CsvPagedPhysicalProductDataImporter>();
-
-            serviceCollection.AddTransient<IPropertyLoader, PropertyLoader>();
-
-            serviceCollection.AddTransient<IImportProductsClassMapFactory, ImportProductsClassMapFactory>();
-
-            // Workaround. Should be excluded when the catalog module's bug  will be excepted https://virtocommerce.atlassian.net/browse/PT-4224.
-            serviceCollection.AddTransient<IListEntryIndexedSearchService, ListEntryIndexedSearchService>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

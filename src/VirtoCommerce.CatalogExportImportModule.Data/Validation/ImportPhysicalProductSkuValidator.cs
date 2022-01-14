@@ -61,7 +61,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                                     return true;
                                 })
-                                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductWithSameSkuExists])
+                                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ProductWithSameSkuExists])
                                 .WithImportState();
                         });
                 });

@@ -31,7 +31,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     return result;
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.CategoryId) || !string.IsNullOrEmpty(record.Record.CategoryOuterId))
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CategoryDoesNotExist])
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.CategoryDoesNotExist])
                 .WithImportState()
                 .Must((record, _, context) =>
                 {
@@ -47,7 +47,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                     return result;
                 })
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CategoryDoesNotBelongToCatalog])
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.CategoryDoesNotBelongToCatalog])
                 .WithImportState();
         }
     }

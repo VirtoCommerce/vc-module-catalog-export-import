@@ -13,16 +13,16 @@ using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public sealed class CsvDataValidator : ICsvDataValidator
+    public sealed class CsvFileValidator : ICsvFileValidator
     {
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly ISettingsManager _settingsManager;
-        private readonly ImportConfigurationFactory _importConfigurationFactory;
+        private readonly IImportConfigurationFactory _importConfigurationFactory;
 
-        public CsvDataValidator(
+        public CsvFileValidator(
             IBlobStorageProvider blobStorageProvider,
             ISettingsManager settingsManager,
-            ImportConfigurationFactory importConfigurationFactory
+            IImportConfigurationFactory importConfigurationFactory
             )
         {
             _blobStorageProvider = blobStorageProvider;
@@ -51,12 +51,12 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             if (blobInfo == null)
             {
-                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrors.FileNotExisted };
+                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrorCodes.FileNotExisted };
                 errorsList.Add(error);
             }
             else if (blobInfo.Size > fileMaxSize)
             {
-                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrors.ExceedingFileMaxSize };
+                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrorCodes.ExceedingFileMaxSize };
                 error.Properties.Add(nameof(fileMaxSize), fileMaxSize.ToString());
                 error.Properties.Add(nameof(blobInfo.Size), blobInfo.Size.ToString());
                 errorsList.Add(error);
@@ -87,8 +87,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             var notCompatibleErrors = new[]
             {
-                ModuleConstants.ValidationErrors.FileNotExisted,
-                ModuleConstants.ValidationErrors.ExceedingFileMaxSize,
+                ModuleConstants.ValidationErrorCodes.FileNotExisted,
+                ModuleConstants.ValidationErrorCodes.ExceedingFileMaxSize,
             };
 
             if (errorsList.Any(x => notCompatibleErrors.Contains(x.ErrorCode)))
@@ -103,20 +103,20 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             if (string.IsNullOrWhiteSpace(headerLine))
             {
-                errorsList.Add(new ImportDataValidationError { ErrorCode = ModuleConstants.ValidationErrors.NoData });
+                errorsList.Add(new ImportDataValidationError { ErrorCode = ModuleConstants.ValidationErrorCodes.NoData });
             }
             else
             {
                 if (!(requiredColumns.Length == 1 && headerLine == requiredColumns.First()) && !headerLine.Contains(csvConfiguration.Delimiter))
                 {
-                    errorsList.Add(new ImportDataValidationError { ErrorCode = ModuleConstants.ValidationErrors.WrongDelimiter });
+                    errorsList.Add(new ImportDataValidationError { ErrorCode = ModuleConstants.ValidationErrorCodes.WrongDelimiter });
                 }
 
                 var fistDataLine = await streamReader.ReadLineAsync();
 
                 if (string.IsNullOrWhiteSpace(fistDataLine))
                 {
-                    errorsList.Add(new ImportDataValidationError { ErrorCode = ModuleConstants.ValidationErrors.NoData });
+                    errorsList.Add(new ImportDataValidationError { ErrorCode = ModuleConstants.ValidationErrorCodes.NoData });
                 }
             }
         }
@@ -125,10 +125,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var notCompatibleErrors = new[]
             {
-                ModuleConstants.ValidationErrors.FileNotExisted,
-                ModuleConstants.ValidationErrors.ExceedingFileMaxSize,
-                ModuleConstants.ValidationErrors.WrongDelimiter,
-                ModuleConstants.ValidationErrors.NoData,
+                ModuleConstants.ValidationErrorCodes.FileNotExisted,
+                ModuleConstants.ValidationErrorCodes.ExceedingFileMaxSize,
+                ModuleConstants.ValidationErrorCodes.WrongDelimiter,
+                ModuleConstants.ValidationErrorCodes.NoData,
             };
 
             if (errorsList.Any(x => notCompatibleErrors.Contains(x.ErrorCode)))
@@ -149,7 +149,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             if (missedColumns.Length > 0)
             {
-                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrors.MissingRequiredColumns };
+                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrorCodes.MissingRequiredColumns };
                 error.Properties.Add(nameof(missedColumns), string.Join(", ", missedColumns));
                 errorsList.Add(error);
             }
@@ -159,9 +159,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         {
             var notCompatibleErrors = new[]
             {
-                ModuleConstants.ValidationErrors.FileNotExisted,
-                ModuleConstants.ValidationErrors.ExceedingFileMaxSize,
-                ModuleConstants.ValidationErrors.NoData,
+                ModuleConstants.ValidationErrorCodes.FileNotExisted,
+                ModuleConstants.ValidationErrorCodes.ExceedingFileMaxSize,
+                ModuleConstants.ValidationErrorCodes.NoData,
             };
 
             if (errorsList.Any(x => notCompatibleErrors.Contains(x.ErrorCode)))
@@ -189,7 +189,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
             if (totalCount > importLimitOfLines)
             {
-                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrors.ExceedingLineLimits };
+                var error = new ImportDataValidationError() { ErrorCode = ModuleConstants.ValidationErrorCodes.ExceedingLineLimits };
                 error.Properties.Add(nameof(importLimitOfLines), importLimitOfLines.ToString());
                 error.Properties.Add("LinesCount", totalCount.ToString());
                 errorsList.Add(error);

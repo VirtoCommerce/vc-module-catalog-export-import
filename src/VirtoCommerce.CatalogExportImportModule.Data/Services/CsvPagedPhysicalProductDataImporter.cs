@@ -16,19 +16,25 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public class CsvPagedPhysicalProductDataImporter : CsvPagedDataImporter<CsvPhysicalProduct>
     {
+        private readonly IValidator<ImportRecord<CsvPhysicalProduct>[]> _importRecordsValidator;
+        private readonly ICsvValidatorFactory _csvValidatorFactory;
         private readonly IImportProductSearchService _importProductSearchService;
         private readonly IImportCategorySearchService _importCategorySearchService;
         private readonly IItemService _itemService;
         private readonly IImportProductsClassMapFactory _classMapFactory;
 
         public CsvPagedPhysicalProductDataImporter(
-            IImportPagedDataSourceFactory dataSourceFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
-            ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
+            IBlobUrlResolver blobUrlResolver,
+            IImportConfigurationFactory importConfigurationFactory, IImportPagedDataSourceFactory dataSourceFactory,
+            ICsvValidatorFactory csvValidatorFactory, IValidator<ImportRecord<CsvPhysicalProduct>[]> importRecordsValidator,
+            ICsvParsingErrorHandlerFactory parsingErrorHandlerFactory, ICsvImportErrorReporterFactory importReporterFactory,
             IImportProductSearchService importProductSearchService, IImportCategorySearchService importCategorySearchService,
-            IItemService itemService, ImportConfigurationFactory importConfigurationFactory,
+            IItemService itemService,
             IImportProductsClassMapFactory classMapFactory)
-            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
+            : base(blobUrlResolver, importConfigurationFactory, dataSourceFactory, parsingErrorHandlerFactory, importReporterFactory)
         {
+            _csvValidatorFactory = csvValidatorFactory;
+            _importRecordsValidator = importRecordsValidator;
             _importProductSearchService = importProductSearchService;
             _importCategorySearchService = importCategorySearchService;
             _itemService = itemService;
@@ -44,14 +50,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             return classMap;
         }
 
-        protected override async Task ProcessChunkAsync(ImportDataRequest request,
-            Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<CsvPhysicalProduct> dataSource,
-            ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter)
+        protected override async Task ProcessChunkAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback,
+            IImportPagedDataSource<CsvPhysicalProduct> dataSource, ICsvImportErrorReporter importErrorReporter,
+            ImportProgressInfo importProgress)
         {
-            var records = dataSource.Items
-                // expect records that was parsed with errors
-                .Where(importContact => !errorsContext.Errors.Select(error => error.Row).Contains(importContact.Row))
-                .ToArray();
+            var records = dataSource.Items;
 
             try
             {
@@ -98,7 +101,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 SetMainProductIdFromTheOuterIfMainValueIsBad(records, existingMainProducts);
 
-                var validationResult = await ValidateAsync(validationContext, errorsContext);
+                var validator = _csvValidatorFactory.Create(_importRecordsValidator, importErrorReporter);
+                var validationResult = validator.Validate(validationContext);
 
                 var invalidRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvPhysicalProduct>)?.InvalidRecord).Distinct().ToArray();
@@ -134,7 +138,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
             catch (Exception e)
             {
-                HandleError(progressCallback, importProgress, e.Message);
+                importProgress.Errors.Add(e.Message);
+                progressCallback(importProgress);
             }
             finally
             {

@@ -32,7 +32,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     var result = existedReview.ItemId == record.Record.ProductId;
                     return result;
                 })
-                    .WithErrorCode(ModuleConstants.ValidationErrors.ReviewExistsInSystem)
+                    .WithErrorCode(ModuleConstants.ValidationErrorCodes.ReviewExistsInSystem)
                     .WithMessage("Description exists in the system related to other product")
                     .WithImportState()
                    );
