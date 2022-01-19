@@ -26,8 +26,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         RuleFor(x => x.Record.Language)
                             .Must((_, language, context) =>
                             {
-                                var languages = (string[])context.ParentContext.RootContextData[
-                                        coreModuleCore.ModuleConstants.Settings.General.Languages.Name];
+                                var languages = (string[])context.RootContextData[coreModuleCore.ModuleConstants.Settings.General.Languages.Name];
                                 return languages.Contains(language, StringComparer.InvariantCultureIgnoreCase);
                             })
                             .WithInvalidValueCodeAndMessage("Language")
@@ -42,8 +41,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     RuleFor(x => x.Record.Type)
                         .Must((_, reviewType, context) =>
                         {
-                            var reviewTypes = (string[])context.ParentContext.RootContextData[
-                                catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name];
+                            var reviewTypes = (string[])context.RootContextData[catalogCore.ModuleConstants.Settings.General.EditorialReviewTypes.Name];
                             return reviewTypes.Contains(reviewType, StringComparer.InvariantCultureIgnoreCase);
                         })
                         .WithInvalidValueCodeAndMessage("Type")
@@ -68,8 +66,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 RuleFor(x => x.Record.ProductSku)
                     .Must((_, sku, context) =>
                     {
-                        var skus = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.Skus];
-
+                        var skus = (string[])context.RootContextData[ModuleConstants.ValidationContextData.Skus];
                         return skus.Contains(sku);
                     })
                     .WithErrorCode("sku-is-not-exist")

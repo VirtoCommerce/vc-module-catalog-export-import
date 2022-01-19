@@ -18,7 +18,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             RuleFor(importRecord => importRecord)
                 .Must((_, importRecord, context) =>
                 {
-                    var duplicates = (CsvEditorialReview[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.DuplicatedImportReview];
+                    var duplicates = (CsvEditorialReview[])context.RootContextData[ModuleConstants.ValidationContextData.DuplicatedImportReview];
 
                     return !duplicates.Contains(importRecord.Record);
                 })

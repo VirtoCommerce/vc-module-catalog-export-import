@@ -18,11 +18,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         private void AttachValidators()
         {
             RuleFor(record => record)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .Must((record, _, context) =>
                 {
                     var existedCategories =
-                        (Category[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedCategories];
+                        (Category[])context.RootContextData[ModuleConstants.ValidationContextData.ExistedCategories];
 
                     // do not check by outer id because id was set before validation if outer id exists
                     var result = existedCategories.Any(c =>
@@ -35,11 +35,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState()
                 .Must((record, _, context) =>
                 {
-                    var catalogId =
-                        context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
+                    var catalogId = context.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
 
-                    var existedCategories =
-                        (Category[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedCategories];
+                    var existedCategories = (Category[])context.RootContextData[ModuleConstants.ValidationContextData.ExistedCategories];
 
                     var category = existedCategories.First(c => c.Id.EqualsInvariant(record.Record.CategoryId));
 

@@ -21,7 +21,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 RuleFor(x => x.Record.DescriptionId)
                     .Must((record, id, context) =>
                 {
-                    var existedReviews = (ExtendedEditorialReview[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews];
+                    var existedReviews = (ExtendedEditorialReview[])context.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews];
                     var existedReview = existedReviews.FirstOrDefault(x => x.Id == id);
 
                     if (existedReview == null)
@@ -60,7 +60,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         RuleFor(x => x.Record.DescriptionLanguage)
                             .Must((_, language, context) =>
                             {
-                                var languages = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages];
+                                var languages = (string[])context.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages];
                                 return languages.Contains(language, StringComparer.InvariantCultureIgnoreCase);
                             })
                             .WithInvalidValueCodeAndMessage("Description Language")
@@ -80,7 +80,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                         RuleFor(x => x.Record.DescriptionType)
                             .Must((_, reviewType, context) =>
                             {
-                                var reviewTypes = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes];
+                                var reviewTypes = (string[])context.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes];
                                 return reviewTypes.Contains(reviewType, StringComparer.InvariantCultureIgnoreCase);
                             })
                             .WithInvalidValueCodeAndMessage("Description Type")
