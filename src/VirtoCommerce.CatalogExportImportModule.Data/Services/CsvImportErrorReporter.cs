@@ -123,7 +123,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private string ConcatErrorMessages(IEnumerable<string> errorMessages)
+        private static string ConcatErrorMessages(IEnumerable<string> errorMessages)
         {
             return string.Join(MessageDelimiter, errorMessages);
         }

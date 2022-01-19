@@ -259,7 +259,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         /// <param name="records"></param>
         /// <param name="existingProducts"></param>
         /// <returns></returns>
-        private CatalogProduct[] GetReducedExistedByWrongOuterId(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingProducts)
+        private static CatalogProduct[] GetReducedExistedByWrongOuterId(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingProducts)
         {
             var result = existingProducts;
 
@@ -319,7 +319,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private void SetCatalogId(CatalogProduct[] productsToSave, string catalogId)
+        private static void SetCatalogId(CatalogProduct[] productsToSave, string catalogId)
         {
             foreach (var product in productsToSave)
             {
@@ -327,7 +327,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
         }
 
-        private void SetMainProductIdFromTheOuterIfMainValueIsBad(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingMainProducts)
+        private static void SetMainProductIdFromTheOuterIfMainValueIsBad(ImportRecord<CsvPhysicalProduct>[] records, CatalogProduct[] existingMainProducts)
         {
             foreach (var record in records.Where(x => !string.IsNullOrEmpty(x.Record.MainProductId) || !string.IsNullOrEmpty(x.Record.MainProductOuterId)))
             {
