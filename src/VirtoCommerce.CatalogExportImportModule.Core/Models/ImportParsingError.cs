@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
@@ -6,6 +7,6 @@ namespace VirtoCommerce.CatalogExportImportModule.Core.Models
     {
         public string ErrorCode { get; set; }
 
-        public IEnumerable<string> Parameters { get; set; }
+        public IEnumerable<string> Parameters { get; set; } = Enumerable.Empty<string>();
     }
 }
