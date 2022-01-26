@@ -45,6 +45,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                     return result;
                 })
+                .When(record => !string.IsNullOrEmpty(record.Record.CategoryId) || !string.IsNullOrEmpty(record.Record.CategoryOuterId))
                 .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.CategoryDoesNotBelongToCatalog])
                 .WithImportState();
         }
