@@ -9,25 +9,29 @@ using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CatalogModule.Core.Services;
-using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public class CsvPagedEditorialReviewDataImporter : CsvPagedDataImporter<CsvEditorialReview>
     {
+        private readonly ICsvValidatorFactory _csvValidatorFactory;
+        private readonly IValidator<ImportRecord<CsvEditorialReview>[]> _importRecordsValidator;
         private readonly IProductSearchService _productSearchService;
         private readonly IItemService _itemService;
         private readonly IProductEditorialReviewService _editorialReviewService;
 
-        public CsvPagedEditorialReviewDataImporter(IImportPagedDataSourceFactory dataSourceFactory,
-            IValidator<ImportRecord<CsvEditorialReview>[]> importRecordsValidator,
-            ICsvImportReporterFactory importReporterFactory, IBlobUrlResolver blobUrlResolver,
-            IProductSearchService productSearchService,
-            IItemService itemService,
-            IProductEditorialReviewService editorialReviewService, ImportConfigurationFactory importConfigurationFactory)
-            : base(dataSourceFactory, importRecordsValidator, importReporterFactory, blobUrlResolver, importConfigurationFactory)
+        public CsvPagedEditorialReviewDataImporter(
+            IBlobUrlResolver blobUrlResolver,
+            IImportConfigurationFactory importConfigurationFactory, IImportPagedDataSourceFactory dataSourceFactory,
+            ICsvValidatorFactory csvValidatorFactory, IValidator<ImportRecord<CsvEditorialReview>[]> importRecordsValidator,
+            ICsvParsingErrorHandlerFactory parsingErrorHandlerFactory, ICsvImportErrorReporterFactory importReporterFactory, 
+            IProductSearchService productSearchService, IItemService itemService, IProductEditorialReviewService editorialReviewService)
+            : base(blobUrlResolver, importConfigurationFactory, dataSourceFactory, parsingErrorHandlerFactory, importReporterFactory)
         {
+            _csvValidatorFactory = csvValidatorFactory;
+            _importRecordsValidator = importRecordsValidator;
             _itemService = itemService;
             _productSearchService = productSearchService;
             _editorialReviewService = editorialReviewService;
@@ -36,14 +40,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
         public override string DataType => nameof(EditorialReview);
 
 
-        protected override async Task ProcessChunkAsync(ImportDataRequest request,
-            Action<ImportProgressInfo> progressCallback, IImportPagedDataSource<CsvEditorialReview> dataSource,
-            ImportErrorsContext errorsContext, ImportProgressInfo importProgress, ICsvImportReporter importReporter)
+        protected override async Task ProcessChunkAsync(ImportDataRequest request, Action<ImportProgressInfo> progressCallback,
+            IImportPagedDataSource<CsvEditorialReview> dataSource, ICsvImportErrorReporter importErrorReporter, ImportProgressInfo importProgress)
         {
-            var importReviewRecords = dataSource.Items
-                // expect records that was parsed with errors
-                .Where(importContact => !errorsContext.Errors.Select(error => error.Row).Contains(importContact.Row))
-                .ToArray();
+            var importReviewRecords = dataSource.Items;
 
             try
             {
@@ -57,7 +57,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 
                 var validationContext = new ValidationContext<ImportRecord<CsvEditorialReview>[]>(importReviewRecords);
 
-                var validationResult = await ValidateAsync(validationContext, errorsContext);
+                var validator = _csvValidatorFactory.Create(_importRecordsValidator, importErrorReporter);
+                var validationResult = validator.Validate(validationContext);
 
                 var invalidImportRecords = validationResult.Errors
                     .Select(x => (x.CustomState as ImportValidationState<CsvEditorialReview>)?.InvalidRecord).Distinct().ToArray();
@@ -109,7 +110,8 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
             }
             catch (Exception e)
             {
-                HandleError(progressCallback, importProgress, e.Message);
+                importProgress.Errors.Add(e.Message);
+                progressCallback(importProgress);
             }
             finally
             {

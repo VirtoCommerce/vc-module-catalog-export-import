@@ -1,9 +1,10 @@
 using System.Globalization;
 using CsvHelper.Configuration;
+using VirtoCommerce.CatalogExportImportModule.Core.Services;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core.Models
 {
-    public sealed class ImportConfigurationFactory
+    public sealed class ImportConfigurationFactory: IImportConfigurationFactory
     {
         public CsvConfiguration Create()
         {

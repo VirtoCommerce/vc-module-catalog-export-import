@@ -21,11 +21,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
         {
             // validate that id and outer id are matching
             RuleFor(record => record)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .Must((record, _, context) =>
                 {
                     var existedProducts =
-                        (CatalogProduct[])context.ParentContext.RootContextData[
+                        (CatalogProduct[])context.RootContextData[
                             ModuleConstants.ValidationContextData.ExistedProducts];
 
                     var productById = existedProducts.FirstOrDefault(p =>
@@ -43,7 +43,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.ProductId) &&
                                 !string.IsNullOrEmpty(record.Record.ProductOuterId))
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductWithSameOuterIdExists])
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ProductWithSameOuterIdExists])
                 .WithImportState();
 
             // validate catalog of product matching to request
@@ -52,11 +52,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 {
                     var result = true;
 
-                    var catalogId =
-                        context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
+                    var catalogId = context.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
 
                     var existedProducts =
-                        (CatalogProduct[])context.ParentContext.RootContextData[
+                        (CatalogProduct[])context.RootContextData[
                             ModuleConstants.ValidationContextData.ExistedProducts];
 
                     // do not check by outer id because id was set before validation if outer id exists
@@ -71,11 +70,11 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                     return result;
                 })
                 .When((record) => !string.IsNullOrEmpty(record.Record.ProductId))
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductDoesNotBelongToCatalog])
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ProductDoesNotBelongToCatalog])
                 .WithImportState();
 
             RuleFor(record => record.Record.ProductName)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .NotEmpty()
                 .WithMissingRequiredValueCodeAndMessage("Product Name")
                 .WithImportState()
@@ -101,13 +100,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.PackageType)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .MaximumLength(254)
                 .WithExceededMaxLengthCodeAndMessage("Package Type", 254)
                 .WithImportState()
                 .Must((record, packageType, context) =>
                 {
-                    var availablePackageTypes = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes];
+                    var availablePackageTypes = (string[])context.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes];
                     return availablePackageTypes.Contains(packageType);
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.PackageType))
@@ -120,13 +119,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.MeasureUnit)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .MaximumLength(32)
                 .WithExceededMaxLengthCodeAndMessage("Measure Unit", 32)
                 .WithImportState()
                 .Must((record, measureUnit, context) =>
                 {
-                    var availableMeasureUnits = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits];
+                    var availableMeasureUnits = (string[])context.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits];
                     return availableMeasureUnits.Contains(measureUnit);
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.MeasureUnit))
@@ -134,13 +133,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.WeightUnit)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .MaximumLength(32)
                 .WithExceededMaxLengthCodeAndMessage("Weight Unit", 32)
                 .WithImportState()
                 .Must((record, weightUnit, context) =>
                 {
-                    var availableWeightUnits = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits];
+                    var availableWeightUnits = (string[])context.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits];
                     return availableWeightUnits.Contains(weightUnit);
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.WeightUnit))
@@ -148,13 +147,13 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .WithImportState();
 
             RuleFor(record => record.Record.TaxType)
-                .Configure(rule => rule.CascadeMode = CascadeMode.StopOnFirstFailure)
+                .Configure(rule => rule.CascadeMode = CascadeMode.Stop)
                 .MaximumLength(64)
                 .WithExceededMaxLengthCodeAndMessage("Tax Type", 64)
                 .WithImportState()
                 .Must((record, taxType, context) =>
                 {
-                    var availableTaxTypes = (string[])context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes];
+                    var availableTaxTypes = (string[])context.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes];
                     return availableTaxTypes.Contains(taxType);
                 })
                 .When(record => !string.IsNullOrEmpty(record.Record.TaxType))
@@ -166,7 +165,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .Must((_, mainProductId, context) =>
                 {
                     var existingMainProducts =
-                        (CatalogProduct[])context.ParentContext.RootContextData[
+                        (CatalogProduct[])context.RootContextData[
                             ModuleConstants.ValidationContextData.ExistingMainProducts];
 
                     var result = existingMainProducts.Any(x => x.Id.EqualsInvariant(mainProductId));
@@ -186,7 +185,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                 .Must((_, mainProductId, context) =>
                 {
                     var existingMainProducts =
-                        (CatalogProduct[])context.ParentContext.RootContextData[
+                        (CatalogProduct[])context.RootContextData[
                             ModuleConstants.ValidationContextData.ExistingMainProducts];
 
                     var mainProduct = existingMainProducts.FirstOrDefault(x => x.Id.EqualsInvariant(mainProductId));

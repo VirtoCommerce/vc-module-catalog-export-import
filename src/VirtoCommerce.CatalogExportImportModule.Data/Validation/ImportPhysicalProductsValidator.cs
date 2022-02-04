@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
-using FluentValidation.Validators;
 using VirtoCommerce.CatalogExportImportModule.Core;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
@@ -55,10 +53,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             RuleFor(importRecords => importRecords).CustomAsync(SetContextData).ForEach(x => x.SetValidator(new ImportPhysicalProductDescriptionValidator()));
         }
 
-        private async Task SetContextData(ImportRecord<CsvPhysicalProduct>[] records, CustomContext context, CancellationToken cancellationToken)
+        private async Task SetContextData(ImportRecord<CsvPhysicalProduct>[] records, ValidationContext<ImportRecord<CsvPhysicalProduct>[]> context, CancellationToken cancellationToken)
         {
             var catalogId =
-                context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
+                context.RootContextData[ModuleConstants.ValidationContextData.CatalogId] as string;
 
             var importedReviewIds = records.Select(x => x.Record.DescriptionId)
                 .Distinct()
@@ -70,19 +68,19 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
             var skus = records.Select(x => x.Record.ProductSku).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes] = await GetAvailablePackageTypesAsync();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits] = await GetAvailableWeightUnits();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes] = await GetAvailableTaxTypes();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages] = await GetAvailableLanguages();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes] = await GetAvailableReviewTypes();
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
-            context.ParentContext.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
+            context.RootContextData[ModuleConstants.ValidationContextData.AvailablePackageTypes] = await GetAvailablePackageTypesAsync();
+            context.RootContextData[ModuleConstants.ValidationContextData.AvailableMeasureUnits] = await GetAvailableMeasureUnits();
+            context.RootContextData[ModuleConstants.ValidationContextData.AvailableWeightUnits] = await GetAvailableWeightUnits();
+            context.RootContextData[ModuleConstants.ValidationContextData.AvailableTaxTypes] = await GetAvailableTaxTypes();
+            context.RootContextData[ModuleConstants.ValidationContextData.AvailableLanguages] = await GetAvailableLanguages();
+            context.RootContextData[ModuleConstants.ValidationContextData.AvailableReviewTypes] = await GetAvailableReviewTypes();
+            context.RootContextData[ModuleConstants.ValidationContextData.ExistedReviews] = (await _editorialReviewService.GetByIdsAsync(importedReviewIds)).OfType<ExtendedEditorialReview>().ToArray();
+            context.RootContextData[ImportProductsPropertyValidator.PropertyDictionaryItems] =
                 await GetPropertyDictionaryItems(propertyIds);
                 
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistingMainProducts] = await GetExistingMainProductsAsync(records);
+            context.RootContextData[ModuleConstants.ValidationContextData.ExistingMainProducts] = await GetExistingMainProductsAsync(records);
             
-            context.ParentContext.RootContextData[ModuleConstants.ValidationContextData.ExistedProductsWithSameSku] =
+            context.RootContextData[ModuleConstants.ValidationContextData.ExistedProductsWithSameSku] =
                 (await _productSearchService.SearchProductsAsync(new ProductSearchCriteria() { CatalogId = catalogId, Skus = skus, Take = ModuleConstants.Settings.PageSize })).Results.ToArray();
         }
 

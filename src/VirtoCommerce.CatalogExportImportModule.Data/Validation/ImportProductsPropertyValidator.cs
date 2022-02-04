@@ -46,7 +46,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                         childRules.RuleFor(propertyValue => propertyValue.ValueId)
                                             .Must((propertyValue, valueId, context) =>
                                             {
-                                                var propertyDictionaryItems = (IList<PropertyDictionaryItem>)context.ParentContext.RootContextData[PropertyDictionaryItems];
+                                                var propertyDictionaryItems = (IList<PropertyDictionaryItem>)context.RootContextData[PropertyDictionaryItems];
                                                 return propertyDictionaryItems.Any(propertyDictionaryItem =>
                                                     propertyDictionaryItem.PropertyId == propertyValue.PropertyId && propertyDictionaryItem.Id == valueId);
                                             })

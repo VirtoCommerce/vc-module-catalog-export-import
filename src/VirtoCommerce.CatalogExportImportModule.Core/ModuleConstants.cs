@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CatalogExportImportModule.Core
@@ -42,6 +43,33 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
 
         public const int MByte = 1024 * KByte;
 
+        public static class ParsingErrorCodes
+        {
+            public const string NotEscapedQuote = nameof(NotEscapedQuote);
+            public const string InvalidValue = nameof(InvalidValue);
+            public const string MissedRequiredValue = nameof(MissedRequiredValue);
+            public const string MissedValue = nameof(MissedValue);
+        }
+
+        public static string GetParsingErrorMessage(string errorCode, params object[] parameters)
+        {
+            switch (errorCode)
+            {
+                case ParsingErrorCodes.NotEscapedQuote:
+                    return "This row has invalid data. The data after field with not escaped quote was lost.";
+                case ParsingErrorCodes.InvalidValue:
+                    return string.Format("This row has invalid value in the column '{0}'.", parameters.ToArray());
+                case ParsingErrorCodes.MissedRequiredValue:
+                    return parameters.Length > 1
+                        ? string.Format("The required value in column {0} is missing.", parameters)
+                        : $"The required values in columns {string.Join(", ", parameters)} are missing";
+                case ParsingErrorCodes.MissedValue:
+                    return $"This row has missed column{(parameters.Length > 1 ? "s" : string.Empty)}: {string.Join(", ", parameters)}";
+                default:
+                    return string.Empty;
+            }
+        }
+
         public static class ValidationContextData
         {
             public const string CatalogId = nameof(CatalogId);
@@ -73,9 +101,9 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string ExistedProductsWithSameSku = nameof(ExistedProductsWithSameSku);
         }
 
-        public static class ValidationErrors
+        public static class ValidationErrorCodes
         {
-            public const string DuplicateError = "Duplicate";
+            public const string DuplicateError = "duplicate";
 
             public const string FileNotExisted = "file-not-existed";
 
@@ -120,22 +148,22 @@ namespace VirtoCommerce.CatalogExportImportModule.Core
             public const string ProductWithSameSkuExists = "product-with-same-sku-exists";
         }
 
-        public static readonly IReadOnlyDictionary<string, string> ValidationMessages = new Dictionary<string, string>
+        public static readonly IReadOnlyDictionary<string, string> ValidationErrorMessages = new Dictionary<string, string>
         {
-            { ValidationErrors.MissingRequiredValues, "The required value in column '{0}' is missing." },
-            { ValidationErrors.ExceedingMaxLength, "Value in column '{0}' may have maximum {1} characters." },
-            { ValidationErrors.ArrayValuesExceedingMaxLength, "Every value in column '{0}' may have maximum {1} characters. The number of values is unlimited." },
-            { ValidationErrors.InvalidValue, "This row has invalid value in the column '{0}'." },
-            { ValidationErrors.NotUniqueValue, "Value in column '{0}' should be unique." },
-            { ValidationErrors.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
-            { ValidationErrors.MainProductIsNotExists, "The main product does not exist." },
-            { ValidationErrors.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." },
-            { ValidationErrors.MainProductIsVariation, "The main product is variation. You should not import variations for variations." },
-            { ValidationErrors.ProductWithSameOuterIdExists, "Another product with the same Outer Id exists in the system." },
-            { ValidationErrors.ProductDoesNotBelongToCatalog, "The product does not belong to the catalog specified in the request." },
-            { ValidationErrors.CategoryDoesNotExist, "Such category does not exist in the system." },
-            { ValidationErrors.CategoryDoesNotBelongToCatalog, "The category does not belong to the catalog specified in the request." },
-            { ValidationErrors.ProductWithSameSkuExists, "Product with the same SKU and with different Id already exists in the current catalog." }
+            { ValidationErrorCodes.MissingRequiredValues, "The required value in column '{0}' is missing." },
+            { ValidationErrorCodes.ExceedingMaxLength, "Value in column '{0}' may have maximum {1} characters." },
+            { ValidationErrorCodes.ArrayValuesExceedingMaxLength, "Every value in column '{0}' may have maximum {1} characters. The number of values is unlimited." },
+            { ValidationErrorCodes.InvalidValue, "This row has invalid value in the column '{0}'." },
+            { ValidationErrorCodes.NotUniqueValue, "Value in column '{0}' should be unique." },
+            { ValidationErrorCodes.NotUniqueMultiValue, "Values in column '{0}' should be unique for the item." },
+            { ValidationErrorCodes.MainProductIsNotExists, "The main product does not exist." },
+            { ValidationErrorCodes.CycleSelfReference, "The main product id is the same as product. It means self cycle reference." },
+            { ValidationErrorCodes.MainProductIsVariation, "The main product is variation. You should not import variations for variations." },
+            { ValidationErrorCodes.ProductWithSameOuterIdExists, "Another product with the same Outer Id exists in the system." },
+            { ValidationErrorCodes.ProductDoesNotBelongToCatalog, "The product does not belong to the catalog specified in the request." },
+            { ValidationErrorCodes.CategoryDoesNotExist, "Such category does not exist in the system." },
+            { ValidationErrorCodes.CategoryDoesNotBelongToCatalog, "The category does not belong to the catalog specified in the request." },
+            { ValidationErrorCodes.ProductWithSameSkuExists, "Product with the same SKU and with different Id already exists in the current catalog." }
         };
 
         public static class Features

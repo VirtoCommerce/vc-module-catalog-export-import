@@ -38,7 +38,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
                                 .Must((record, sku, context) =>
                                 {
                                     var existedProductsWithSameSku =
-                                        (CatalogProduct[])context.ParentContext.RootContextData[
+                                        (CatalogProduct[])context.RootContextData[
                                             ModuleConstants.ValidationContextData.ExistedProductsWithSameSku];
 
                                     var productWithSuchSku = existedProductsWithSameSku.FirstOrDefault(x => x.Code.EqualsInvariant(sku));
@@ -61,7 +61,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
 
                                     return true;
                                 })
-                                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ProductWithSameSkuExists])
+                                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ProductWithSameSkuExists])
                                 .WithImportState();
                         });
                 });

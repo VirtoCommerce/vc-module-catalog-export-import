@@ -1,17 +1,17 @@
 using CsvHelper.Configuration;
 using VirtoCommerce.CatalogExportImportModule.Core.Models;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
-using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.AssetsModule.Core.Assets;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
     public sealed class ImportPagedDataSourceFactory : IImportPagedDataSourceFactory
     {
         private readonly IBlobStorageProvider _blobStorageProvider;
-        private readonly ImportConfigurationFactory _importConfigurationFactory;
+        private readonly IImportConfigurationFactory _importConfigurationFactory;
 
 
-        public ImportPagedDataSourceFactory(IBlobStorageProvider blobStorageProvider, ImportConfigurationFactory importConfigurationFactory)
+        public ImportPagedDataSourceFactory(IBlobStorageProvider blobStorageProvider, IImportConfigurationFactory importConfigurationFactory)
         {
             _blobStorageProvider = blobStorageProvider;
             _importConfigurationFactory = importConfigurationFactory;

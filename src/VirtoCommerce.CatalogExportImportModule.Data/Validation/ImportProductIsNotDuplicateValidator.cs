@@ -18,10 +18,10 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Validation
             RuleFor(importRecord => importRecord)
                 .Must((_, importRecord, context) =>
                 {
-                    var duplicates = (ImportRecord<CsvPhysicalProduct>[])context.ParentContext.RootContextData[ImportProductsAreNotDuplicatesValidator.Duplicates];
+                    var duplicates = (ImportRecord<CsvPhysicalProduct>[])context.RootContextData[ImportProductsAreNotDuplicatesValidator.Duplicates];
                     return !duplicates.Contains(importRecord);
                 })
-                .WithErrorCode(ModuleConstants.ValidationErrors.DuplicateError)
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.DuplicateError)
                 .WithMessage("This product is a duplicate.")
                 .WithImportState();
         }

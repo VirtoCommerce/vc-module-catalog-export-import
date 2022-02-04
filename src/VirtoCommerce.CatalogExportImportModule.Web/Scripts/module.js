@@ -7,7 +7,7 @@ if (AppDependencies !== undefined) {
     AppDependencies.push(moduleName);
 }
 
-var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.featureManagerSubscriber', 'virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (featureManagerSubscriber, catalogImportService, catalogExportService) {
+var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoCommerce.catalogModule.catalogImportService', 'virtoCommerce.catalogModule.catalogExportService', function (catalogImportService, catalogExportService) {
 
     catalogImportService.register({
         name: 'Descriptions import',
@@ -27,24 +27,22 @@ var module = angular.module(moduleName, ['ui.grid.autoFitColumns']).run(['virtoC
         template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/export-processing.tpl.html'
     });
 
-    featureManagerSubscriber.onLoginStatusChanged('CatalogExportImport', () => {
-        catalogExportService.register({
-            name: 'Physical products export',
-            description: 'Export only physical products',
-            icon: 'fas fa-box',
-            dataType: 'PhysicalProduct',
-            controller: 'virtoCommerce.catalogExportImportModule.exportProcessingController',
-            template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/export-processing.tpl.html'
-        });
+    catalogExportService.register({
+        name: 'Physical products export',
+        description: 'Export only physical products',
+        icon: 'fas fa-box',
+        dataType: 'PhysicalProduct',
+        controller: 'virtoCommerce.catalogExportImportModule.exportProcessingController',
+        template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/export-processing.tpl.html'
+    });
 
-        catalogImportService.register({
-            name: 'Physical products import',
-            description: 'Physical products data import from CSV',
-            icon: 'fas fa-box',
-            controller: 'virtoCommerce.catalogExportImportModule.fileUploadController',
-            template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/file-upload.tpl.html',
-            predefinedDataType: { key: 'Physical Products', value: 'PhysicalProduct' }
-        });
+    catalogImportService.register({
+        name: 'Physical products import',
+        description: 'Physical products data import from CSV',
+        icon: 'fas fa-box',
+        controller: 'virtoCommerce.catalogExportImportModule.fileUploadController',
+        template: 'Modules/$(VirtoCommerce.CatalogExportImport)/Scripts/blades/file-upload.tpl.html',
+        predefinedDataType: { key: 'Physical Products', value: 'PhysicalProduct' }
     });
 }]);
 

@@ -20,78 +20,78 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Helpers
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithMissingRequiredValueCodeAndMessage<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule, string columnName)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.MissingRequiredValues)
-                .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MissingRequiredValues], columnName));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.MissingRequiredValues)
+                .WithMessage(string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.MissingRequiredValues], columnName));
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithExceededMaxLengthCodeAndMessage<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule, string columnName, int maxLength)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.ExceedingMaxLength)
-                .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ExceedingMaxLength], columnName, maxLength));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.ExceedingMaxLength)
+                .WithMessage(string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ExceedingMaxLength], columnName, maxLength));
         }
 
         public static IRuleBuilderOptions<PropertyValue, TProperty> WithExceededMaxLengthCodeAndMessage<TProperty>(this IRuleBuilderOptions<PropertyValue, TProperty> rule, int maxLength)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.ExceedingMaxLength)
-                .WithMessage(dynamicPropertyValue => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.ExceedingMaxLength], dynamicPropertyValue.PropertyName, maxLength));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.ExceedingMaxLength)
+                .WithMessage(dynamicPropertyValue => string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.ExceedingMaxLength], dynamicPropertyValue.PropertyName, maxLength));
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithInvalidValueCodeAndMessage<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule, string columnName)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.InvalidValue)
-                .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], columnName));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.InvalidValue)
+                .WithMessage(string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.InvalidValue], columnName));
         }
 
         public static IRuleBuilderOptions<Property, TProperty> WithInvalidValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<Property, TProperty> rule)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.InvalidValue)
-                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], property.Name));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.InvalidValue)
+                .WithMessage(property => string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.InvalidValue], property.Name));
         }
 
         public static IRuleBuilderOptions<PropertyValue, TProperty> WithInvalidValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<PropertyValue, TProperty> rule)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.InvalidValue)
-                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.InvalidValue], property.PropertyName));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.InvalidValue)
+                .WithMessage(property => string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.InvalidValue], property.PropertyName));
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithNotUniqueValueCodeAndMessage<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule, string columnName)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.NotUniqueValue)
-                .WithMessage(string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueValue], columnName));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.NotUniqueValue)
+                .WithMessage(string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.NotUniqueValue], columnName));
         }
 
         public static IRuleBuilderOptions<Property, TProperty> WithNotUniqueMultiValueCodeAndMessage<TProperty>(this IRuleBuilderOptions<Property, TProperty> rule)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.NotUniqueValue)
-                .WithMessage(property => string.Format(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.NotUniqueMultiValue], property.Name));
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.NotUniqueValue)
+                .WithMessage(property => string.Format(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.NotUniqueMultiValue], property.Name));
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithNotExistedMainProduct<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.MainProductIsNotExists)
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MainProductIsNotExists]);
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.MainProductIsNotExists)
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.MainProductIsNotExists]);
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithSelfCycleReference<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.CycleSelfReference)
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.CycleSelfReference]);
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.CycleSelfReference)
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.CycleSelfReference]);
         }
 
         public static IRuleBuilderOptions<ImportRecord<T>, TProperty> WithMainProductIsVariation<T, TProperty>(this IRuleBuilderOptions<ImportRecord<T>, TProperty> rule)
         {
             return rule
-                .WithErrorCode(ModuleConstants.ValidationErrors.MainProductIsVariation)
-                .WithMessage(ModuleConstants.ValidationMessages[ModuleConstants.ValidationErrors.MainProductIsVariation]);
+                .WithErrorCode(ModuleConstants.ValidationErrorCodes.MainProductIsVariation)
+                .WithMessage(ModuleConstants.ValidationErrorMessages[ModuleConstants.ValidationErrorCodes.MainProductIsVariation]);
         }
     }
 }

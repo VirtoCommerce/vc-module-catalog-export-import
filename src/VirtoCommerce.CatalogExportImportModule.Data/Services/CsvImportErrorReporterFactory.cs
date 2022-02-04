@@ -1,18 +1,18 @@
 using System.Threading.Tasks;
 using VirtoCommerce.CatalogExportImportModule.Core.Services;
-using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.AssetsModule.Core.Assets;
 
 namespace VirtoCommerce.CatalogExportImportModule.Data.Services
 {
-    public sealed class CsvImportReporterFactory : ICsvImportReporterFactory
+    public sealed class CsvImportErrorReporterFactory : ICsvImportErrorReporterFactory
     {
         private readonly IBlobStorageProvider _blobStorageProvider;
-        public CsvImportReporterFactory(IBlobStorageProvider blobStorageProvider)
+        public CsvImportErrorReporterFactory(IBlobStorageProvider blobStorageProvider)
         {
             _blobStorageProvider = blobStorageProvider;
         }
 
-        public async Task<ICsvImportReporter> CreateAsync(string reportFilePath, string delimiter)
+        public async Task<ICsvImportErrorReporter> CreateAsync(string reportFilePath, string delimiter)
         {
             var reportBlob = await _blobStorageProvider.GetBlobInfoAsync(reportFilePath);
 
@@ -21,7 +21,7 @@ namespace VirtoCommerce.CatalogExportImportModule.Data.Services
                 await _blobStorageProvider.RemoveAsync(new[] { reportFilePath });
             }
 
-            return new CsvImportReporter(reportFilePath, _blobStorageProvider, delimiter);
+            return new CsvImportErrorReporter(_blobStorageProvider, reportFilePath, delimiter);
         }
     }
 }
